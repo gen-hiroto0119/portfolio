@@ -407,7 +407,12 @@ const mdxOptions = {
     [
       rehypePrettyCode,
       {
-        theme: "vesper",
+        // Dual themes: tokens carry --shiki-light/--shiki-dark variables,
+        // switched by html[data-theme] rules in globals.css.
+        theme: {
+          dark: "vesper",
+          light: "github-light",
+        },
         keepBackground: false,
       },
     ],

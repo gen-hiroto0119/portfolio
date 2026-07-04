@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { useCommandPalette } from "@/components/command-palette/command-palette-provider";
+import { MobileMenu } from "@/components/layout/mobile-menu";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { navItems } from "@/lib/site";
 import {
@@ -72,6 +73,19 @@ const styles = stylex.create({
       outlineOffset: "2px",
     },
   },
+  commandLabel: {
+    "@media (max-width: 640px)": {
+      display: "none",
+    },
+  },
+  commandIcon: {
+    display: "none",
+    width: fontSize.sm,
+    height: fontSize.sm,
+    "@media (max-width: 640px)": {
+      display: "block",
+    },
+  },
 });
 
 function isNavActive(pathname: string, href: string): boolean {
@@ -118,6 +132,7 @@ export function HeaderNav() {
           x.alignItems.center,
         )}
       >
+        <MobileMenu />
         <button
           type="button"
           {...stylex.props(
@@ -132,7 +147,27 @@ export function HeaderNav() {
           aria-label="Open command palette"
           onClick={openPalette}
         >
-          ⌘K
+          <span {...stylex.props(styles.commandLabel)}>⌘K</span>
+          <svg
+            {...stylex.props(styles.commandIcon)}
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden
+          >
+            <circle
+              cx="7"
+              cy="7"
+              r="4.25"
+              stroke="currentColor"
+              strokeWidth="1.25"
+            />
+            <path
+              d="M10.5 10.5L14 14"
+              stroke="currentColor"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+            />
+          </svg>
         </button>
         <ThemeToggle />
       </div>

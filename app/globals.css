@@ -50,3 +50,20 @@
 }
 
 @stylex;
+
+/*
+ * Dual-theme syntax highlighting (rehype-pretty-code / shiki).
+ * Tokens carry inline --shiki-light / --shiki-dark custom properties;
+ * html[data-theme] (set pre-paint by the theme init script) picks one.
+ * Dark is the site default, so it is also the fallback when data-theme
+ * is absent (e.g. JS disabled).
+ */
+code[data-theme*=" "],
+code[data-theme*=" "] span {
+  color: var(--shiki-dark);
+}
+
+html[data-theme="light"] code[data-theme*=" "],
+html[data-theme="light"] code[data-theme*=" "] span {
+  color: var(--shiki-light);
+}

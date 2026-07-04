@@ -43,12 +43,15 @@ const styles = stylex.create({
   popup: {
     transform: "translateX(-50%)",
     width: `min(calc(100% - ${spacing.lg} * 2), 36rem)`,
+    maxHeight: "min(24rem, calc(100dvh - 20% - 2rem))",
     backgroundColor: colors.bgElevated,
     borderWidth: "1px",
     borderStyle: "solid",
     borderColor: colors.border,
     borderRadius: radius.md,
     boxShadow: `0 ${spacing.md} ${spacing.xl} color-mix(in srgb, ${colors.bg} 50%, transparent)`,
+    touchAction: "pan-y",
+    overscrollBehavior: "contain",
   },
   input: {
     paddingBlock: spacing.md,
@@ -68,6 +71,12 @@ const styles = stylex.create({
   },
   list: {
     paddingBlock: spacing.xs,
+    flexGrow: 1,
+    flexShrink: 1,
+    minHeight: 0,
+    touchAction: "pan-y",
+    overscrollBehavior: "contain",
+    WebkitOverflowScrolling: "touch",
   },
   groupLabel: {
     paddingBlock: spacing.xs,
@@ -318,18 +327,14 @@ export function CommandPalette({
               setSelectedIndex(0);
             }}
             onKeyDown={handleInputKeyDown}
-            {...stylex.props(styles.input, x.width["100%"])}
+            {...stylex.props(styles.input, x.width["100%"], x.flexShrink._0)}
           />
 
           <div
             id={listboxId}
             role="listbox"
             aria-label="Commands"
-            {...stylex.props(
-              styles.list,
-              x.maxHeight["18rem"],
-              x.overflowY.auto,
-            )}
+            {...stylex.props(styles.list, x.overflowY.auto)}
           >
             {flatCommands.length === 0 ? (
               <p {...stylex.props(styles.empty, x.textAlign.center)}>
@@ -369,7 +374,11 @@ export function CommandPalette({
                             x.cursor.pointer,
                             isSelected && styles.optionSelected,
                           )}
-                          onMouseEnter={() => setSelectedIndex(index)}
+                          onPointerMove={(event) => {
+                            if (event.pointerType === "mouse") {
+                              setSelectedIndex(index);
+                            }
+                          }}
                           onClick={() => executeCommand(command)}
                         >
                           <span
@@ -412,7 +421,7 @@ export function CommandPalette({
           </div>
 
           <div
-            {...stylex.props(styles.footer, x.display.flex)}
+            {...stylex.props(styles.footer, x.display.flex, x.flexShrink._0)}
           >
             <span>↑↓ 移動</span>
             <span>↵ 実行</span>

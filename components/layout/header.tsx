@@ -65,13 +65,9 @@ export function Header() {
       >
         <Link
           href="/"
-          {...stylex.props(
-            styles.logo,
-            x.textTransform.lowercase,
-            x.textDecoration.none,
-          )}
+          {...stylex.props(styles.logo, x.textDecoration.none)}
         >
-          hiroto
+          Hiroto Furugen
         </Link>
         <HeaderNav />
       </div>

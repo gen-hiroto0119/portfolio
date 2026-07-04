@@ -55,14 +55,8 @@ export const profile = {
       ],
     },
   ] satisfies SkillGroup[],
+  // Reverse chronological order (newest first).
   timeline: [
-    {
-      period: "2026.03 — 現在",
-      organization: "hyphen technologies",
-      role: "Co-founder / Tech Lead",
-      summary:
-        "「情報の非対称を、技術で解く。」を掲げるソフトウェア企業を友人と共同創業。SEO / GEO / AIO に対応したコンテンツ運用自動化プラットフォーム「SCAS」の開発を Tech Lead として主導。複数業種での PoC を経て 2026 年 6 月に β 提供を開始。",
-    },
     {
       period: "2026.07 — 現在",
       organization: "CyberAgent",
@@ -76,6 +70,13 @@ export const profile = {
       role: "Campus Ambassador",
       summary:
         "全国の大学・大学院から選抜された約15名の一人として、生成AI「Gemini」のマーケティングチームと協働。フィールドマーケティングを軸に、イベント企画・運営、学生コミュニティ形成、大学教授・理系学部との連携をアカウントマネジメントとして推進。",
+    },
+    {
+      period: "2026.03 — 現在",
+      organization: "hyphen technologies",
+      role: "Co-founder / Tech Lead",
+      summary:
+        "「情報の非対称を、技術で解く。」を掲げるソフトウェア企業を友人と共同創業。SEO / GEO / AIO に対応したコンテンツ運用自動化プラットフォーム「SCAS」の開発を Tech Lead として主導。複数業種での PoC を経て 2026 年 6 月に β 提供を開始。",
     },
     {
       period: "2026.02 — 2026.03",

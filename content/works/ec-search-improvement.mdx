@@ -1,0 +1,65 @@
+---
+title: "ECサイトの検索体験改善"
+description: "検索ゼロ件率の改善と、カテゴリ横断の発見性向上を目的にした検索UI・ランキング再設計。"
+date: "2025-08-03"
+role: "UXデザイン / フロントエンド実装"
+stack:
+  - "Next.js"
+  - "Algolia"
+  - "TypeScript"
+  - "StyleX"
+client: "アパレルEC（月間セッション200万）"
+challenge: "検索後の離脱率が高く、サジェストと結果画面の体験が分断されていた"
+outcome: "検索経由CVRを21%改善し、ゼロ件検索率を14%から9%に低下"
+featured: false
+metrics:
+  - label: "検索CVR"
+    value: "+21%"
+  - label: "ゼロ件率"
+    value: "-5pt"
+links:
+  - label: "改善概要デック"
+    href: "https://example.com/deck/ec-search"
+---
+
+## 背景と課題
+
+アパレルECでは、ユーザーが探しているのは「商品名」より「着用シーン」や「素材感」であることが多いのに、検索UIはキーワード入力中心で設計されていました。サジェストは表示されるものの、結果画面に遷移すると関連語が消え、絞り込みの文脈が途切れていました。
+
+分析では検索セッションの約3割が1回のクエリで終了しており、再検索に進まないユーザーが多数いることが分かりました。
+
+## 意思決定
+
+検索体験を「入力」「探索」「比較」の3フェーズに再定義し、各フェーズで必要なUIだけを表示する方針にしました。入力中はサジェストと最近見た商品を、結果画面ではファセットと並び替えを前面に出しています。
+
+また、ゼロ件時には単なるメッセージではなく、近似カテゴリと人気商品への導線を提示する「リカバリー状態」を新設しました。
+
+## 技術選定
+
+検索基盤は Algolia を継続利用しつつ、フロント側の状態管理を整理しました。クエリ・フィルタ・ソートを URL クエリに完全同期させ、共有リンクと戻る操作の両方で文脈が保持されるようにしています。
+
+ランキングは人気順だけでなく、在庫あり・新着・レビュー高評価を切り替え可能にし、各モードでスコアリング式を切り替える実装を行いました。
+
+```ts
+type SearchState = {
+  q: string;
+  facets: Record<string, string[]>;
+  sort: "relevance" | "newest" | "rating";
+};
+
+export function toSearchParams(state: SearchState): URLSearchParams {
+  const params = new URLSearchParams();
+  params.set("q", state.q);
+  params.set("sort", state.sort);
+  for (const [key, values] of Object.entries(state.facets)) {
+    values.forEach((value) => params.append(key, value));
+  }
+  return params;
+}
+```
+
+## 成果
+
+改善リリースから8週間で、検索経由のコンバージョン率は21%向上しました。ゼロ件検索率も改善し、離脱前に別カテゴリへ遷移するユーザーが増えています。
+
+運用面では、マーケチームが検索ログから需要の穴を把握しやすくなり、季節商品の訴求タイミング調整にも活用されています。

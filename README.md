@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hiroto Portfolio
 
-## Getting Started
+デザインとエンジニアリングのポートフォリオサイト。
 
-First, run the development server:
+## 技術スタック
+
+- **Next.js 16** (App Router, SSG)
+- **TypeScript**
+- **StyleX** — スタイリングとデザイントークン
+- **MDX** — コンテンツ (`gray-matter` + `next-mdx-remote`)
+
+## 開発
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build
+npm run start
+npm run lint
+npx tsc --noEmit
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+本番 URL は `NEXT_PUBLIC_SITE_URL` 環境変数で上書きできます（未設定時は `https://hiroto-portfolio.vercel.app`）。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## コンテンツの追加
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`content/` 配下に MDX ファイルを追加します。
 
-## Learn More
+| ディレクトリ | 用途 | 主な frontmatter |
+|---|---|---|
+| `content/works/` | ケーススタディ | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome` |
+| `content/blog/` | ブログ記事 | `title`, `description`, `date`, `tags` |
+| `content/garden/` | デジタルガーデン | `title`, `planted`, `tended`, `status`, `tags` |
 
-To learn more about Next.js, take a look at the following resources:
+ファイル名（拡張子除く）が URL の slug になります。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## デザイントークン
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`lib/theme/tokens.stylex.ts` に色・タイポグラフィ・スペーシングなどのセマンティックトークンを定義しています。ライトテーマは `lib/theme/themes.stylex.ts` を参照してください。

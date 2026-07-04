@@ -1,0 +1,52 @@
+---
+title: "Next.js App Routerの使い所"
+description: "Server Components と Client Components の境界をどう切るか、実務で効いた判断基準を整理する。"
+date: "2025-12-05"
+tags:
+  - "Next.js"
+  - "React"
+  - "Architecture"
+---
+
+## まず境界を決める
+
+App Router 導入時に迷うのは「どこまでサーバーで描画するか」です。初期は Client Component に寄せがちですが、データ取得とHTML生成をサーバー側に寄せるほど初期表示は軽くなります。
+
+判断基準はシンプルで、**インタラクションが必要な部分だけ Client** にします。一覧取得、詳細本文、メタ情報は Server Component で十分なことが多いです。
+
+## データ取得パターン
+
+詳細ページでは `generateStaticParams` と組み合わせてビルド時にページを生成し、ランタイムでは静的配信に近い体験を作れます。動的更新が必要な箇所だけ `revalidate` を使います。
+
+```tsx
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) notFound();
+  return <Article post={post} />;
+}
+```
+
+## Server / Client の切り分け表
+
+| 要件 | 推奨 | 理由 |
+| --- | --- | --- |
+| MDX本文レンダリング | Server | 依存をサーバーに閉じられる |
+| コマンドパレット | Client | キーボードイベントが必要 |
+| テーマ切替 | Client + script | 初期フラッシュ防止 |
+| 一覧フィルタ | Client or URL同期 | 要件次第で選択 |
+
+## つまずきやすい点
+
+`use client` を付けたコンポーネントの子は自動的にクライアント境界になります。逆に、Client から Server Component を直接 import することはできないため、Composition（`children` で渡す）を使うのが定石です。
+
+また、Babel 経由の StyleX 構成では SWC 専用機能が使えないため、Next の実験的機能を入れる前にビルドパイプラインを確認するのが安全です。

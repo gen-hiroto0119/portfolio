@@ -2,6 +2,7 @@ import Link from "next/link";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { CategoryLabel } from "@/components/blog/category-label";
 import { MdxContent } from "@/components/mdx/mdx-content";
 import type { BlogPostWithContent } from "@/lib/content/schema";
 import {
@@ -84,6 +85,7 @@ export function PostDetail({ post }: PostDetailProps) {
           <time dateTime={post.date} {...stylex.props(styles.date)}>
             {post.date}
           </time>
+          <CategoryLabel category={post.category} />
           <div
             {...stylex.props(
               styles.tags,

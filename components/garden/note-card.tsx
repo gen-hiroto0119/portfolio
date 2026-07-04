@@ -50,6 +50,10 @@ const styles = stylex.create({
   titleRow: {
     gap: spacing.sm,
   },
+  titleActions: {
+    gap: spacing.sm,
+    flexShrink: 0,
+  },
   title: {
     fontFamily: fonts.display,
     fontSize: fontSize.lg,
@@ -77,13 +81,20 @@ const styles = stylex.create({
     fontSize: fontSize.xs,
     color: colors.fgFaint,
   },
+  connectionCount: {
+    fontFamily: fonts.mono,
+    fontSize: fontSize.xs,
+    color: colors.fgMuted,
+    flexShrink: 0,
+  },
 });
 
 type NoteCardProps = {
   note: GardenNote;
+  connectionCount?: number;
 };
 
-function NoteCard({ note }: NoteCardProps) {
+function NoteCard({ note, connectionCount = 0 }: NoteCardProps) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -112,7 +123,20 @@ function NoteCard({ note }: NoteCardProps) {
         >
           {note.title}
         </h2>
-        <StatusIcon status={note.status} />
+        <div
+          {...stylex.props(
+            styles.titleActions,
+            x.display.flex,
+            x.alignItems.center,
+          )}
+        >
+          {connectionCount > 0 ? (
+            <span {...stylex.props(styles.connectionCount)} aria-label={`${connectionCount}件のつながり`}>
+              ⤳ {connectionCount}
+            </span>
+          ) : null}
+          <StatusIcon status={note.status} />
+        </div>
       </div>
       <p {...stylex.props(styles.meta)}>
         Planted {note.planted} / Tended {note.tended}
@@ -134,7 +158,13 @@ function NoteCard({ note }: NoteCardProps) {
   );
 }
 
-export function NoteGrid({ notes }: { notes: GardenNote[] }) {
+export function NoteGrid({
+  notes,
+  connectionCounts,
+}: {
+  notes: GardenNote[];
+  connectionCounts?: Record<string, number>;
+}) {
   return (
     <nav
       aria-label="Garden notes"
@@ -146,7 +176,11 @@ export function NoteGrid({ notes }: { notes: GardenNote[] }) {
       )}
     >
       {notes.map((note) => (
-        <NoteCard key={note.slug} note={note} />
+        <NoteCard
+          key={note.slug}
+          note={note}
+          connectionCount={connectionCounts?.[note.slug] ?? 0}
+        />
       ))}
     </nav>
   );

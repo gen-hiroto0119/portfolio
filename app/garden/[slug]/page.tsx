@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { NoteDetail } from "@/components/garden/note-detail";
 import { getAllNotes, getNote } from "@/lib/content";
+import { getConnections } from "@/lib/garden-graph";
 
 type GardenNotePageProps = {
   params: Promise<{ slug: string }>;
@@ -31,11 +32,13 @@ export async function generateMetadata({
 
 export default async function GardenNotePage({ params }: GardenNotePageProps) {
   const { slug } = await params;
-  const note = await getNote(slug);
+  const [note, allNotes] = await Promise.all([getNote(slug), getAllNotes()]);
 
   if (!note) {
     notFound();
   }
 
-  return <NoteDetail note={note} />;
+  const connections = getConnections(slug, allNotes);
+
+  return <NoteDetail note={note} connections={connections} />;
 }

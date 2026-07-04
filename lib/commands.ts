@@ -10,6 +10,7 @@ export type CommandItem = {
   group: CommandGroup;
   label: string;
   keywords?: string[];
+  meta?: string;
   perform: () => void;
 };
 

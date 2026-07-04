@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" fill="none">
+  <rect width="1200" height="800" fill="#0A0A0B"/>
+  <defs>
+    <radialGradient id="beam" cx="0.75" cy="0.2" r="0.85" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#EDEBE8" stop-opacity="0.22"/>
+      <stop offset="45%" stop-color="#EDEBE8" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#0A0A0B" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="slant" x1="200" y1="0" x2="1000" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF4D00" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FF4D00" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FF4D00" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#beam)"/>
+  <path d="M 0 640 L 1200 120" stroke="#EDEBE8" stroke-opacity="0.08" stroke-width="1"/>
+  <path d="M 0 680 L 1200 160" stroke="#EDEBE8" stroke-opacity="0.06" stroke-width="1"/>
+  <path d="M 0 720 L 1200 200" stroke="#EDEBE8" stroke-opacity="0.04" stroke-width="1"/>
+  <rect x="0" y="0" width="1200" height="800" fill="url(#slant)" opacity="0.5"/>
+  <rect x="80" y="560" width="1040" height="1" fill="#EDEBE8" fill-opacity="0.25"/>
+  <rect x="720" y="80" width="1" height="640" fill="#FF4D00" fill-opacity="0.5"/>
+  <text x="48" y="760" font-family="monospace" font-size="14" fill="#8A8782" letter-spacing="0.08em">LIGHT / TOKYO TEXTURE 02</text>
+</svg>

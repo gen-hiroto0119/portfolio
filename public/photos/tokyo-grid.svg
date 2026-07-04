@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" fill="none">
+  <rect width="1200" height="800" fill="#0A0A0B"/>
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF4D00" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#FF4D00" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#EDEBE8" stroke-opacity="0.12" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="800" fill="url(#grid)"/>
+  <rect width="1200" height="800" fill="url(#glow)"/>
+  <line x1="0" y1="520" x2="1200" y2="520" stroke="#EDEBE8" stroke-opacity="0.35" stroke-width="1"/>
+  <line x1="0" y1="521" x2="1200" y2="521" stroke="#FF4D00" stroke-opacity="0.6" stroke-width="2"/>
+  <rect x="180" y="140" width="320" height="200" stroke="#EDEBE8" stroke-opacity="0.2" stroke-width="1" fill="none"/>
+  <rect x="640" y="280" width="420" height="360" stroke="#EDEBE8" stroke-opacity="0.15" stroke-width="1" fill="none"/>
+  <circle cx="920" cy="180" r="6" fill="#FF4D00" fill-opacity="0.9"/>
+  <text x="48" y="760" font-family="monospace" font-size="14" fill="#8A8782" letter-spacing="0.08em">GRID / TOKYO TEXTURE 01</text>
+</svg>

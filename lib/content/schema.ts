@@ -4,10 +4,15 @@ const dateStringSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD date format");
 
+export const blogCategorySchema = z.enum(["tech", "photo", "daily"]);
+
+export type BlogCategory = z.infer<typeof blogCategorySchema>;
+
 export const blogFrontmatterSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   date: dateStringSchema,
+  category: blogCategorySchema.default("tech"),
   tags: z.array(z.string()),
 });
 
@@ -45,6 +50,8 @@ export const gardenFrontmatterSchema = z.object({
   tended: z.string().min(1),
   status: z.enum(["seedling", "budding", "evergreen"]),
   tags: z.array(z.string()),
+  // Slugs of explicitly connected notes (idea graph edges).
+  related: z.array(z.string()).default([]),
 });
 
 export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;

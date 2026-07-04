@@ -3,8 +3,10 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { MdxContent } from "@/components/mdx/mdx-content";
+import { NoteConnectionsSection } from "@/components/garden/note-connections";
 import { StatusIcon } from "@/components/garden/status-icon";
 import type { GardenNoteWithContent } from "@/lib/content/schema";
+import type { NoteConnections } from "@/lib/garden-graph";
 import {
   colors,
   fontSize,
@@ -57,9 +59,10 @@ const styles = stylex.create({
 
 type NoteDetailProps = {
   note: GardenNoteWithContent;
+  connections: NoteConnections;
 };
 
-export function NoteDetail({ note }: NoteDetailProps) {
+export function NoteDetail({ note, connections }: NoteDetailProps) {
   return (
     <article {...stylex.props(styles.article, x.width["100%"])}>
       <header>
@@ -81,6 +84,7 @@ export function NoteDetail({ note }: NoteDetailProps) {
       <div {...stylex.props(x.width["100%"])}>
         <MdxContent source={note.content} />
       </div>
+      <NoteConnectionsSection connections={connections} />
       <Link
         href="/garden"
         {...stylex.props(

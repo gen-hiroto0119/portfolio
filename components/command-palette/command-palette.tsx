@@ -3,6 +3,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
 import {
   useCallback,
@@ -21,6 +22,7 @@ import {
   groupCommands,
   type CommandItem,
 } from "@/lib/commands";
+import type { ContentCommandData } from "@/lib/content-commands";
 import {
   colors,
   fontSize,
@@ -114,15 +116,40 @@ const styles = stylex.create({
     fontSize: fontSize.sm,
     color: colors.fgMuted,
   },
+  optionMeta: {
+    fontFamily: fonts.mono,
+    fontSize: fontSize.xs,
+    color: colors.fgFaint,
+    flexShrink: 0,
+  },
 });
 
 type CommandPaletteProps = {
+  contentItems?: ContentCommandData[];
   extraCommands?: CommandItem[];
 };
 
-export function CommandPalette({ extraCommands = [] }: CommandPaletteProps) {
+function contentItemsToCommands(
+  items: ContentCommandData[],
+  router: AppRouterInstance,
+): CommandItem[] {
+  return items.map((item) => ({
+    id: item.id,
+    group: item.group,
+    label: item.label,
+    keywords: item.keywords,
+    meta: item.meta,
+    perform: () => router.push(item.href),
+  }));
+}
+
+export function CommandPalette({
+  contentItems = [],
+  extraCommands = [],
+}: CommandPaletteProps) {
   const listboxId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const scrollOnKeyboardRef = useRef(false);
   const router = useRouter();
   const { setTheme } = useTheme();
   const { open, closePalette } = useCommandPalette();
@@ -130,12 +157,18 @@ export function CommandPalette({ extraCommands = [] }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const contentCommands = useMemo(
+    () => contentItemsToCommands(contentItems, router),
+    [contentItems, router],
+  );
+
   const allCommands = useMemo(
     () => [
       ...createStaticCommands(router, setTheme),
+      ...contentCommands,
       ...extraCommands,
     ],
-    [router, setTheme, extraCommands],
+    [router, setTheme, contentCommands, extraCommands],
   );
 
   const filteredCommands = useMemo(
@@ -190,11 +223,23 @@ export function CommandPalette({ extraCommands = [] }: CommandPaletteProps) {
     }
   }, [open]);
 
+  useEffect(() => {
+    if (!scrollOnKeyboardRef.current || !selectedCommand) {
+      return;
+    }
+
+    scrollOnKeyboardRef.current = false;
+    document
+      .getElementById(`command-option-${selectedCommand.id}`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [clampedSelectedIndex, selectedCommand]);
+
   function handleInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
         if (flatCommands.length > 0) {
+          scrollOnKeyboardRef.current = true;
           setSelectedIndex(
             (current) =>
               (Math.min(current, flatCommands.length - 1) + 1) %
@@ -205,6 +250,7 @@ export function CommandPalette({ extraCommands = [] }: CommandPaletteProps) {
       case "ArrowUp":
         event.preventDefault();
         if (flatCommands.length > 0) {
+          scrollOnKeyboardRef.current = true;
           setSelectedIndex(
             (current) =>
               (Math.min(current, flatCommands.length - 1) -
@@ -265,7 +311,7 @@ export function CommandPalette({ extraCommands = [] }: CommandPaletteProps) {
               selectedCommand ? `command-option-${selectedCommand.id}` : undefined
             }
             aria-autocomplete="list"
-            placeholder="コマンドまたはページを検索…"
+            placeholder="ページ・記事・メモを検索…"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -337,7 +383,23 @@ export function CommandPalette({ extraCommands = [] }: CommandPaletteProps) {
                               isSelected && styles.optionIndicatorVisible,
                             )}
                           />
-                          {command.label}
+                          {command.meta ? (
+                            <span
+                              {...stylex.props(
+                                x.display.flex,
+                                x.alignItems.center,
+                                x.justifyContent["space-between"],
+                                x.width["100%"],
+                              )}
+                            >
+                              <span>{command.label}</span>
+                              <span {...stylex.props(styles.optionMeta)}>
+                                {command.meta}
+                              </span>
+                            </span>
+                          ) : (
+                            command.label
+                          )}
                         </div>
                       );
                     })}

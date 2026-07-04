@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" fill="none">
+  <rect width="1200" height="800" fill="#0A0A0B"/>
+  <defs>
+    <pattern id="hatch" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line x1="0" y1="0" x2="0" y2="16" stroke="#EDEBE8" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" y1="800" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#111113"/>
+      <stop offset="100%" stop-color="#0A0A0B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#fade)"/>
+  <rect x="120" y="100" width="960" height="560" fill="url(#hatch)"/>
+  <rect x="120" y="100" width="960" height="560" stroke="#232326" stroke-width="1" fill="none"/>
+  <path d="M 120 420 C 360 380, 540 460, 1080 360" stroke="#EDEBE8" stroke-opacity="0.18" stroke-width="1" fill="none"/>
+  <path d="M 120 480 C 400 520, 620 400, 1080 500" stroke="#FF4D00" stroke-opacity="0.45" stroke-width="2" fill="none"/>
+  <rect x="120" y="100" width="240" height="560" fill="#EDEBE8" fill-opacity="0.03"/>
+  <circle cx="360" cy="380" r="3" fill="#FF4D00"/>
+  <text x="48" y="760" font-family="monospace" font-size="14" fill="#8A8782" letter-spacing="0.08em">SURFACE / TOKYO TEXTURE 03</text>
+</svg>

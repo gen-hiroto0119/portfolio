@@ -5,6 +5,7 @@ import { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { CategoryLabel } from "@/components/blog/category-label";
 import type { BlogPost } from "@/lib/content/schema";
 import {
   colors,
@@ -39,15 +40,18 @@ const styles = stylex.create({
       borderBottomColor: colors.border,
     },
   },
-  date: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.sm,
-    color: colors.fgMuted,
+  dateColumn: {
+    gap: spacing.xs,
     paddingTop: spacing.xxs,
     marginBottom: {
       default: 0,
       "@media (max-width: 640px)": spacing.sm,
     },
+  },
+  date: {
+    fontFamily: fonts.mono,
+    fontSize: fontSize.sm,
+    color: colors.fgMuted,
   },
   title: {
     fontFamily: fonts.display,
@@ -98,12 +102,18 @@ function PostRow({ post }: PostRowProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <time
-        dateTime={post.date}
-        {...stylex.props(styles.date, x.display.block)}
+      <div
+        {...stylex.props(
+          styles.dateColumn,
+          x.display.flex,
+          x.flexDirection.column,
+        )}
       >
-        {post.date}
-      </time>
+        <time dateTime={post.date} {...stylex.props(styles.date)}>
+          {post.date}
+        </time>
+        <CategoryLabel category={post.category} />
+      </div>
       <div>
         <h2 {...stylex.props(styles.title, hovered && styles.titleAccent)}>
           {post.title}
@@ -127,11 +137,19 @@ function PostRow({ post }: PostRowProps) {
   );
 }
 
-export function PostList({ posts }: { posts: BlogPost[] }) {
+type PostListProps = {
+  posts: BlogPost[];
+  embedded?: boolean;
+};
+
+export function PostList({ posts, embedded = false }: PostListProps) {
   return (
     <nav
       aria-label="Blog posts"
-      {...stylex.props(styles.listShell, x.width["100%"])}
+      {...stylex.props(
+        !embedded && styles.listShell,
+        x.width["100%"],
+      )}
     >
       {posts.map((post) => (
         <PostRow key={post.slug} post={post} />

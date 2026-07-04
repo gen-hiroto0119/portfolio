@@ -3,6 +3,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { CommandPaletteProvider } from "@/components/command-palette/command-palette-provider";
+import { getContentCommandData } from "@/lib/content-commands";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -54,11 +55,13 @@ const layoutStyles = stylex.create({
   },
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const contentItems = await getContentCommandData();
+
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
@@ -77,7 +80,7 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider lightThemeClassName={lightThemeClassName}>
-          <CommandPaletteProvider>
+          <CommandPaletteProvider contentItems={contentItems}>
             <Header />
             <main
               id="main"

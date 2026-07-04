@@ -1,25 +1,42 @@
 import type { Metadata } from "next";
 
+import { GardenView } from "@/components/garden/garden-view";
 import { SectionPageHeader } from "@/components/garden/section-page-header";
-import { NoteGrid } from "@/components/garden/note-card";
-import { getAllNotes } from "@/lib/content";
+import { getAllNotes, getAllPosts, getAllWorks } from "@/lib/content";
+import { buildContentGraph } from "@/lib/content-graph";
+import { getConnectionCount } from "@/lib/garden-graph";
 
 export const metadata: Metadata = {
   title: "Garden",
-  description: "育てているアイデアのメモ。下書き、参照、実験的な思考の記録。",
+  description:
+    "アイデアをブレストし、つなげて、育てる場所。メモは互いにリンクし、時間をかけて成長します。",
 };
 
 export default async function GardenPage() {
-  const notes = await getAllNotes();
+  const [notes, posts, works] = await Promise.all([
+    getAllNotes(),
+    getAllPosts(),
+    getAllWorks(),
+  ]);
+
+  const graph = buildContentGraph(notes, posts, works);
+
+  const connectionCounts = Object.fromEntries(
+    notes.map((note) => [note.slug, getConnectionCount(note.slug, notes)]),
+  );
 
   return (
     <>
       <SectionPageHeader
         label="Garden"
         title="育てているアイデアのメモ。"
-        description="まだ芽生えたばかりの思考から、何度も手を入れて定着した知見まで。育成段階ごとに分類しています。"
+        description="アイデアをブレストし、つなげて、育てる場所。メモは互いにリンクし、時間をかけて成長します。"
       />
-      <NoteGrid notes={notes} />
+      <GardenView
+        notes={notes}
+        connectionCounts={connectionCounts}
+        graph={graph}
+      />
     </>
   );
 }

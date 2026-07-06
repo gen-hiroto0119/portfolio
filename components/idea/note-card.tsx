@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { StatusIcon } from "@/components/idea/status-icon";
+import { BorderGlow } from "@/components/visuals/border-glow";
 import type { IdeaNote } from "@/lib/content/schema";
 import {
   colors,
@@ -35,17 +36,17 @@ const styles = stylex.create({
   card: {
     gap: spacing.sm,
     padding: spacing.lg,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-    borderRadius: radius.sm,
-    transitionProperty: "background-color, border-color",
+    height: "100%",
+    transitionProperty: "background-color",
     transitionDuration: motion.durationBase,
     transitionTimingFunction: motion.easing,
     ":hover": {
       backgroundColor: colors.bgSubtle,
-      borderColor: colors.borderStrong,
     },
+  },
+  glowShell: {
+    height: "100%",
+    width: "100%",
   },
   titleRow: {
     gap: spacing.sm,
@@ -98,18 +99,20 @@ function NoteCard({ note, connectionCount = 0 }: NoteCardProps) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Link
-      href={`/idea/${note.slug}`}
-      {...stylex.props(
-        styles.card,
-        x.display.flex,
-        x.flexDirection.column,
-        x.textDecoration.none,
-        x.color.inherit,
-      )}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <div {...stylex.props(styles.glowShell)}>
+      <BorderGlow borderRadius={Number.parseInt(radius.sm, 10)} fill>
+        <Link
+        href={`/idea/${note.slug}`}
+        {...stylex.props(
+          styles.card,
+          x.display.flex,
+          x.flexDirection.column,
+          x.textDecoration.none,
+          x.color.inherit,
+        )}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
       <div
         {...stylex.props(
           styles.titleRow,
@@ -154,7 +157,9 @@ function NoteCard({ note, connectionCount = 0 }: NoteCardProps) {
           </span>
         ))}
       </div>
-    </Link>
+      </Link>
+    </BorderGlow>
+    </div>
   );
 }
 

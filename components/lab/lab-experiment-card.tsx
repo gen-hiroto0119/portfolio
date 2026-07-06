@@ -1,6 +1,7 @@
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { BorderGlow } from "@/components/visuals/border-glow";
 import type { LabExperiment } from "@/lib/lab-registry";
 import {
   colors,
@@ -9,14 +10,14 @@ import {
   letterSpacing,
   lineHeight,
   maxWidth,
+  radius,
   spacing,
 } from "@/lib/theme/tokens.stylex";
 
+const BORDER_RADIUS = Number.parseInt(radius.sm, 10);
+
 const styles = stylex.create({
   card: {
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
     backgroundColor: colors.bg,
   },
   demo: {
@@ -58,13 +59,14 @@ export function LabExperimentCard({ experiment }: LabExperimentCardProps) {
   const { Component, no, date, title, description } = experiment;
 
   return (
-    <article
-      {...stylex.props(
-        x.display.flex,
-        x.flexDirection.column,
-        styles.card,
-      )}
-    >
+    <BorderGlow borderRadius={BORDER_RADIUS}>
+      <article
+        {...stylex.props(
+          x.display.flex,
+          x.flexDirection.column,
+          styles.card,
+        )}
+      >
       <div
         {...stylex.props(
           x.height["16rem"],
@@ -97,7 +99,8 @@ export function LabExperimentCard({ experiment }: LabExperimentCardProps) {
           {description}
         </p>
       </div>
-    </article>
+      </article>
+    </BorderGlow>
   );
 }
 

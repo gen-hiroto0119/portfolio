@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { useLocale } from "@/components/i18n/locale-provider";
+import { BorderGlow } from "@/components/visuals/border-glow";
 import { profile } from "@/lib/profile";
 import {
   colors,
@@ -16,6 +17,8 @@ import {
   radius,
   spacing,
 } from "@/lib/theme/tokens.stylex";
+
+const SKILL_BORDER_RADIUS = Number.parseInt(radius.sm, 10);
 
 const styles = stylex.create({
   page: {
@@ -99,9 +102,11 @@ const styles = stylex.create({
   skillGroup: {
     gap: spacing.sm,
     padding: spacing.lg,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
+    height: "100%",
+  },
+  skillGlowShell: {
+    height: "100%",
+    width: "100%",
   },
   skillGroupName: {
     fontFamily: fonts.mono,
@@ -227,38 +232,41 @@ export function AboutContent() {
           )}
         >
           {profile.skills.map((group) => (
-            <div
-              key={group.name}
-              {...stylex.props(
-                styles.skillGroup,
-                x.display.flex,
-                x.flexDirection.column,
-              )}
-            >
-              <span
-                {...stylex.props(
-                  styles.skillGroupName,
-                  x.textTransform.uppercase,
-                )}
-              >
-                {group.name}
-              </span>
-              <ul
-                {...stylex.props(
-                  styles.skillList,
-                  x.listStyle.none,
-                  x.margin._0,
-                  x.padding._0,
-                  x.display.flex,
-                  x.flexDirection.column,
-                )}
-              >
-                {group.items.map((item) => (
-                  <li key={item} {...stylex.props(styles.skillItem)}>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+            <div key={group.name} {...stylex.props(styles.skillGlowShell)}>
+              <BorderGlow borderRadius={SKILL_BORDER_RADIUS} fill>
+                <div
+                  {...stylex.props(
+                    styles.skillGroup,
+                    x.display.flex,
+                    x.flexDirection.column,
+                  )}
+                >
+                  <span
+                    {...stylex.props(
+                      styles.skillGroupName,
+                      x.textTransform.uppercase,
+                    )}
+                  >
+                    {group.name}
+                  </span>
+                  <ul
+                    {...stylex.props(
+                      styles.skillList,
+                      x.listStyle.none,
+                      x.margin._0,
+                      x.padding._0,
+                      x.display.flex,
+                      x.flexDirection.column,
+                    )}
+                  >
+                    {group.items.map((item) => (
+                      <li key={item} {...stylex.props(styles.skillItem)}>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </BorderGlow>
             </div>
           ))}
         </div>

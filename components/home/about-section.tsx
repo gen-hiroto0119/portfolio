@@ -6,7 +6,6 @@ import x from "@stylexjs/atoms";
 
 import { useLocale } from "@/components/i18n/locale-provider";
 import { SectionLabel } from "@/components/home/section-label";
-import { DecryptedSubtitle } from "@/components/visuals/decrypted-text";
 import {
   colors,
   fontSize,
@@ -60,12 +59,8 @@ export function AboutSection() {
           styles.body,
         )}
       >
-        <p {...stylex.props(x.margin._0, styles.text)}>
-          <DecryptedSubtitle text={t.home.about.p1} viewDelay={820} />
-        </p>
-        <p {...stylex.props(x.margin._0, styles.text)}>
-          <DecryptedSubtitle text={t.home.about.p2} viewDelay={1500} />
-        </p>
+        <p {...stylex.props(x.margin._0, styles.text)}>{t.home.about.p1}</p>
+        <p {...stylex.props(x.margin._0, styles.text)}>{t.home.about.p2}</p>
         <Link
           href="/about"
           {...stylex.props(

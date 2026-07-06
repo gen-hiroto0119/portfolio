@@ -495,28 +495,6 @@ export function DecryptedTextView({
   );
 }
 
-export function DecryptedSubtitle({
-  viewDelay = 980,
-  speed = 46,
-  sequential = true,
-  useOriginalCharsOnly = true,
-  revealDirection = "start",
-  encryptedClassName = "decrypted-text__encrypted",
-  ...props
-}: Omit<DecryptedTextProps, "animateOn">) {
-  return (
-    <DecryptedTextView
-      viewDelay={viewDelay}
-      speed={speed}
-      sequential={sequential}
-      useOriginalCharsOnly={useOriginalCharsOnly}
-      revealDirection={revealDirection}
-      encryptedClassName={encryptedClassName}
-      {...props}
-    />
-  );
-}
-
 export function DecryptedTextHover({
   speed = 35,
   sequential = true,

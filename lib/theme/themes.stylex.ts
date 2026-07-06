@@ -2,7 +2,10 @@ import * as stylex from "@stylexjs/stylex";
 
 import { colors } from "./tokens.stylex";
 
-/** Light theme — applied via class on `<html>` when resolved theme is light. */
+/**
+ * Light theme — applied via class on `<html>` when resolved theme is light.
+ * Keep in sync with `lightThemeColors` in `./theme-colors.ts`.
+ */
 export const lightTheme = stylex.createTheme(colors, {
   bg: "#F7F5F2",
   bgSubtle: "#EFECE7",

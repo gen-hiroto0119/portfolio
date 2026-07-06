@@ -1,6 +1,9 @@
 import * as stylex from "@stylexjs/stylex";
 
-/** Semantic color tokens — dark theme values are defaults. */
+/**
+ * Semantic color tokens — dark theme values are defaults.
+ * Keep in sync with `darkThemeColors` in `./theme-colors.ts`.
+ */
 export const colors = stylex.defineVars({
   bg: "#0A0A0B",
   bgSubtle: "#111113",

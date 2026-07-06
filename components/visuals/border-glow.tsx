@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { useTheme } from "@/components/theme/theme-provider";
+import { getBorderGlowPalette } from "@/lib/theme/glow-palette";
 
 import "./border-glow.css";
 
@@ -54,19 +55,6 @@ const GRADIENT_KEYS = [
 ] as const;
 
 const COLOR_MAP = [0, 1, 2, 0, 1, 2, 1] as const;
-
-const THEME_GLOW = {
-  dark: {
-    backgroundColor: "#0A0A0B",
-    glowColor: "18 100 55",
-    colors: ["#FF4D00", "#3F4658", "#55534E"],
-  },
-  light: {
-    backgroundColor: "#F7F5F2",
-    glowColor: "18 90 48",
-    colors: ["#E64500", "#C2BDB4", "#8A8782"],
-  },
-} as const;
 
 function parseHSL(hslStr: string): HSL {
   const match = hslStr.match(/([\d.]+)\s+([\d.]+)%?\s+([\d.]+)%?/);
@@ -169,7 +157,7 @@ export function BorderGlow({
   fillOpacity = 0.35,
 }: BorderGlowProps) {
   const { resolvedTheme } = useTheme();
-  const themeGlow = THEME_GLOW[resolvedTheme];
+  const themeGlow = getBorderGlowPalette(resolvedTheme);
   const cardRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
   const idleFrameRef = useRef<number | undefined>(undefined);

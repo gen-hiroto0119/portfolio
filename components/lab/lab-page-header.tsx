@@ -3,7 +3,7 @@
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import { DecryptedSubtitle, DecryptedTextView } from "@/components/visuals/decrypted-text";
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 
 import {
   colors,
@@ -65,7 +65,7 @@ export function LabPageHeader({
         <DecryptedTextView text={title} speed={35} />
       </h1>
       <p {...stylex.props(x.maxWidth["36rem"], styles.description)}>
-        <DecryptedSubtitle text={description} />
+        {description}
       </p>
     </header>
   );

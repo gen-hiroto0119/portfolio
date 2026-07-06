@@ -4,7 +4,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { StatusIcon } from "@/components/idea/status-icon";
-import { DecryptedSubtitle, DecryptedTextView } from "@/components/visuals/decrypted-text";
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import {
   colors,
   fontSize,
@@ -77,7 +77,7 @@ export function SectionPageHeader({
       <p
         {...stylex.props(styles.description, x.maxWidth["36rem"])}
       >
-        <DecryptedSubtitle text={description} />
+        {description}
       </p>
       <div
         {...stylex.props(

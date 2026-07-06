@@ -145,11 +145,7 @@ export function Hero() {
               />
             </h1>
             <p {...stylex.props(x.margin._0, x.maxWidth["36rem"], styles.tagline)}>
-              <DecryptedTextView
-                text={t.hero.tagline}
-                speed={48}
-                viewDelay={1180}
-              />
+              {t.hero.tagline}
             </p>
           </div>
           <p

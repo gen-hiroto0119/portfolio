@@ -5,7 +5,7 @@ import x from "@stylexjs/atoms";
 
 import { useLocale } from "@/components/i18n/locale-provider";
 import { BorderGlow } from "@/components/visuals/border-glow";
-import { DecryptedSubtitle, DecryptedTextView } from "@/components/visuals/decrypted-text";
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import { profile } from "@/lib/profile";
 import {
   colors,
@@ -214,12 +214,9 @@ export function AboutContent() {
       </header>
 
       <div {...stylex.props(styles.intro, x.width["100%"])}>
-        {t.about.intro.map((paragraph, index) => (
+        {t.about.intro.map((paragraph) => (
           <p key={paragraph.slice(0, 24)} {...stylex.props(styles.paragraph)}>
-            <DecryptedSubtitle
-              text={paragraph}
-              viewDelay={820 + index * 680}
-            />
+            {paragraph}
           </p>
         ))}
       </div>

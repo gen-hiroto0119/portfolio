@@ -134,7 +134,7 @@ export function Hero() {
               Hiroto Furugen
             </h1>
             <p {...stylex.props(x.margin._0, x.maxWidth["36rem"], styles.tagline)}>
-              本質的な課題を、技術とビジネスの両輪でかたちにする。
+              問いを立て、組み、届ける。プロダクト・コード・デザインの交差点に。
             </p>
           </div>
           <p

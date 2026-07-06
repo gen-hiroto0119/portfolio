@@ -7,10 +7,10 @@ import { useTheme } from "@/components/theme/theme-provider";
 
 type ResolvedTheme = "dark" | "light";
 
-// Canvas colors map to tokens: colors.bg / colors.accent (dark & light)
+// Canvas cannot read CSS variables — hardcoded to match tokens.stylex colors.
 const PALETTE = {
-  dark: { bg: "#0A0A0B", accent: "#FF4D00" },
-  light: { bg: "#F7F5F2", accent: "#E64500" },
+  dark: { bg: "#0A0A0C", accent: "#3F4658" },
+  light: { bg: "#EBE9EC", accent: "#B2B6C4" },
 } as const;
 
 const BAYER_4 = [

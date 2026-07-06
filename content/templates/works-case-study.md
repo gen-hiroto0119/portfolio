@@ -1,7 +1,9 @@
 ---
-title: {{title}}
-description:
-date: {{date}}
+title:
+  "{ title }":
+description: works-case-study
+date:
+  "{ date }":
 role:
 stack: []
 challenge:

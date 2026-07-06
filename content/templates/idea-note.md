@@ -1,8 +1,11 @@
 ---
-title: {{title}}
-description:
-planted: {{date}}
-tended: {{date}}
+title:
+  "{ title }":
+description: idea
+planted:
+  "{ date }":
+tended:
+  "{ date }":
 status: seedling
 tags: []
 related: []

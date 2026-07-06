@@ -1,7 +1,9 @@
 ---
-title: {{title}}
-description:
-date: {{date}}
+title:
+  "{ title }":
+description: blog
+date:
+  "{ date }":
 category: tech
 tags: []
 published: false

@@ -5,9 +5,9 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { ContentGraph } from "@/components/graph/content-graph";
-import { NoteGrid } from "@/components/garden/note-card";
+import { NoteGrid } from "@/components/idea/note-card";
 import type { ContentGraph as ContentGraphData } from "@/lib/content-graph";
-import type { GardenNote } from "@/lib/content/schema";
+import type { IdeaNote } from "@/lib/content/schema";
 import {
   colors,
   fontSize,
@@ -20,7 +20,7 @@ import {
 
 const NOTES_PER_PAGE = 6;
 
-type GardenViewMode = "cards" | "graph";
+type IdeaViewMode = "cards" | "graph";
 
 const styles = stylex.create({
   shell: {
@@ -114,8 +114,8 @@ const styles = stylex.create({
   },
 });
 
-type GardenViewProps = {
-  notes: GardenNote[];
+type IdeaViewProps = {
+  notes: IdeaNote[];
   connectionCounts: Record<string, number>;
   graph: ContentGraphData;
 };
@@ -138,7 +138,7 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
 
   return (
     <nav
-      aria-label="Garden notes pagination"
+      aria-label="Ideas pagination"
       {...stylex.props(
         styles.pagination,
         x.display.flex,
@@ -197,8 +197,8 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
 }
 
 function renderViewContent(
-  view: GardenViewMode,
-  notes: GardenNote[],
+  view: IdeaViewMode,
+  notes: IdeaNote[],
   connectionCounts: Record<string, number>,
   graph: ContentGraphData,
   page: number,
@@ -232,12 +232,12 @@ function renderViewContent(
   }
 }
 
-export function GardenView({
+export function IdeaView({
   notes,
   connectionCounts,
   graph,
-}: GardenViewProps) {
-  const [view, setView] = useState<GardenViewMode>("cards");
+}: IdeaViewProps) {
+  const [view, setView] = useState<IdeaViewMode>("cards");
   const [page, setPage] = useState(1);
 
   const totalPages = Math.max(1, Math.ceil(notes.length / NOTES_PER_PAGE));
@@ -254,7 +254,7 @@ export function GardenView({
       >
         <div
           role="tablist"
-          aria-label="Garden view"
+          aria-label="Idea view"
           {...stylex.props(
             styles.tablist,
             x.display.flex,

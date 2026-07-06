@@ -1,21 +1,21 @@
 import "server-only";
 
-import type { GardenNote } from "@/lib/content/schema";
+import type { IdeaNote } from "@/lib/content/schema";
 
 export type NoteConnections = {
-  related: GardenNote[];
-  backlinks: GardenNote[];
-  sameTags: GardenNote[];
+  related: IdeaNote[];
+  backlinks: IdeaNote[];
+  sameTags: IdeaNote[];
 };
 
-function compareByTendedDesc(left: GardenNote, right: GardenNote): number {
+function compareByTendedDesc(left: IdeaNote, right: IdeaNote): number {
   return right.tended.localeCompare(left.tended);
 }
 
 function resolveRelatedSlugs(
   slug: string,
-  allNotes: GardenNote[],
-): GardenNote[] {
+  allNotes: IdeaNote[],
+): IdeaNote[] {
   const noteBySlug = new Map(allNotes.map((note) => [note.slug, note]));
   const current = noteBySlug.get(slug);
 
@@ -25,14 +25,14 @@ function resolveRelatedSlugs(
 
   return current.related
     .map((relatedSlug) => noteBySlug.get(relatedSlug))
-    .filter((note): note is GardenNote => note !== undefined);
+    .filter((note): note is IdeaNote => note !== undefined);
 }
 
 function getBacklinks(
   slug: string,
-  allNotes: GardenNote[],
+  allNotes: IdeaNote[],
   excludeSlugs: Set<string>,
-): GardenNote[] {
+): IdeaNote[] {
   return allNotes
     .filter(
       (note) =>
@@ -45,9 +45,9 @@ function getBacklinks(
 
 function getSameTags(
   slug: string,
-  allNotes: GardenNote[],
+  allNotes: IdeaNote[],
   excludeSlugs: Set<string>,
-): GardenNote[] {
+): IdeaNote[] {
   const current = allNotes.find((note) => note.slug === slug);
 
   if (!current || current.tags.length === 0) {
@@ -69,7 +69,7 @@ function getSameTags(
 
 export function getConnections(
   slug: string,
-  allNotes: GardenNote[],
+  allNotes: IdeaNote[],
 ): NoteConnections {
   const related = resolveRelatedSlugs(slug, allNotes);
   const excludeSlugs = new Set(related.map((note) => note.slug));
@@ -86,7 +86,7 @@ export function getConnections(
 
 export function getConnectionCount(
   slug: string,
-  allNotes: GardenNote[],
+  allNotes: IdeaNote[],
 ): number {
   const { related, backlinks } = getConnections(slug, allNotes);
   return related.length + backlinks.length;

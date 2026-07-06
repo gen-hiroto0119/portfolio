@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 
-import { GardenView } from "@/components/garden/garden-view";
-import { SectionPageHeader } from "@/components/garden/section-page-header";
-import { getAllNotes, getAllPosts, getAllWorks } from "@/lib/content";
+import { IdeaView } from "@/components/idea/idea-view";
+import { SectionPageHeader } from "@/components/idea/section-page-header";
+import { getAllIdeas, getAllPosts, getAllWorks } from "@/lib/content";
 import { buildContentGraph } from "@/lib/content-graph";
-import { getConnectionCount } from "@/lib/garden-graph";
+import { getConnectionCount } from "@/lib/idea-graph";
 
 export const metadata: Metadata = {
-  title: "Garden",
+  title: "Idea",
   description:
     "アイデアをブレストし、つなげて、育てる場所。メモは互いにリンクし、時間をかけて成長します。",
 };
 
-export default async function GardenPage() {
+export default async function IdeaPage() {
   const [notes, posts, works] = await Promise.all([
-    getAllNotes(),
+    getAllIdeas(),
     getAllPosts(),
     getAllWorks(),
   ]);
@@ -28,11 +28,11 @@ export default async function GardenPage() {
   return (
     <>
       <SectionPageHeader
-        label="Garden"
+        label="Idea"
         title="育てているアイデアのメモ。"
         description="アイデアをブレストし、つなげて、育てる場所。メモは互いにリンクし、時間をかけて成長します。"
       />
-      <GardenView
+      <IdeaView
         notes={notes}
         connectionCounts={connectionCounts}
         graph={graph}

@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { NoteDetail } from "@/components/garden/note-detail";
-import { getAllNotes, getNote } from "@/lib/content";
-import { getConnections } from "@/lib/garden-graph";
+import { NoteDetail } from "@/components/idea/note-detail";
+import { getAllIdeas, getIdea } from "@/lib/content";
+import { getConnections } from "@/lib/idea-graph";
 
-type GardenNotePageProps = {
+type IdeaNotePageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  const notes = await getAllNotes();
+  const notes = await getAllIdeas();
   return notes.map((note) => ({ slug: note.slug }));
 }
 
 export async function generateMetadata({
   params,
-}: GardenNotePageProps): Promise<Metadata> {
+}: IdeaNotePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const note = await getNote(slug);
+  const note = await getIdea(slug);
 
   if (!note) {
     return {};
@@ -26,13 +26,13 @@ export async function generateMetadata({
 
   return {
     title: note.title,
-    description: `Garden note — ${note.status}, tended ${note.tended}`,
+    description: `Idea — ${note.status}, tended ${note.tended}`,
   };
 }
 
-export default async function GardenNotePage({ params }: GardenNotePageProps) {
+export default async function IdeaNotePage({ params }: IdeaNotePageProps) {
   const { slug } = await params;
-  const [note, allNotes] = await Promise.all([getNote(slug), getAllNotes()]);
+  const [note, allNotes] = await Promise.all([getIdea(slug), getAllIdeas()]);
 
   if (!note) {
     notFound();

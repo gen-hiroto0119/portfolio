@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import { StatusIcon } from "@/components/garden/status-icon";
+import { StatusIcon } from "@/components/idea/status-icon";
 import {
   colors,
   fontSize,

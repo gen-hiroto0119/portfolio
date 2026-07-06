@@ -26,7 +26,7 @@ const styles = stylex.create({
   item: {
     gap: spacing.xs,
   },
-  dotGarden: {
+  dotIdea: {
     width: "6px",
     height: "6px",
     borderRadius: "50%",
@@ -86,8 +86,8 @@ export function GraphLegend() {
       <span
         {...stylex.props(styles.item, x.display.flex, x.alignItems.center)}
       >
-        <span {...stylex.props(styles.dotGarden)} aria-hidden />
-        GARDEN
+        <span {...stylex.props(styles.dotIdea)} aria-hidden />
+        IDEA
       </span>
       <span
         {...stylex.props(styles.item, x.display.flex, x.alignItems.center)}

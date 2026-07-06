@@ -32,14 +32,14 @@ portfolio/
 ├── app/                    # ルート・各セクションのページ
 │   ├── blog/               # ブログ一覧・詳細
 │   ├── works/              # 実績
-│   ├── garden/             # メモ・デジタルガーデン
+│   ├── idea/               # アイデアメモ
 │   ├── lab/                # 実験 UI
 │   ├── design/             # デザインシステム showcase
 │   └── about/
 ├── content/                # MDX コンテンツ（Obsidian Vault 予定地）
 │   ├── blog/
 │   ├── works/
-│   └── garden/
+│   └── idea/
 ├── components/             # UI コンポーネント（セクション別サブフォルダ）
 ├── lib/
 │   ├── content/            # MDX 読み込み・Zod スキーマ
@@ -51,18 +51,20 @@ portfolio/
 
 ## コンテンツ
 
+詳細なスキーマ定義・例: [content/README.md](content/README.md)
+
 ### コレクション
 
 | パス | 用途 | frontmatter 主要フィールド |
 |------|------|---------------------------|
 | `content/blog/` | 記事 | `title`, `description`, `date`, `category` (tech/photo/daily), `tags`, `published` |
 | `content/works/` | 実績 | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome`, `featured`, `metrics`, `links`, `published` |
-| `content/garden/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
+| `content/idea/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
 
 `published` は省略時 `true`。`false` の場合は一覧・詳細・sitemap・RSS から除外される。
 
 スキーマ定義: `lib/content/schema.ts`  
-読み込み API: `lib/content/index.ts`（`getAllPosts`, `getPost`, `getAllWorks`, `getWork`, `getAllNotes`, `getNote`）
+読み込み API: `lib/content/index.ts`（`getAllPosts`, `getPost`, `getAllWorks`, `getWork`, `getAllIdeas`, `getIdea`）
 
 ### 新規 MDX 追加手順
 
@@ -105,7 +107,7 @@ content/
 
 ### コンポーネント配置
 
-- `components/<section>/` — セクション固有（`blog/`, `garden/`, `works/` 等）
+- `components/<section>/` — セクション固有（`blog/`, `idea/`, `works/` 等）
 - `components/layout/` — Header, Footer, ナビ
 - `components/mdx/` — MDX 用スタイル付きプリミティブ
 

@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { BlogPost, GardenNote, Work } from "@/lib/content/schema";
+import type { BlogPost, IdeaNote, Work } from "@/lib/content/schema";
 
-export type GraphNodeKind = "garden" | "blog" | "works";
+export type GraphNodeKind = "idea" | "blog" | "works";
 
 export type GraphNode = {
   id: string;
@@ -27,8 +27,8 @@ export type ContentGraph = {
   edges: GraphEdge[];
 };
 
-function gardenId(slug: string): string {
-  return `garden:${slug}`;
+function ideaId(slug: string): string {
+  return `idea:${slug}`;
 }
 
 function blogId(slug: string): string {
@@ -44,7 +44,7 @@ function undirectedPairKey(a: string, b: string): string {
 }
 
 export function buildContentGraph(
-  notes: GardenNote[],
+  notes: IdeaNote[],
   posts: BlogPost[],
   works: Work[],
 ): ContentGraph {
@@ -52,13 +52,13 @@ export function buildContentGraph(
   const nodeIds = new Set<string>();
 
   for (const note of notes) {
-    const id = gardenId(note.slug);
+    const id = ideaId(note.slug);
     nodeIds.add(id);
     nodes.push({
       id,
-      kind: "garden",
+      kind: "idea",
       title: note.title,
-      href: `/garden/${note.slug}`,
+      href: `/idea/${note.slug}`,
       status: note.status,
       tags: note.tags,
       degree: 0,
@@ -95,10 +95,10 @@ export function buildContentGraph(
   const relatedPairs = new Set<string>();
 
   for (const note of notes) {
-    const sourceId = gardenId(note.slug);
+    const sourceId = ideaId(note.slug);
 
     for (const relatedSlug of note.related) {
-      const targetId = gardenId(relatedSlug);
+      const targetId = ideaId(relatedSlug);
       if (!nodeIds.has(targetId)) {
         continue;
       }

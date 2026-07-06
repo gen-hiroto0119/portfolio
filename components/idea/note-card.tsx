@@ -5,8 +5,8 @@ import { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import { StatusIcon } from "@/components/garden/status-icon";
-import type { GardenNote } from "@/lib/content/schema";
+import { StatusIcon } from "@/components/idea/status-icon";
+import type { IdeaNote } from "@/lib/content/schema";
 import {
   colors,
   fontSize,
@@ -90,7 +90,7 @@ const styles = stylex.create({
 });
 
 type NoteCardProps = {
-  note: GardenNote;
+  note: IdeaNote;
   connectionCount?: number;
 };
 
@@ -99,7 +99,7 @@ function NoteCard({ note, connectionCount = 0 }: NoteCardProps) {
 
   return (
     <Link
-      href={`/garden/${note.slug}`}
+      href={`/idea/${note.slug}`}
       {...stylex.props(
         styles.card,
         x.display.flex,
@@ -162,12 +162,12 @@ export function NoteGrid({
   notes,
   connectionCounts,
 }: {
-  notes: GardenNote[];
+  notes: IdeaNote[];
   connectionCounts?: Record<string, number>;
 }) {
   return (
     <nav
-      aria-label="Garden notes"
+      aria-label="Ideas"
       {...stylex.props(
         styles.grid,
         x.display.grid,

@@ -42,7 +42,7 @@ const REDUCED_MOTION_STEPS = 300;
 const LABEL_TRUNCATE = 12;
 const HIT_RADIUS_PAD = 4;
 
-type GraphMode = "garden" | "all";
+type GraphMode = "idea" | "all";
 
 const styles = stylex.create({
   shell: {
@@ -126,7 +126,7 @@ function isActiveInMode(kind: GraphNodeKind, mode: GraphMode): boolean {
   if (mode === "all") {
     return true;
   }
-  return kind === "garden";
+  return kind === "idea";
 }
 
 function edgeVisible(
@@ -137,7 +137,7 @@ function edgeVisible(
   if (mode === "all") {
     return true;
   }
-  return sourceKind === "garden" && targetKind === "garden";
+  return sourceKind === "idea" && targetKind === "idea";
 }
 
 type ContentGraphProps = {
@@ -147,7 +147,7 @@ type ContentGraphProps = {
 export function ContentGraph({ graph }: ContentGraphProps) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
-  const [mode, setMode] = useState<GraphMode>("garden");
+  const [mode, setMode] = useState<GraphMode>("idea");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -159,7 +159,7 @@ export function ContentGraph({ graph }: ContentGraphProps) {
   const frameRef = useRef<number | null>(null);
   const visibleRef = useRef(true);
   const draggingRef = useRef<string | null>(null);
-  const modeRef = useRef<GraphMode>("garden");
+  const modeRef = useRef<GraphMode>("idea");
   const hoveredRef = useRef<string | null>(null);
   const maxDegreeRef = useRef(1);
   const targetAlphaRef = useRef<Map<string, number>>(new Map());
@@ -237,7 +237,7 @@ export function ContentGraph({ graph }: ContentGraphProps) {
       }
       if (
         !edgeVisible(source.kind, target.kind, currentMode) &&
-        currentMode === "garden"
+        currentMode === "idea"
       ) {
         continue;
       }
@@ -358,7 +358,7 @@ export function ContentGraph({ graph }: ContentGraphProps) {
       } else {
         ctx.beginPath();
         ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
-        if (node.kind === "garden") {
+        if (node.kind === "idea") {
           ctx.fillStyle =
             node.status === "evergreen" ? palette.accent : palette.fg;
         } else {
@@ -692,7 +692,7 @@ export function ContentGraph({ graph }: ContentGraphProps) {
             x.alignItems.center,
           )}
         >
-          {(["garden", "all"] as const).map((tab) => (
+          {(["idea", "all"] as const).map((tab) => (
             <button
               key={tab}
               type="button"
@@ -705,7 +705,7 @@ export function ContentGraph({ graph }: ContentGraphProps) {
               )}
               onClick={() => handleModeChange(tab)}
             >
-              {tab === "garden" ? "GARDEN" : "ALL"}
+              {tab === "idea" ? "IDEA" : "ALL"}
             </button>
           ))}
         </div>

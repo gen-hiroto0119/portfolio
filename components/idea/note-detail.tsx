@@ -3,10 +3,10 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { MdxContent } from "@/components/mdx/mdx-content";
-import { NoteConnectionsSection } from "@/components/garden/note-connections";
-import { StatusIcon } from "@/components/garden/status-icon";
-import type { GardenNoteWithContent } from "@/lib/content/schema";
-import type { NoteConnections } from "@/lib/garden-graph";
+import { NoteConnectionsSection } from "@/components/idea/note-connections";
+import { StatusIcon } from "@/components/idea/status-icon";
+import type { IdeaNoteWithContent } from "@/lib/content/schema";
+import type { NoteConnections } from "@/lib/idea-graph";
 import {
   colors,
   fontSize,
@@ -58,7 +58,7 @@ const styles = stylex.create({
 });
 
 type NoteDetailProps = {
-  note: GardenNoteWithContent;
+  note: IdeaNoteWithContent;
   connections: NoteConnections;
 };
 
@@ -86,14 +86,14 @@ export function NoteDetail({ note, connections }: NoteDetailProps) {
       </div>
       <NoteConnectionsSection connections={connections} />
       <Link
-        href="/garden"
+        href="/idea"
         {...stylex.props(
           styles.backLink,
           x.display["inline-block"],
           x.textDecoration.none,
         )}
       >
-        ← Garden 一覧へ
+        ← Idea 一覧へ
       </Link>
     </article>
   );

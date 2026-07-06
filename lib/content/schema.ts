@@ -48,7 +48,7 @@ export const worksFrontmatterSchema = z.object({
   published: publishedSchema,
 });
 
-export const gardenFrontmatterSchema = z.object({
+export const ideaFrontmatterSchema = z.object({
   title: z.string().min(1),
   planted: dateStringSchema,
   tended: z.string().min(1),
@@ -61,7 +61,7 @@ export const gardenFrontmatterSchema = z.object({
 
 export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;
 export type WorksFrontmatter = z.infer<typeof worksFrontmatterSchema>;
-export type GardenFrontmatter = z.infer<typeof gardenFrontmatterSchema>;
+export type IdeaFrontmatter = z.infer<typeof ideaFrontmatterSchema>;
 
 export type BlogPost = BlogFrontmatter & {
   slug: string;
@@ -71,7 +71,7 @@ export type Work = WorksFrontmatter & {
   slug: string;
 };
 
-export type GardenNote = GardenFrontmatter & {
+export type IdeaNote = IdeaFrontmatter & {
   slug: string;
 };
 
@@ -83,11 +83,11 @@ export type WorkWithContent = Work & {
   content: string;
 };
 
-export type GardenNoteWithContent = GardenNote & {
+export type IdeaNoteWithContent = IdeaNote & {
   content: string;
 };
 
-export type ContentKind = "blog" | "works" | "garden";
+export type ContentKind = "blog" | "works" | "idea";
 
 function formatZodError(error: z.ZodError): string {
   return error.issues
@@ -121,14 +121,14 @@ export function parseWorksFrontmatter(
   return result.data;
 }
 
-export function parseGardenFrontmatter(
+export function parseIdeaFrontmatter(
   data: unknown,
   filePath: string,
-): GardenFrontmatter {
-  const result = gardenFrontmatterSchema.safeParse(data);
+): IdeaFrontmatter {
+  const result = ideaFrontmatterSchema.safeParse(data);
   if (!result.success) {
     throw new Error(
-      `Invalid garden frontmatter in ${filePath}: ${formatZodError(result.error)}`,
+      `Invalid idea frontmatter in ${filePath}: ${formatZodError(result.error)}`,
     );
   }
   return result.data;

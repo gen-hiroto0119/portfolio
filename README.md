@@ -30,7 +30,7 @@ npx tsc --noEmit
 |---|---|---|
 | `content/works/` | ケーススタディ | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome` |
 | `content/blog/` | ブログ記事 | `title`, `description`, `date`, `tags` |
-| `content/garden/` | デジタルガーデン | `title`, `planted`, `tended`, `status`, `tags` |
+| `content/idea/` | アイデアメモ | `title`, `planted`, `tended`, `status`, `tags` |
 
 ファイル名（拡張子除く）が URL の slug になります。
 

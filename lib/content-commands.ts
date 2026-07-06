@@ -1,10 +1,10 @@
 import "server-only";
 
-import { getAllNotes, getAllPosts, getAllWorks } from "@/lib/content";
+import { getAllIdeas, getAllPosts, getAllWorks } from "@/lib/content";
 
 export type ContentCommandData = {
   id: string;
-  group: "Works" | "Blog" | "Garden";
+  group: "Works" | "Blog" | "Idea";
   label: string;
   href: string;
   keywords: string[];
@@ -19,7 +19,7 @@ export async function getContentCommandData(): Promise<ContentCommandData[]> {
   const [works, posts, notes] = await Promise.all([
     getAllWorks(),
     getAllPosts(),
-    getAllNotes(),
+    getAllIdeas(),
   ]);
 
   const workCommands: ContentCommandData[] = works.map((work) => ({
@@ -47,21 +47,21 @@ export async function getContentCommandData(): Promise<ContentCommandData[]> {
     meta: post.date,
   }));
 
-  const gardenCommands: ContentCommandData[] = notes.map((note) => ({
-    id: `garden:${note.slug}`,
-    group: "Garden",
+  const ideaCommands: ContentCommandData[] = notes.map((note) => ({
+    id: `idea:${note.slug}`,
+    group: "Idea",
     label: note.title,
-    href: `/garden/${note.slug}`,
+    href: `/idea/${note.slug}`,
     keywords: [
       note.slug,
       ...note.tags,
       note.status,
-      "garden",
+      "idea",
       "メモ",
       "アイデア",
     ],
     meta: note.status,
   }));
 
-  return [...workCommands, ...blogCommands, ...gardenCommands];
+  return [...workCommands, ...blogCommands, ...ideaCommands];
 }

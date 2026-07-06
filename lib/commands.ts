@@ -76,7 +76,7 @@ function getNavKeywords(label: string, href: string): string[] {
   const keywordMap: Record<string, string[]> = {
     works: ["わーくす", "works", "作品", "ポートフォリオ"],
     blog: ["ぶろぐ", "blog", "記事", "ブログ"],
-    garden: ["がーでん", "garden", "ガーデン"],
+    idea: ["あいであ", "idea", "アイデア", "メモ"],
     lab: ["らぼ", "lab", "ラボ", "実験"],
     design: ["でざいん", "design", "デザイン"],
     about: ["あばうと", "about", "アバウト", "自己紹介", site.name.toLowerCase()],

@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import type { GardenStatus } from "@/components/garden/garden-status";
-import { getStatusLabel } from "@/components/garden/garden-status";
+import type { IdeaStatus } from "@/components/idea/idea-status";
+import { getStatusLabel } from "@/components/idea/idea-status";
 import { colors, fontSize, fonts, spacing } from "@/lib/theme/tokens.stylex";
 
 const styles = stylex.create({
@@ -24,7 +24,7 @@ const styles = stylex.create({
 });
 
 type StatusIconProps = {
-  status: GardenStatus;
+  status: IdeaStatus;
   showLabel?: boolean;
 };
 

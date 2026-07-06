@@ -5,9 +5,9 @@ import { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import { StatusIcon } from "@/components/garden/status-icon";
-import type { GardenNote } from "@/lib/content/schema";
-import type { NoteConnections } from "@/lib/garden-graph";
+import { StatusIcon } from "@/components/idea/status-icon";
+import type { IdeaNote } from "@/lib/content/schema";
+import type { NoteConnections } from "@/lib/idea-graph";
 import {
   colors,
   fontSize,
@@ -72,7 +72,7 @@ const styles = stylex.create({
 
 type ConnectionGroupProps = {
   label: string;
-  notes: GardenNote[];
+  notes: IdeaNote[];
 };
 
 function ConnectionGroup({ label, notes }: ConnectionGroupProps) {
@@ -101,13 +101,13 @@ function ConnectionGroup({ label, notes }: ConnectionGroupProps) {
   );
 }
 
-function ConnectionRow({ note }: { note: GardenNote }) {
+function ConnectionRow({ note }: { note: IdeaNote }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <li>
       <Link
-        href={`/garden/${note.slug}`}
+        href={`/idea/${note.slug}`}
         {...stylex.props(
           styles.link,
           x.display.flex,

@@ -1,8 +1,8 @@
-import type { GardenNote } from "@/lib/content/schema";
+import type { IdeaNote } from "@/lib/content/schema";
 
-export type GardenStatus = GardenNote["status"];
+export type IdeaStatus = IdeaNote["status"];
 
-export function getStatusLabel(status: GardenStatus): string {
+export function getStatusLabel(status: IdeaStatus): string {
   switch (status) {
     case "seedling":
       return "Seedling";

@@ -7,12 +7,12 @@ import matter from "gray-matter";
 
 import {
   parseBlogFrontmatter,
-  parseGardenFrontmatter,
+  parseIdeaFrontmatter,
   parseWorksFrontmatter,
   type BlogPost,
   type BlogPostWithContent,
-  type GardenNote,
-  type GardenNoteWithContent,
+  type IdeaNote,
+  type IdeaNoteWithContent,
   type Work,
   type WorkWithContent,
 } from "@/lib/content/schema";
@@ -21,7 +21,7 @@ const CONTENT_ROOT = path.join(process.cwd(), "content");
 
 const BLOG_DIR = path.join(CONTENT_ROOT, "blog");
 const WORKS_DIR = path.join(CONTENT_ROOT, "works");
-const GARDEN_DIR = path.join(CONTENT_ROOT, "garden");
+const IDEA_DIR = path.join(CONTENT_ROOT, "idea");
 
 async function readMdxFiles(directory: string): Promise<
   Array<{
@@ -104,13 +104,13 @@ export async function getAllWorks(): Promise<Work[]> {
     });
 }
 
-export async function getAllNotes(): Promise<GardenNote[]> {
-  const files = await readMdxFiles(GARDEN_DIR);
+export async function getAllIdeas(): Promise<IdeaNote[]> {
+  const files = await readMdxFiles(IDEA_DIR);
 
   return files
     .map((file) => ({
       slug: file.slug,
-      ...parseGardenFrontmatter(file.data, file.filePath),
+      ...parseIdeaFrontmatter(file.data, file.filePath),
     }))
     .filter(isPublished)
     .sort((left, right) =>
@@ -168,10 +168,10 @@ export async function getWork(slug: string): Promise<WorkWithContent | null> {
   }
 }
 
-export async function getNote(
+export async function getIdea(
   slug: string,
-): Promise<GardenNoteWithContent | null> {
-  const filePath = path.join(GARDEN_DIR, `${slug}.mdx`);
+): Promise<IdeaNoteWithContent | null> {
+  const filePath = path.join(IDEA_DIR, `${slug}.mdx`);
 
   try {
     const raw = await fs.readFile(filePath, "utf8");
@@ -179,7 +179,7 @@ export async function getNote(
     const note = {
       slug,
       content,
-      ...parseGardenFrontmatter(data, filePath),
+      ...parseIdeaFrontmatter(data, filePath),
     };
 
     return note.published ? note : null;

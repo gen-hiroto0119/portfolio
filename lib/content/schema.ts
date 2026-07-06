@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-const dateStringSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD date format");
+import { calendarDateSchema } from "@/lib/content/calendar-date";
 
 const publishedSchema = z.boolean().default(true);
 
@@ -13,7 +11,7 @@ export type BlogCategory = z.infer<typeof blogCategorySchema>;
 export const blogFrontmatterSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  date: dateStringSchema,
+  date: calendarDateSchema,
   category: blogCategorySchema.default("tech"),
   tags: z.array(z.string()),
   published: publishedSchema,
@@ -22,7 +20,7 @@ export const blogFrontmatterSchema = z.object({
 export const worksFrontmatterSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  date: dateStringSchema,
+  date: calendarDateSchema,
   role: z.string().min(1),
   stack: z.array(z.string()),
   client: z.string().optional(),
@@ -50,8 +48,8 @@ export const worksFrontmatterSchema = z.object({
 
 export const ideaFrontmatterSchema = z.object({
   title: z.string().min(1),
-  planted: dateStringSchema,
-  tended: z.string().min(1),
+  planted: calendarDateSchema,
+  tended: calendarDateSchema,
   status: z.enum(["seedling", "budding", "evergreen"]),
   tags: z.array(z.string()),
   // Slugs of explicitly connected notes (idea graph edges).

@@ -5,10 +5,43 @@ frontmatter は [lib/content/schema.ts](../lib/content/schema.ts) の Zod スキ
 
 ```
 content/
-├── blog/     → /blog/:slug
-├── works/    → /works/:slug
-└── idea/     → /idea/:slug
+├── blog/       → /blog/:slug
+├── works/      → /works/:slug
+├── idea/       → /idea/:slug
+└── templates/  → Obsidian テンプレート（サイト非公開）
 ```
+
+## Obsidian（Vault = `content/`）
+
+このフォルダを Obsidian Vault として開き、MDX を直接編集できます。サイトが読むのは **frontmatter の YAML** のみです（インライン `#タグ` や `[[リンク]]` は自動連携しません）。
+
+### 日付の書き方
+
+| 書き方 | 例 | 備考 |
+|--------|-----|------|
+| クォートなし | `date: 2026-07-06` | Obsidian Properties **Date 型**推奨。ビルド時に `YYYY-MM-DD` 文字列へ正規化 |
+| クォートあり | `date: "2026-07-06"` | 従来どおり有効 |
+| Date & time 型 | `2026-07-06T10:00:00` | **非推奨**（TZ なしのため Vercel ビルド等でずれる可能性） |
+
+Blog / Works / Idea の日付は **カレンダー日付**（時刻なし）です。アプリ内部も `YYYY-MM-DD` 文字列で保持します。
+
+### テンプレート
+
+[`templates/`](templates/) に Obsidian Templates 用ファイルがあります（サイトには公開されません）。
+
+1. Obsidian 設定 → **Templates** → Template folder location → `templates`
+2. 対象フォルダ（例 `blog/`）で `.mdx` を新規作成（Edit MDX プラグイン）
+3. コマンド **「テンプレートを挿入」** で雛形を挿入
+
+| テンプレート | 挿入先 |
+|-------------|--------|
+| `blog-post.md` | `content/blog/*.mdx` |
+| `works-case-study.md` | `content/works/*.mdx` |
+| `idea-note.md` | `content/idea/*.mdx` |
+
+テンプレートの `{{date}}` は `YYYY-MM-DD` 形式です。新規下書きは `published: false` がデフォルトです。
+
+---
 
 ## 共通ルール
 
@@ -16,7 +49,7 @@ content/
 |------|--------|
 | ファイル形式 | `.mdx`（YAML frontmatter + Markdown 本文） |
 | slug | ファイル名から自動決定（`my-post.mdx` → `my-post`） |
-| 日付 | `YYYY-MM-DD`（例: `2026-07-06`） |
+| 日付 | `YYYY-MM-DD`（クォートあり/なしどちらも可） | 例: `2026-07-06` |
 | `published` | 省略時 `true`。`false` のファイルはサイトに表示されない |
 | 本文 | 標準 Markdown + MDX。コードブロックは Shiki でハイライト |
 
@@ -45,7 +78,7 @@ content/
 ---
 title: デザインとエンジニアリングの境界
 description: 仕様の受け渡しを減らし、品質を上げるためにチームで使える共通言語について。
-date: "2026-07-03"
+date: 2026-07-03
 category: tech
 tags:
   - Design
@@ -90,7 +123,7 @@ published: true
 ---
 title: SCAS — SEO / GEO / AIO Agent Platform
 description: 記事の作成・改善・公開までのコンテンツ運用を AI エージェントで自動化するプラットフォーム。
-date: "2026-06-25"
+date: 2026-06-25
 role: Co-founder / Tech Lead
 stack:
   - TypeScript / Next.js
@@ -128,7 +161,7 @@ published: true
 |-----------|-----|------|-----------|------|
 | `title` | string | ✅ | — | メモのタイトル |
 | `planted` | `YYYY-MM-DD` | ✅ | — | 最初に書いた日 |
-| `tended` | string | ✅ | — | 最後に手入れした日（通常 `YYYY-MM-DD`） |
+| `tended` | `YYYY-MM-DD` | ✅ | — | 最後に手入れした日 |
 | `status` | 下表 | ✅ | — | 育ち具合 |
 | `tags` | string[] | ✅ | — | タグ |
 | `related` | string[] | — | `[]` | 関連メモの **slug** 配列 |
@@ -148,8 +181,8 @@ published: true
 ---
 title: コマンドパレットのキー配列メモ
 description: 修飾キーと単キーの優先順位を整理中。
-planted: "2026-07-02"
-tended: "2026-07-04"
+planted: 2026-07-02
+tended: 2026-07-04
 status: seedling
 tags:
   - UX

@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { useLocale } from "@/components/i18n/locale-provider";
 import { SectionLabel } from "@/components/home/section-label";
 import {
   colors,
@@ -43,6 +46,8 @@ const styles = stylex.create({
 });
 
 export function AboutSection() {
+  const { t } = useLocale();
+
   return (
     <section {...stylex.props(styles.section)}>
       <SectionLabel>01 — ABOUT</SectionLabel>
@@ -54,12 +59,8 @@ export function AboutSection() {
           styles.body,
         )}
       >
-        <p {...stylex.props(x.margin._0, styles.text)}>
-          プロダクト思考で問いを立て、エンジニアリングで組み、デザインで届ける——三つのレイヤーを分断せずに扱ってきました。マーケティング、プロダクトマネジメント、エンジニアリングと領域を横断してきました。
-        </p>
-        <p {...stylex.props(x.margin._0, styles.text)}>
-          AIが実装を加速するいまだからこそ、「何をつくるか」と「どう届けるか」がより問われます。課題の本質から入り、最後まで形にすることを大切にしています。
-        </p>
+        <p {...stylex.props(x.margin._0, styles.text)}>{t.home.about.p1}</p>
+        <p {...stylex.props(x.margin._0, styles.text)}>{t.home.about.p2}</p>
         <Link
           href="/about"
           {...stylex.props(
@@ -70,7 +71,7 @@ export function AboutSection() {
             styles.link,
           )}
         >
-          詳しく →
+          {t.home.about.link}
         </Link>
       </div>
     </section>

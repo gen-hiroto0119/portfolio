@@ -1,19 +1,17 @@
 "use client";
 
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Languages } from "lucide-react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { useLocale } from "@/components/i18n/locale-provider";
+import type { Locale } from "@/lib/i18n/messages";
 import { iconSize, iconStroke } from "@/lib/icons";
 import {
   colors,
   motion,
   radius,
 } from "@/lib/theme/tokens.stylex";
-
-import { useTheme, type Theme } from "./theme-provider";
-
-const THEME_CYCLE: Theme[] = ["dark", "light", "system"];
 
 const styles = stylex.create({
   button: {
@@ -40,37 +38,12 @@ const styles = stylex.create({
   },
 });
 
-const THEME_LABELS: Record<Theme, string> = {
-  dark: "Dark theme",
-  light: "Light theme",
-  system: "System theme",
-};
-
-function nextTheme(current: Theme): Theme {
-  const index = THEME_CYCLE.indexOf(current);
-  return THEME_CYCLE[(index + 1) % THEME_CYCLE.length];
+function nextLocale(current: Locale): Locale {
+  return current === "ja" ? "en" : "ja";
 }
 
-function ThemeIcon({ theme }: { theme: Theme }) {
-  const props = {
-    size: iconSize,
-    strokeWidth: iconStroke,
-    "aria-hidden": true as const,
-  };
-
-  if (theme === "dark") {
-    return <Moon {...props} />;
-  }
-
-  if (theme === "light") {
-    return <Sun {...props} />;
-  }
-
-  return <Monitor {...props} />;
-}
-
-export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+export function LocaleToggle() {
+  const { locale, setLocale, t } = useLocale();
 
   return (
     <button
@@ -85,10 +58,10 @@ export function ThemeToggle() {
         x.padding._0,
         x.cursor.pointer,
       )}
-      aria-label={`Theme: ${THEME_LABELS[theme]}. Activate to switch theme.`}
-      onClick={() => setTheme(nextTheme(theme))}
+      aria-label={locale === "ja" ? t.locale.switchToEn : t.locale.switchToJa}
+      onClick={() => setLocale(nextLocale(locale))}
     >
-      <ThemeIcon theme={theme} />
+      <Languages size={iconSize} strokeWidth={iconStroke} aria-hidden />
     </button>
   );
 }

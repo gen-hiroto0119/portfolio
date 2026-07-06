@@ -1,12 +1,16 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 import { useState } from "react";
 
+import { useLocale } from "@/components/i18n/locale-provider";
+import { LocaleToggle } from "@/components/i18n/locale-toggle";
+import { iconSize, iconStroke } from "@/lib/icons";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { navItems, site } from "@/lib/site";
 import {
@@ -46,11 +50,6 @@ const styles = stylex.create({
     "@media (max-width: 640px)": {
       display: "inline-flex",
     },
-  },
-  iconBar: {
-    width: fontSize.sm,
-    height: "1px",
-    backgroundColor: "currentColor",
   },
   backdrop: {
     backgroundColor: `color-mix(in srgb, ${colors.bg} 98%, transparent)`,
@@ -187,30 +186,10 @@ function isNavActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function HamburgerIcon() {
-  return (
-    <span
-      {...stylex.props(
-        x.display.flex,
-        x.flexDirection.column,
-        x.alignItems.center,
-        x.justifyContent.center,
-        x.gap["3px"],
-        x.width["1rem"],
-        x.height["1rem"],
-      )}
-      aria-hidden
-    >
-      <span {...stylex.props(styles.iconBar)} />
-      <span {...stylex.props(styles.iconBar)} />
-      <span {...stylex.props(styles.iconBar)} />
-    </span>
-  );
-}
-
 export function MobileMenu() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { t } = useLocale();
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -223,9 +202,9 @@ export function MobileMenu() {
           x.height["2rem"],
           x.cursor.pointer,
         )}
-        aria-label="メニューを開く"
+        aria-label={t.nav.openMenu}
       >
-        <HamburgerIcon />
+        <Menu size={iconSize} strokeWidth={iconStroke} aria-hidden />
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -274,9 +253,9 @@ export function MobileMenu() {
                 x.height["2rem"],
                 x.cursor.pointer,
               )}
-              aria-label="メニューを閉じる"
+              aria-label={t.nav.closeMenu}
             >
-              ×
+              <X size={iconSize} strokeWidth={iconStroke} aria-hidden />
             </Dialog.Close>
           </div>
 
@@ -343,6 +322,7 @@ export function MobileMenu() {
             >
               LinkedIn
             </a>
+            <LocaleToggle />
             <ThemeToggle />
           </div>
         </Dialog.Popup>

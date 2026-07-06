@@ -1,6 +1,9 @@
+"use client";
+
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { useLocale } from "@/components/i18n/locale-provider";
 import { profile } from "@/lib/profile";
 import {
   colors,
@@ -180,6 +183,8 @@ const styles = stylex.create({
 });
 
 export function AboutContent() {
+  const { t } = useLocale();
+
   return (
     <div {...stylex.props(styles.page)}>
       <header {...stylex.props(styles.hero, x.width["100%"])}>
@@ -197,7 +202,7 @@ export function AboutContent() {
       </header>
 
       <div {...stylex.props(styles.intro, x.width["100%"])}>
-        {profile.intro.map((paragraph) => (
+        {t.about.intro.map((paragraph) => (
           <p key={paragraph.slice(0, 24)} {...stylex.props(styles.paragraph)}>
             {paragraph}
           </p>
@@ -277,9 +282,9 @@ export function AboutContent() {
             x.gap._0,
           )}
         >
-          {profile.timeline.map((entry) => (
+          {t.about.timeline.map((entry) => (
             <div
-              key={entry.period}
+              key={entry.id}
               {...stylex.props(
                 styles.timelineItem,
                 x.display.grid,

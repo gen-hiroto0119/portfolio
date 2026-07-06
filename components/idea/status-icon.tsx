@@ -1,17 +1,15 @@
+import { Circle, CircleDot } from "lucide-react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import type { IdeaStatus } from "@/components/idea/idea-status";
 import { getStatusLabel } from "@/components/idea/idea-status";
+import { iconSize, iconStroke } from "@/lib/icons";
 import { colors, fontSize, fonts, spacing } from "@/lib/theme/tokens.stylex";
 
 const styles = stylex.create({
   root: {
     gap: spacing.xs,
-  },
-  icon: {
-    width: fontSize.sm,
-    height: fontSize.sm,
   },
   label: {
     fontFamily: fonts.mono,
@@ -28,6 +26,33 @@ type StatusIconProps = {
   showLabel?: boolean;
 };
 
+function StatusGlyph({ status }: { status: IdeaStatus }) {
+  const props = {
+    size: iconSize,
+    strokeWidth: iconStroke,
+    "aria-hidden": true as const,
+  };
+
+  switch (status) {
+    case "seedling":
+      return <Circle {...props} />;
+    case "budding":
+      return <CircleDot {...props} />;
+    case "evergreen":
+      return (
+        <Circle
+          {...props}
+          fill={colors.accent}
+          stroke={colors.accent}
+        />
+      );
+    default: {
+      const _exhaustive: never = status;
+      return _exhaustive;
+    }
+  }
+}
+
 export function StatusIcon({ status, showLabel = false }: StatusIconProps) {
   const isEvergreen = status === "evergreen";
 
@@ -39,38 +64,7 @@ export function StatusIcon({ status, showLabel = false }: StatusIconProps) {
         x.alignItems.center,
       )}
     >
-      <svg
-        viewBox="0 0 16 16"
-        aria-hidden="true"
-        {...stylex.props(styles.icon, x.flexShrink._0)}
-      >
-        {status === "seedling" ? (
-          <circle
-            cx="8"
-            cy="8"
-            r="6"
-            fill="none"
-            stroke={colors.fgMuted}
-            strokeWidth="1.5"
-          />
-        ) : null}
-        {status === "budding" ? (
-          <>
-            <circle
-              cx="8"
-              cy="8"
-              r="6"
-              fill="none"
-              stroke={colors.fgMuted}
-              strokeWidth="1.5"
-            />
-            <path d="M8 2 A6 6 0 0 1 8 14 Z" fill={colors.fgMuted} />
-          </>
-        ) : null}
-        {status === "evergreen" ? (
-          <circle cx="8" cy="8" r="6" fill={colors.accent} />
-        ) : null}
-      </svg>
+      <StatusGlyph status={status} />
       {showLabel ? (
         <span
           {...stylex.props(styles.label, isEvergreen && styles.labelEvergreen)}

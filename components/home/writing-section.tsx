@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { useLocale } from "@/components/i18n/locale-provider";
 import { SectionLabel } from "@/components/home/section-label";
 import type { BlogPost } from "@/lib/content/schema";
 import {
@@ -74,6 +77,7 @@ type WritingSectionProps = {
 };
 
 export function WritingSection({ posts }: WritingSectionProps) {
+  const { t } = useLocale();
   const latest = posts.slice(0, 3);
 
   return (
@@ -122,7 +126,7 @@ export function WritingSection({ posts }: WritingSectionProps) {
           styles.footerLink,
         )}
       >
-        すべての記事 →
+        {t.home.allPosts}
       </Link>
     </section>
   );

@@ -1,6 +1,9 @@
+"use client";
+
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { useLocale } from "@/components/i18n/locale-provider";
 import { DitherGradientCanvas } from "@/components/visuals/dither-gradient-canvas";
 import {
   colors,
@@ -80,6 +83,7 @@ const styles = stylex.create({
 });
 
 export function Hero() {
+  const { t } = useLocale();
   const canvasClass = stylex.props(
     x.position.absolute,
     x.inset._0,
@@ -111,7 +115,7 @@ export function Hero() {
         )}
       >
         <p {...stylex.props(x.textTransform.uppercase, styles.label)}>
-          Portfolio — 2026 / Tokyo
+          {t.hero.label}
         </p>
         <div
           {...stylex.props(
@@ -134,7 +138,7 @@ export function Hero() {
               Hiroto Furugen
             </h1>
             <p {...stylex.props(x.margin._0, x.maxWidth["36rem"], styles.tagline)}>
-              問いを立て、組み、届ける。プロダクト・コード・デザインの交差点に。
+              {t.hero.tagline}
             </p>
           </div>
           <p
@@ -144,7 +148,7 @@ export function Hero() {
               styles.scroll,
             )}
           >
-            Scroll ↓
+            {t.hero.scroll}
           </p>
         </div>
       </div>

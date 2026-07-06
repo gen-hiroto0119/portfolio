@@ -1,11 +1,15 @@
 "use client";
 
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { useCommandPalette } from "@/components/command-palette/command-palette-provider";
+import { useLocale } from "@/components/i18n/locale-provider";
+import { LocaleToggle } from "@/components/i18n/locale-toggle";
+import { iconSize, iconStroke } from "@/lib/icons";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { navItems } from "@/lib/site";
@@ -80,8 +84,6 @@ const styles = stylex.create({
   },
   commandIcon: {
     display: "none",
-    width: fontSize.sm,
-    height: fontSize.sm,
     "@media (max-width: 640px)": {
       display: "block",
     },
@@ -96,6 +98,7 @@ function isNavActive(pathname: string, href: string): boolean {
 export function HeaderNav() {
   const pathname = usePathname();
   const { openPalette } = useCommandPalette();
+  const { t } = useLocale();
 
   return (
     <nav
@@ -144,31 +147,18 @@ export function HeaderNav() {
             x.height["2rem"],
             x.cursor.pointer,
           )}
-          aria-label="Open command palette"
+          aria-label={t.nav.openCommandPalette}
           onClick={openPalette}
         >
           <span {...stylex.props(styles.commandLabel)}>⌘K</span>
-          <svg
+          <Search
             {...stylex.props(styles.commandIcon)}
-            viewBox="0 0 16 16"
-            fill="none"
+            size={iconSize}
+            strokeWidth={iconStroke}
             aria-hidden
-          >
-            <circle
-              cx="7"
-              cy="7"
-              r="4.25"
-              stroke="currentColor"
-              strokeWidth="1.25"
-            />
-            <path
-              d="M10.5 10.5L14 14"
-              stroke="currentColor"
-              strokeWidth="1.25"
-              strokeLinecap="round"
-            />
-          </svg>
+          />
         </button>
+        <LocaleToggle />
         <ThemeToggle />
       </div>
     </nav>

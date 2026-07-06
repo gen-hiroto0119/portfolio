@@ -3,10 +3,12 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { CommandPaletteProvider } from "@/components/command-palette/command-palette-provider";
+import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { getContentCommandData } from "@/lib/content-commands";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { getLocaleInitScript } from "@/lib/i18n/locale-script";
 import { getThemeInitScript } from "@/lib/theme/theme-script";
 import { site } from "@/lib/site";
 import { lightTheme } from "@/lib/theme/themes.stylex";
@@ -67,6 +69,11 @@ export default async function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
+            __html: getLocaleInitScript(),
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
             __html: getThemeInitScript(lightThemeClassName),
           }}
         />
@@ -80,16 +87,18 @@ export default async function RootLayout({
         )}
       >
         <ThemeProvider lightThemeClassName={lightThemeClassName}>
-          <CommandPaletteProvider contentItems={contentItems}>
-            <Header />
-            <main
-              id="main"
-              {...stylex.props(x.flex._1, x.display.flex, x.flexDirection.column)}
-            >
-              {children}
-            </main>
-            <Footer />
-          </CommandPaletteProvider>
+          <LocaleProvider>
+            <CommandPaletteProvider contentItems={contentItems}>
+              <Header />
+              <main
+                id="main"
+                {...stylex.props(x.flex._1, x.display.flex, x.flexDirection.column)}
+              >
+                {children}
+              </main>
+              <Footer />
+            </CommandPaletteProvider>
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { useLocale } from "@/components/i18n/locale-provider";
 import { SectionLabel } from "@/components/home/section-label";
 import type { Work } from "@/lib/content/schema";
 import {
@@ -102,6 +105,7 @@ type FeaturedWorksProps = {
 };
 
 export function FeaturedWorks({ works }: FeaturedWorksProps) {
+  const { t } = useLocale();
   const featured = works.slice(0, 3);
 
   return (
@@ -167,7 +171,7 @@ export function FeaturedWorks({ works }: FeaturedWorksProps) {
           styles.footerLink,
         )}
       >
-        すべての Works →
+        {t.home.allWorks}
       </Link>
     </section>
   );

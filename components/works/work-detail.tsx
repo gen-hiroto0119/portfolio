@@ -3,7 +3,6 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { MdxContent } from "@/components/mdx/mdx-content";
-import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import type { WorkWithContent } from "@/lib/content/schema";
 import {
   colors,
@@ -249,11 +248,9 @@ export function WorkDetail({ work, prev, next }: WorkDetailProps) {
         {...stylex.props(styles.hero, x.width["100%"])}
       >
         <p {...stylex.props(styles.label, x.textTransform.uppercase)}>
-          <DecryptedTextView text="Case Study" />
+          Case Study
         </p>
-        <h1 {...stylex.props(styles.title)}>
-          <DecryptedTextView text={work.title} speed={35} />
-        </h1>
+        <h1 {...stylex.props(styles.title)}>{work.title}</h1>
         <p {...stylex.props(styles.description, x.maxWidth["48rem"])}>
           {work.description}
         </p>

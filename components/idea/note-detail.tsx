@@ -3,7 +3,6 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { MdxContent } from "@/components/mdx/mdx-content";
-import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import { NoteConnectionsSection } from "@/components/idea/note-connections";
 import { StatusIcon } from "@/components/idea/status-icon";
 import type { IdeaNoteWithContent } from "@/lib/content/schema";
@@ -80,9 +79,7 @@ export function NoteDetail({ note, connections }: NoteDetailProps) {
             Planted {note.planted} / Tended {note.tended}
           </span>
         </div>
-        <h1 {...stylex.props(styles.title)}>
-          <DecryptedTextView text={note.title} speed={35} />
-        </h1>
+        <h1 {...stylex.props(styles.title)}>{note.title}</h1>
       </header>
       <div {...stylex.props(x.width["100%"])}>
         <MdxContent source={note.content} />

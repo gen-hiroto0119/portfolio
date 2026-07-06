@@ -5,7 +5,6 @@ import { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import { DecryptedTextHover } from "@/components/visuals/decrypted-text";
 import type { Work } from "@/lib/content/schema";
 import {
   colors,
@@ -192,7 +191,7 @@ export function WorkCard({ work, index }: WorkCardProps) {
           <h2
             {...stylex.props(styles.title, x.margin._0, hovered && styles.titleAccent)}
           >
-            <DecryptedTextHover text={work.title} />
+            {work.title}
           </h2>
           {work.featured ? (
             <span

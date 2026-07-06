@@ -1,9 +1,5 @@
-"use client";
-
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
-
-import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 
 import {
   colors,
@@ -61,11 +57,9 @@ export function SectionPageHeader({
       {...stylex.props(styles.shell, x.width["100%"])}
     >
       <p {...stylex.props(styles.label, x.textTransform.uppercase)}>
-        <DecryptedTextView text={label} />
+        {label}
       </p>
-      <h1 {...stylex.props(styles.title)}>
-        <DecryptedTextView text={title} speed={35} />
-      </h1>
+      <h1 {...stylex.props(styles.title)}>{title}</h1>
       <p {...stylex.props(styles.description, x.maxWidth["36rem"])}>
         {description}
       </p>

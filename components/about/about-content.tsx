@@ -5,7 +5,6 @@ import x from "@stylexjs/atoms";
 
 import { useLocale } from "@/components/i18n/locale-provider";
 import { BorderGlow } from "@/components/visuals/border-glow";
-import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import { profile } from "@/lib/profile";
 import {
   colors,
@@ -195,13 +194,7 @@ export function AboutContent() {
     <div {...stylex.props(styles.page)}>
       <header {...stylex.props(styles.hero, x.width["100%"])}>
         <p {...stylex.props(styles.label, x.textTransform.uppercase)}>About</p>
-        <h1 {...stylex.props(styles.title)}>
-          <DecryptedTextView
-            text={profile.name}
-            revealDirection="center"
-            speed={32}
-          />
-        </h1>
+        <h1 {...stylex.props(styles.title)}>{profile.name}</h1>
         <div
           {...stylex.props(styles.strengths, x.display.flex, x.flexWrap.wrap)}
         >
@@ -229,7 +222,7 @@ export function AboutContent() {
           id="skills-heading"
           {...stylex.props(styles.sectionLabel, x.textTransform.uppercase)}
         >
-          <DecryptedTextView text="Skills" />
+          Skills
         </h2>
         <div
           {...stylex.props(
@@ -287,7 +280,7 @@ export function AboutContent() {
           id="timeline-heading"
           {...stylex.props(styles.sectionLabel, x.textTransform.uppercase)}
         >
-          <DecryptedTextView text="Timeline" />
+          Timeline
         </h2>
         <div
           {...stylex.props(
@@ -345,7 +338,7 @@ export function AboutContent() {
           id="contact-heading"
           {...stylex.props(styles.sectionLabel, x.textTransform.uppercase)}
         >
-          <DecryptedTextView text="Contact" />
+          Contact
         </h2>
         <div
           {...stylex.props(

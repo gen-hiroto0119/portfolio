@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import { GenerativeHero } from "@/components/home/generative-hero";
+import { DitherGradientCanvas } from "@/components/visuals/dither-gradient-canvas";
 import {
   colors,
   fontSize,
@@ -98,7 +98,7 @@ export function Hero() {
         styles.section,
       )}
     >
-      <GenerativeHero className={canvasClass.className ?? undefined} />
+      <DitherGradientCanvas className={canvasClass.className ?? undefined} />
       <div
         {...stylex.props(
           x.position.relative,

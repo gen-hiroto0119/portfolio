@@ -55,9 +55,11 @@ portfolio/
 
 | パス | 用途 | frontmatter 主要フィールド |
 |------|------|---------------------------|
-| `content/blog/` | 記事 | `title`, `description`, `date`, `category` (tech/photo/daily), `tags` |
-| `content/works/` | 実績 | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome`, `featured`, `metrics`, `links` |
-| `content/garden/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列) |
+| `content/blog/` | 記事 | `title`, `description`, `date`, `category` (tech/photo/daily), `tags`, `published` |
+| `content/works/` | 実績 | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome`, `featured`, `metrics`, `links`, `published` |
+| `content/garden/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
+
+`published` は省略時 `true`。`false` の場合は一覧・詳細・sitemap・RSS から除外される。
 
 スキーマ定義: `lib/content/schema.ts`  
 読み込み API: `lib/content/index.ts`（`getAllPosts`, `getPost`, `getAllWorks`, `getWork`, `getAllNotes`, `getNote`）

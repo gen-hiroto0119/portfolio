@@ -71,6 +71,10 @@ function compareByDateDesc(
   return rightDate.localeCompare(leftDate);
 }
 
+function isPublished<T extends { published: boolean }>(item: T): boolean {
+  return item.published;
+}
+
 export async function getAllPosts(): Promise<BlogPost[]> {
   const files = await readMdxFiles(BLOG_DIR);
 
@@ -79,6 +83,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
       slug: file.slug,
       ...parseBlogFrontmatter(file.data, file.filePath),
     }))
+    .filter(isPublished)
     .sort((left, right) => compareByDateDesc(left.date, right.date));
 }
 
@@ -90,6 +95,7 @@ export async function getAllWorks(): Promise<Work[]> {
       slug: file.slug,
       ...parseWorksFrontmatter(file.data, file.filePath),
     }))
+    .filter(isPublished)
     .sort((left, right) => {
       if (left.featured !== right.featured) {
         return left.featured ? -1 : 1;
@@ -106,6 +112,7 @@ export async function getAllNotes(): Promise<GardenNote[]> {
       slug: file.slug,
       ...parseGardenFrontmatter(file.data, file.filePath),
     }))
+    .filter(isPublished)
     .sort((left, right) =>
       compareByDateDesc(left.tended, right.tended),
     );
@@ -117,12 +124,13 @@ export async function getPost(slug: string): Promise<BlogPostWithContent | null>
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(raw);
-
-    return {
+    const post = {
       slug,
       content,
       ...parseBlogFrontmatter(data, filePath),
     };
+
+    return post.published ? post : null;
   } catch (error) {
     if (
       error instanceof Error &&
@@ -141,12 +149,13 @@ export async function getWork(slug: string): Promise<WorkWithContent | null> {
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(raw);
-
-    return {
+    const work = {
       slug,
       content,
       ...parseWorksFrontmatter(data, filePath),
     };
+
+    return work.published ? work : null;
   } catch (error) {
     if (
       error instanceof Error &&
@@ -167,12 +176,13 @@ export async function getNote(
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(raw);
-
-    return {
+    const note = {
       slug,
       content,
       ...parseGardenFrontmatter(data, filePath),
     };
+
+    return note.published ? note : null;
   } catch (error) {
     if (
       error instanceof Error &&

@@ -10,8 +10,8 @@ Hiroto Furugen の個人ポートフォリオサイト。コンテンツは **Gi
 
 ## 方針
 
-- **コンテンツはファイルファースト** — DB / ヘッドレス CMS（Payload 等）は使わない。`content/` の MDX が唯一のソース。
-- **執筆フロー（予定）** — Obsidian Git で `content/` を Vault として編集 → commit → push → Vercel 自動公開。
+- **コンテンツはファイルファースト** — DB / ヘッドレス CMS は使わない。Blog / Idea は `content/` の MDX、Works は `app/works/_entries/`。
+- **執筆フロー** — Obsidian Git で `content/` を Vault として編集 → commit → push → Vercel 自動公開。
 - **変更は最小限** — 依頼範囲外のリファクタ・抽象化・テスト追加はしない。
 - **日本語 UI** — サイトのコピー・メタデータは日本語が基本。
 
@@ -30,15 +30,16 @@ Hiroto Furugen の個人ポートフォリオサイト。コンテンツは **Gi
 ```
 portfolio/
 ├── app/                    # ルート・各セクションのページ
-│   ├── blog/               # ブログ一覧・詳細
-│   ├── works/              # 実績
-│   ├── idea/               # アイデアメモ
-│   ├── lab/                # 実験 UI
-│   ├── design/             # デザインシステム showcase
-│   └── about/
-├── content/                # MDX コンテンツ（Obsidian Vault 予定地）
 │   ├── blog/
 │   ├── works/
+│   │   ├── _entries/       # Works 定義（*.meta.ts + *.case.md）
+│   │   └── _lib/           # getAllWorks / getWork / schema
+│   ├── idea/
+│   ├── lab/
+│   ├── design/
+│   └── about/
+├── content/                # MDX（Obsidian Vault = blog + idea）
+│   ├── blog/
 │   └── idea/
 ├── components/             # UI コンポーネント（セクション別サブフォルダ）
 ├── lib/
@@ -58,13 +59,13 @@ portfolio/
 | パス | 用途 | frontmatter 主要フィールド |
 |------|------|---------------------------|
 | `content/blog/` | 記事 | `title`, `description`, `date`, `category` (tech/photo/daily), `tags`, `published` |
-| `content/works/` | 実績 | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome`, `featured`, `metrics`, `links`, `published` |
+| `app/works/_entries/` | 実績 | `{slug}.meta.ts` + `{slug}.case.md` — スキーマは `app/works/_lib/schema.ts` |
 | `content/idea/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
 
 `published` は省略時 `true`。`false` の場合は一覧・詳細・sitemap・RSS から除外される。
 
-スキーマ定義: `lib/content/schema.ts`  
-読み込み API: `lib/content/index.ts`（`getAllPosts`, `getPost`, `getAllWorks`, `getWork`, `getAllIdeas`, `getIdea`）
+スキーマ定義: `lib/content/schema.ts`（blog / idea）、`app/works/_lib/schema.ts`（works）  
+読み込み API: `lib/content/index.ts`（blog / idea）、`app/works/_lib/get-works.ts`（works）
 
 ### 新規 MDX 追加手順
 
@@ -77,11 +78,9 @@ portfolio/
 
 ```
 content/
-├── tech/          # ブログ tech カテゴリ
-├── photo/
-├── diary/
-├── works/
-└── attachments/   # 画像
+├── blog/
+├── idea/
+└── attachments/   # 画像（予定）
 ```
 
 移行時は WikiLink (`[[note]]`) と `![[image]]` の変換レイヤーを `lib/content` に追加する。現状は標準 MDX のみ。

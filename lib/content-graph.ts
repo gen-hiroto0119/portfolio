@@ -1,6 +1,7 @@
 import "server-only";
 
-import type { BlogPost, IdeaNote, Work } from "@/lib/content/schema";
+import type { Work } from "@/app/works/_lib/schema";
+import type { BlogPost, IdeaNote } from "@/lib/content/schema";
 
 export type GraphNodeKind = "idea" | "blog" | "works";
 

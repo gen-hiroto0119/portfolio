@@ -1,6 +1,7 @@
 import "server-only";
 
-import { getAllIdeas, getAllPosts, getAllWorks } from "@/lib/content";
+import { getAllWorks } from "@/app/works/_lib/get-works";
+import { getAllIdeas, getAllPosts } from "@/lib/content";
 
 export type ContentCommandData = {
   id: string;

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 import { IdeaView } from "@/components/idea/idea-view";
 import { SectionPageHeader } from "@/components/idea/section-page-header";
-import { getAllIdeas, getAllPosts, getAllWorks } from "@/lib/content";
+import { getAllWorks } from "@/app/works/_lib/get-works";
+import { getAllIdeas, getAllPosts } from "@/lib/content";
 import { buildContentGraph } from "@/lib/content-graph";
 import { getConnectionCount } from "@/lib/idea-graph";
 

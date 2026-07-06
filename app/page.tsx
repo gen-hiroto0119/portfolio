@@ -5,7 +5,8 @@ import { AboutSection } from "@/components/home/about-section";
 import { FeaturedWorks } from "@/components/home/featured-works";
 import { Hero } from "@/components/home/hero";
 import { WritingSection } from "@/components/home/writing-section";
-import { getAllPosts, getAllWorks } from "@/lib/content";
+import { getAllWorks } from "@/app/works/_lib/get-works";
+import { getAllPosts } from "@/lib/content";
 import { maxWidth, spacing } from "@/lib/theme/tokens.stylex";
 
 const styles = stylex.create({

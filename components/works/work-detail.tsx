@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { MdxContent } from "@/components/mdx/mdx-content";
-import type { WorkWithContent } from "@/lib/content/schema";
+import type { WorkWithContent } from "@/app/works/_lib/schema";
 import {
   colors,
   fontSize,

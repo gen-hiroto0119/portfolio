@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { WorkDetail } from "@/components/works/work-detail";
-import { getAllWorks, getWork } from "@/lib/content";
+import { getAllWorks, getWork } from "@/app/works/_lib/get-works";
 import { site } from "@/lib/site";
 
 type WorkPageProps = {

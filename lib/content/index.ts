@@ -8,19 +8,15 @@ import matter from "gray-matter";
 import {
   parseBlogFrontmatter,
   parseIdeaFrontmatter,
-  parseWorksFrontmatter,
   type BlogPost,
   type BlogPostWithContent,
   type IdeaNote,
   type IdeaNoteWithContent,
-  type Work,
-  type WorkWithContent,
 } from "@/lib/content/schema";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
 
 const BLOG_DIR = path.join(CONTENT_ROOT, "blog");
-const WORKS_DIR = path.join(CONTENT_ROOT, "works");
 const IDEA_DIR = path.join(CONTENT_ROOT, "idea");
 
 async function readMdxFiles(directory: string): Promise<
@@ -87,23 +83,6 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     .sort((left, right) => compareByDateDesc(left.date, right.date));
 }
 
-export async function getAllWorks(): Promise<Work[]> {
-  const files = await readMdxFiles(WORKS_DIR);
-
-  return files
-    .map((file) => ({
-      slug: file.slug,
-      ...parseWorksFrontmatter(file.data, file.filePath),
-    }))
-    .filter(isPublished)
-    .sort((left, right) => {
-      if (left.featured !== right.featured) {
-        return left.featured ? -1 : 1;
-      }
-      return compareByDateDesc(left.date, right.date);
-    });
-}
-
 export async function getAllIdeas(): Promise<IdeaNote[]> {
   const files = await readMdxFiles(IDEA_DIR);
 
@@ -131,31 +110,6 @@ export async function getPost(slug: string): Promise<BlogPostWithContent | null>
     };
 
     return post.published ? post : null;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      "code" in error &&
-      error.code === "ENOENT"
-    ) {
-      return null;
-    }
-    throw error;
-  }
-}
-
-export async function getWork(slug: string): Promise<WorkWithContent | null> {
-  const filePath = path.join(WORKS_DIR, `${slug}.mdx`);
-
-  try {
-    const raw = await fs.readFile(filePath, "utf8");
-    const { content, data } = matter(raw);
-    const work = {
-      slug,
-      content,
-      ...parseWorksFrontmatter(data, filePath),
-    };
-
-    return work.published ? work : null;
   } catch (error) {
     if (
       error instanceof Error &&

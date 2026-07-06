@@ -6,7 +6,7 @@ import x from "@stylexjs/atoms";
 
 import { useLocale } from "@/components/i18n/locale-provider";
 import { SectionLabel } from "@/components/home/section-label";
-import type { Work } from "@/lib/content/schema";
+import type { Work } from "@/app/works/_lib/schema";
 import {
   colors,
   fontSize,

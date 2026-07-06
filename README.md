@@ -24,15 +24,15 @@ npx tsc --noEmit
 
 ## コンテンツの追加
 
-`content/` 配下に MDX ファイルを追加します。
+`content/` 配下に Blog / Idea の MDX を追加します。Works は `app/works/_entries/` を編集します。
 
-| ディレクトリ | 用途 | 主な frontmatter |
-|---|---|---|
-| `content/works/` | ケーススタディ | `title`, `description`, `date`, `role`, `stack`, `challenge`, `outcome` |
-| `content/blog/` | ブログ記事 | `title`, `description`, `date`, `tags` |
-| `content/idea/` | アイデアメモ | `title`, `planted`, `tended`, `status`, `tags` |
+| パス | 用途 |
+|---|---|
+| `content/blog/` | ブログ記事（MDX + frontmatter） |
+| `content/idea/` | アイデアメモ（MDX + frontmatter） |
+| `app/works/_entries/` | ケーススタディ（`*.meta.ts` + `*.case.md`） |
 
-ファイル名（拡張子除く）が URL の slug になります。
+Blog / Idea のファイル名（拡張子除く）が URL の slug になります。
 
 ## デザイントークン
 

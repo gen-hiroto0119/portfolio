@@ -5,7 +5,7 @@ import {
   ogImageContentType,
   ogImageSize,
 } from "@/lib/og/create-og-image";
-import { getWork } from "@/lib/content";
+import { getWork } from "@/app/works/_lib/get-works";
 
 export const alt = "Case study";
 export const size = ogImageSize;

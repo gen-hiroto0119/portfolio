@@ -17,35 +17,6 @@ export const blogFrontmatterSchema = z.object({
   published: publishedSchema,
 });
 
-export const worksFrontmatterSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  date: calendarDateSchema,
-  role: z.string().min(1),
-  stack: z.array(z.string()),
-  client: z.string().optional(),
-  challenge: z.string().min(1),
-  outcome: z.string().min(1),
-  metrics: z
-    .array(
-      z.object({
-        label: z.string().min(1),
-        value: z.string().min(1),
-      }),
-    )
-    .optional(),
-  links: z
-    .array(
-      z.object({
-        label: z.string().min(1),
-        href: z.string().url(),
-      }),
-    )
-    .optional(),
-  featured: z.boolean().default(false),
-  published: publishedSchema,
-});
-
 export const ideaFrontmatterSchema = z.object({
   title: z.string().min(1),
   planted: calendarDateSchema,
@@ -58,14 +29,9 @@ export const ideaFrontmatterSchema = z.object({
 });
 
 export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;
-export type WorksFrontmatter = z.infer<typeof worksFrontmatterSchema>;
 export type IdeaFrontmatter = z.infer<typeof ideaFrontmatterSchema>;
 
 export type BlogPost = BlogFrontmatter & {
-  slug: string;
-};
-
-export type Work = WorksFrontmatter & {
   slug: string;
 };
 
@@ -77,15 +43,11 @@ export type BlogPostWithContent = BlogPost & {
   content: string;
 };
 
-export type WorkWithContent = Work & {
-  content: string;
-};
-
 export type IdeaNoteWithContent = IdeaNote & {
   content: string;
 };
 
-export type ContentKind = "blog" | "works" | "idea";
+export type ContentKind = "blog" | "idea";
 
 function formatZodError(error: z.ZodError): string {
   return error.issues
@@ -101,19 +63,6 @@ export function parseBlogFrontmatter(
   if (!result.success) {
     throw new Error(
       `Invalid blog frontmatter in ${filePath}: ${formatZodError(result.error)}`,
-    );
-  }
-  return result.data;
-}
-
-export function parseWorksFrontmatter(
-  data: unknown,
-  filePath: string,
-): WorksFrontmatter {
-  const result = worksFrontmatterSchema.safeParse(data);
-  if (!result.success) {
-    throw new Error(
-      `Invalid works frontmatter in ${filePath}: ${formatZodError(result.error)}`,
     );
   }
   return result.data;

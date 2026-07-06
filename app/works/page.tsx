@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { SectionPageHeader } from "@/components/works/section-page-header";
 import { WorkCardList } from "@/components/works/work-card";
-import { getAllWorks } from "@/lib/content";
+import { getAllWorks } from "@/app/works/_lib/get-works";
 
 export const metadata: Metadata = {
   title: "Works",

@@ -5,7 +5,7 @@ import { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
-import type { Work } from "@/lib/content/schema";
+import type { Work } from "@/app/works/_lib/schema";
 import {
   colors,
   fontSize,

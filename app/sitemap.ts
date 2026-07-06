@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-import { getAllIdeas, getAllPosts, getAllWorks } from "@/lib/content";
+import { getAllWorks } from "@/app/works/_lib/get-works";
+import { getAllIdeas, getAllPosts } from "@/lib/content";
 import { site } from "@/lib/site";
 
 const staticRoutes: MetadataRoute.Sitemap = [

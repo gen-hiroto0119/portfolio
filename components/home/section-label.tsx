@@ -1,5 +1,9 @@
+"use client";
+
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
+
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 
 import {
   colors,
@@ -26,7 +30,7 @@ type SectionLabelProps = {
 export function SectionLabel({ children }: SectionLabelProps) {
   return (
     <p {...stylex.props(x.textTransform.uppercase, styles.label)}>
-      {children}
+      <DecryptedTextView text={children} />
     </p>
   );
 }

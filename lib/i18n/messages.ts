@@ -13,6 +13,8 @@ export type Messages = {
     label: string;
     tagline: string;
     scroll: string;
+    stackLabel: string;
+    stackAriaLabel: string;
   };
   home: {
     about: {
@@ -45,6 +47,8 @@ export const messages: Record<Locale, Messages> = {
       tagline:
         "問いを立て、組み、届ける。プロダクト・コード・デザインの交差点に。",
       scroll: "Scroll ↓",
+      stackLabel: "My Stack",
+      stackAriaLabel: "使用技術スタック",
     },
     home: {
       about: {
@@ -136,6 +140,8 @@ export const messages: Record<Locale, Messages> = {
       tagline:
         "Ask, build, deliver. At the intersection of product, code, and design.",
       scroll: "Scroll ↓",
+      stackLabel: "My Stack",
+      stackAriaLabel: "Technology stack",
     },
     home: {
       about: {

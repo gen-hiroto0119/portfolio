@@ -1,7 +1,10 @@
+"use client";
+
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { StatusIcon } from "@/components/idea/status-icon";
+import { DecryptedSubtitle, DecryptedTextView } from "@/components/visuals/decrypted-text";
 import {
   colors,
   fontSize,
@@ -66,13 +69,15 @@ export function SectionPageHeader({
       {...stylex.props(styles.shell, x.width["100%"])}
     >
       <p {...stylex.props(styles.label, x.textTransform.uppercase)}>
-        {label}
+        <DecryptedTextView text={label} />
       </p>
-      <h1 {...stylex.props(styles.title)}>{title}</h1>
+      <h1 {...stylex.props(styles.title)}>
+        <DecryptedTextView text={title} speed={35} />
+      </h1>
       <p
         {...stylex.props(styles.description, x.maxWidth["36rem"])}
       >
-        {description}
+        <DecryptedSubtitle text={description} />
       </p>
       <div
         {...stylex.props(

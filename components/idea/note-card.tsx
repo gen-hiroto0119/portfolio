@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
 import { StatusIcon } from "@/components/idea/status-icon";
+import { DecryptedTextHover } from "@/components/visuals/decrypted-text";
 import { BorderGlow } from "@/components/visuals/border-glow";
 import type { IdeaNote } from "@/lib/content/schema";
 import {
@@ -124,7 +125,7 @@ function NoteCard({ note, connectionCount = 0 }: NoteCardProps) {
         <h2
           {...stylex.props(styles.title, x.margin._0, hovered && styles.titleAccent)}
         >
-          {note.title}
+          <DecryptedTextHover text={note.title} />
         </h2>
         <div
           {...stylex.props(

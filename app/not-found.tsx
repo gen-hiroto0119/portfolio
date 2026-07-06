@@ -2,6 +2,8 @@ import Link from "next/link";
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
+
 import {
   colors,
   fontSize,
@@ -61,9 +63,11 @@ export default function NotFound() {
       )}
     >
       <p {...stylex.props(styles.label, x.textTransform.uppercase)}>
-        404 — Not Found
+        <DecryptedTextView text="404 — Not Found" />
       </p>
-      <h1 {...stylex.props(styles.title)}>ページが見つかりません</h1>
+      <h1 {...stylex.props(styles.title)}>
+        <DecryptedTextView text="ページが見つかりません" speed={35} />
+      </h1>
       <p {...stylex.props(styles.description, x.maxWidth["36rem"])}>
         お探しのページは移動したか、削除された可能性があります。
       </p>

@@ -4,6 +4,7 @@ import x from "@stylexjs/atoms";
 
 import { CategoryLabel } from "@/components/blog/category-label";
 import { MdxContent } from "@/components/mdx/mdx-content";
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import type { BlogPostWithContent } from "@/lib/content/schema";
 import {
   colors,
@@ -100,7 +101,9 @@ export function PostDetail({ post }: PostDetailProps) {
             ))}
           </div>
         </div>
-        <h1 {...stylex.props(styles.title)}>{post.title}</h1>
+        <h1 {...stylex.props(styles.title)}>
+          <DecryptedTextView text={post.title} speed={35} />
+        </h1>
       </header>
       <div {...stylex.props(styles.body, x.width["100%"])}>
         <MdxContent source={post.content} />

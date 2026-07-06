@@ -3,7 +3,9 @@
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
 
+import { HeroStackLoop } from "@/components/home/hero-stack-loop";
 import { useLocale } from "@/components/i18n/locale-provider";
+import { DecryptedTextView } from "@/components/visuals/decrypted-text";
 import { DitherGradientCanvas } from "@/components/visuals/dither-gradient-canvas";
 import {
   colors,
@@ -115,7 +117,7 @@ export function Hero() {
         )}
       >
         <p {...stylex.props(x.textTransform.uppercase, styles.label)}>
-          {t.hero.label}
+          <DecryptedTextView text={t.hero.label} />
         </p>
         <div
           {...stylex.props(
@@ -135,10 +137,19 @@ export function Hero() {
             )}
           >
             <h1 {...stylex.props(x.margin._0, styles.title)}>
-              Hiroto Furugen
+              <DecryptedTextView
+                text="Hiroto Furugen"
+                revealDirection="center"
+                speed={50}
+                viewDelay={560}
+              />
             </h1>
             <p {...stylex.props(x.margin._0, x.maxWidth["36rem"], styles.tagline)}>
-              {t.hero.tagline}
+              <DecryptedTextView
+                text={t.hero.tagline}
+                speed={48}
+                viewDelay={1180}
+              />
             </p>
           </div>
           <p
@@ -151,6 +162,7 @@ export function Hero() {
             {t.hero.scroll}
           </p>
         </div>
+        <HeroStackLoop />
       </div>
     </section>
   );

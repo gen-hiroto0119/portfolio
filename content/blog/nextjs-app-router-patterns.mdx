@@ -50,5 +50,3 @@ export default async function PostPage({
 ## つまずきやすい点
 
 `use client` を付けたコンポーネントの子は自動的にクライアント境界になります。逆に、Client から Server Component を直接 import することはできないため、Composition（`children` で渡す）を使うのが定石です。
-
-また、Babel 経由の StyleX 構成では SWC 専用機能が使えないため、Next の実験的機能を入れる前にビルドパイプラインを確認するのが安全です。

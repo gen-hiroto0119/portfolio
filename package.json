@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test lib/content/calendar-date.test.ts"
+    "test": "node --experimental-strip-types --test lib/content/calendar-date.test.ts lib/content/attachment-paths.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

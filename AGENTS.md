@@ -38,9 +38,10 @@ portfolio/
 │   ├── lab/
 │   ├── design/
 │   └── about/
-├── content/                # MDX（Obsidian Vault = blog + idea）
+├── content/                # MDX（Obsidian Vault = blog + idea + attachments）
 │   ├── blog/
-│   └── idea/
+│   ├── idea/
+│   └── attachments/        # 画像（![[embed]] / cover）
 ├── components/             # UI コンポーネント（セクション別サブフォルダ）
 ├── lib/
 │   ├── content/            # MDX 読み込み・Zod スキーマ
@@ -74,16 +75,16 @@ portfolio/
 3. slug はファイル名（拡張子除く）
 4. `npm run dev` で表示確認
 
-### Obsidian 移行（予定）
+### Obsidian 移行
 
 ```
 content/
 ├── blog/
 ├── idea/
-└── attachments/   # 画像（予定）
+└── attachments/   # 画像（![[image]] / cover 対応済み）
 ```
 
-移行時は WikiLink (`[[note]]`) と `![[image]]` の変換レイヤーを `lib/content` に追加する。現状は標準 MDX のみ。
+`![[image]]` 埋め込みは `lib/content` で `/attachments/...` に変換される。WikiLink（`[[note]]`）のノート間リンクは未実装。
 
 ## コーディング規約
 

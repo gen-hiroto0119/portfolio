@@ -6,6 +6,10 @@ import path from "node:path";
 import matter from "gray-matter";
 
 import {
+  prepareContentImages,
+  resolveCoverImageUrl,
+} from "@/lib/content/attachments";
+import {
   parseBlogFrontmatter,
   parseIdeaFrontmatter,
   type BlogPost,
@@ -74,11 +78,20 @@ function isPublished<T extends { published: boolean }>(item: T): boolean {
 export async function getAllPosts(): Promise<BlogPost[]> {
   const files = await readMdxFiles(BLOG_DIR);
 
-  return files
-    .map((file) => ({
-      slug: file.slug,
-      ...parseBlogFrontmatter(file.data, file.filePath),
-    }))
+  const posts = await Promise.all(
+    files.map(async (file) => {
+      const frontmatter = parseBlogFrontmatter(file.data, file.filePath);
+      const coverUrl = await resolveCoverImageUrl(frontmatter.cover);
+
+      return {
+        slug: file.slug,
+        ...frontmatter,
+        ...(coverUrl ? { coverUrl } : {}),
+      };
+    }),
+  );
+
+  return posts
     .filter(isPublished)
     .sort((left, right) => compareByDateDesc(left.date, right.date));
 }
@@ -103,10 +116,16 @@ export async function getPost(slug: string): Promise<BlogPostWithContent | null>
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(raw);
+    const frontmatter = parseBlogFrontmatter(data, filePath);
+    const [resolvedContent, coverUrl] = await Promise.all([
+      prepareContentImages(content),
+      resolveCoverImageUrl(frontmatter.cover),
+    ]);
     const post = {
       slug,
-      content,
-      ...parseBlogFrontmatter(data, filePath),
+      content: resolvedContent,
+      ...frontmatter,
+      ...(coverUrl ? { coverUrl } : {}),
     };
 
     return post.published ? post : null;
@@ -130,10 +149,12 @@ export async function getIdea(
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(raw);
+    const frontmatter = parseIdeaFrontmatter(data, filePath);
+    const resolvedContent = await prepareContentImages(content);
     const note = {
       slug,
-      content,
-      ...parseIdeaFrontmatter(data, filePath),
+      content: resolvedContent,
+      ...frontmatter,
     };
 
     return note.published ? note : null;

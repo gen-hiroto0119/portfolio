@@ -15,6 +15,7 @@
 | 目的 | ファイル |
 |------|----------|
 | 記事・実績・メモの追加 | `content/**/*.mdx` |
+| 画像（Blog / Idea） | `content/attachments/` |
 | frontmatter 定義 | `lib/content/schema.ts` |
 | データ取得 | `lib/content/index.ts` |
 | MDX 見た目 | `components/mdx/mdx-content.tsx` |

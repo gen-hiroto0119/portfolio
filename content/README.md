@@ -9,6 +9,7 @@ frontmatter は [lib/content/schema.ts](../lib/content/schema.ts) の Zod スキ
 content/
 ├── blog/       → /blog/:slug
 ├── idea/       → /idea/:slug
+├── attachments/ → 画像（Obsidian 埋め込み / cover）
 └── templates/  → Obsidian テンプレート（サイト非公開）
 ```
 
@@ -70,6 +71,7 @@ Blog / Idea の日付は **カレンダー日付**（時刻なし）です。ア
 | `date` | `YYYY-MM-DD` | ✅ | — | 公開日（新しい順に並ぶ） |
 | `category` | `tech` \| `photo` \| `daily` | — | `tech` | カテゴリタブのフィルタ |
 | `tags` | string[] | ✅ | — | タグ（空配列可） |
+| `cover` | string | — | — | カバー画像。`hero.png` / `attachments/...` / `/attachments/...` / `https://...` |
 | `published` | boolean | — | `true` | 公開フラグ |
 
 ### 例
@@ -84,9 +86,22 @@ tags:
   - Design
   - Engineering
   - Process
+cover: boundary.svg
 published: true
 ---
 ```
+
+### 画像（attachments）
+
+画像は Vault 内の [`attachments/`](attachments/) に置きます。詳細は [attachments/README.md](attachments/README.md)。
+
+| 書き方 | 例 |
+|--------|-----|
+| Obsidian 埋め込み | `![[boundary.svg\|キャプション]]` |
+| Markdown | `![キャプション](../attachments/blog/my-post/hero.png)` |
+| cover | frontmatter の `cover: boundary.svg` |
+
+ビルド時に `/attachments/...` へ解決され、`app/attachments/[...path]` がファイルを配信します。
 
 ### 表示先
 

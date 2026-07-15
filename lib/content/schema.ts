@@ -14,6 +14,12 @@ export const blogFrontmatterSchema = z.object({
   date: calendarDateSchema,
   category: blogCategorySchema.default("tech"),
   tags: z.array(z.string()),
+  /**
+   * Cover image ref: attachment basename/path (`hero.png`),
+   * vault-relative (`attachments/...`), public URL (`/attachments/...`),
+   * or absolute `https://...`.
+   */
+  cover: z.string().min(1).optional(),
   published: publishedSchema,
 });
 
@@ -33,6 +39,8 @@ export type IdeaFrontmatter = z.infer<typeof ideaFrontmatterSchema>;
 
 export type BlogPost = BlogFrontmatter & {
   slug: string;
+  /** Resolved public URL for `cover`, when present. */
+  coverUrl?: string;
 };
 
 export type IdeaNote = IdeaFrontmatter & {

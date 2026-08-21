@@ -37,6 +37,8 @@ basename だけで参照できます（Vault 内でファイル名が重複し�
 
 公開 URL は `/attachments/...` に解決され、`app/attachments/[...path]` が `content/attachments` から配信します。
 
+見つからないファイルは `![[missing.png]]` のまま残します（存在しない URL にはしません）。
+
 ## Blog cover
 
 frontmatter の `cover` に同じ参照形式を書けます。

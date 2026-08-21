@@ -41,6 +41,13 @@ const styles = stylex.create({
     fontSize: fontSize.xxl,
     lineHeight: lineHeight.tight,
     color: colors.fg,
+    marginBottom: spacing.md,
+  },
+  description: {
+    fontFamily: fonts.body,
+    fontSize: fontSize.base,
+    lineHeight: lineHeight.normal,
+    color: colors.fgMuted,
     marginBottom: spacing.xl,
   },
   backLink: {
@@ -80,6 +87,7 @@ export function NoteDetail({ note, connections }: NoteDetailProps) {
           </span>
         </div>
         <h1 {...stylex.props(styles.title)}>{note.title}</h1>
+        <p {...stylex.props(styles.description)}>{note.description}</p>
       </header>
       <div {...stylex.props(x.width["100%"])}>
         <MdxContent source={note.content} />

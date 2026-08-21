@@ -17,6 +17,11 @@ import {
   type IdeaNote,
   type IdeaNoteWithContent,
 } from "@/lib/content/schema";
+import {
+  buildNoteIndex,
+  rewriteWikiLinks,
+  type NoteIndex,
+} from "@/lib/content/wiki-links";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
 
@@ -75,6 +80,31 @@ function isPublished<T extends { published: boolean }>(item: T): boolean {
   return item.published;
 }
 
+let noteIndexPromise: Promise<NoteIndex> | null = null;
+
+async function getNoteIndex(): Promise<NoteIndex> {
+  if (!noteIndexPromise) {
+    noteIndexPromise = Promise.all([getAllPosts(), getAllIdeas()]).then(
+      ([posts, ideas]) =>
+        buildNoteIndex(
+          posts.map((post) => post.slug),
+          ideas.map((note) => note.slug),
+        ),
+    );
+  }
+
+  return noteIndexPromise;
+}
+
+async function prepareMdxContent(source: string): Promise<string> {
+  const [withImages, noteIndex] = await Promise.all([
+    prepareContentImages(source),
+    getNoteIndex(),
+  ]);
+
+  return rewriteWikiLinks(withImages, noteIndex);
+}
+
 export async function getAllPosts(): Promise<BlogPost[]> {
   const files = await readMdxFiles(BLOG_DIR);
 
@@ -118,7 +148,7 @@ export async function getPost(slug: string): Promise<BlogPostWithContent | null>
     const { content, data } = matter(raw);
     const frontmatter = parseBlogFrontmatter(data, filePath);
     const [resolvedContent, coverUrl] = await Promise.all([
-      prepareContentImages(content),
+      prepareMdxContent(content),
       resolveCoverImageUrl(frontmatter.cover),
     ]);
     const post = {
@@ -150,7 +180,7 @@ export async function getIdea(
     const raw = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(raw);
     const frontmatter = parseIdeaFrontmatter(data, filePath);
-    const resolvedContent = await prepareContentImages(content);
+    const resolvedContent = await prepareMdxContent(content);
     const note = {
       slug,
       content: resolvedContent,

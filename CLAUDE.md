@@ -25,7 +25,7 @@
 ## コンテンツ方針
 
 - **MDX + Git が正**。CMS は使わない。
-- 将来 **Obsidian Git** で `content/` を Vault 化する予定。WikiLink 対応は未実装。
+- Obsidian Git で `content/` を Vault 化する。`![[image]]` と `[[note]]` は `lib/content` で変換される。
 - 新規コンテンツは既存 MDX の frontmatter・トーンに合わせる。
 
 ## 実装時の注意

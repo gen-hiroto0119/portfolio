@@ -67,6 +67,12 @@ const styles = stylex.create({
   titleAccent: {
     color: colors.accent,
   },
+  description: {
+    fontFamily: fonts.body,
+    fontSize: fontSize.base,
+    lineHeight: lineHeight.normal,
+    color: colors.fgMuted,
+  },
   meta: {
     fontFamily: fonts.mono,
     fontSize: fontSize.xs,
@@ -144,6 +150,7 @@ function NoteCard({ note, connectionCount = 0 }: NoteCardProps) {
       <p {...stylex.props(styles.meta)}>
         Planted {note.planted} / Tended {note.tended}
       </p>
+      <p {...stylex.props(styles.description, x.margin._0)}>{note.description}</p>
       <div
         {...stylex.props(
           styles.tags,

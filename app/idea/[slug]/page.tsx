@@ -26,7 +26,7 @@ export async function generateMetadata({
 
   return {
     title: note.title,
-    description: `Idea — ${note.status}, tended ${note.tended}`,
+    description: note.description,
   };
 }
 

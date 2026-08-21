@@ -25,6 +25,7 @@ export const blogFrontmatterSchema = z.object({
 
 export const ideaFrontmatterSchema = z.object({
   title: z.string().min(1),
+  description: z.string().min(1),
   planted: calendarDateSchema,
   tended: calendarDateSchema,
   status: z.enum(["seedling", "budding", "evergreen"]),

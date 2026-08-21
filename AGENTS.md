@@ -61,7 +61,7 @@ portfolio/
 |------|------|---------------------------|
 | `content/blog/` | 記事 | `title`, `description`, `date`, `category` (tech/photo/daily), `tags`, `published` |
 | `app/works/_entries/` | 実績 | `{slug}.meta.ts` + `{slug}.case.md` — スキーマは `app/works/_lib/schema.ts` |
-| `content/idea/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
+| `content/idea/` | メモ | `title`, `description`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
 
 `published` は省略時 `true`。`false` の場合は一覧・詳細・sitemap・RSS から除外される。
 
@@ -84,7 +84,7 @@ content/
 └── attachments/   # 画像（![[image]] / cover 対応済み）
 ```
 
-`![[image]]` 埋め込みは `lib/content` で `/attachments/...` に変換される。WikiLink（`[[note]]`）のノート間リンクは未実装。
+`![[image]]` 埋め込みは `lib/content` で `/attachments/...` に変換される。WikiLink（`[[note]]` / `[[note|label]]`）は公開済みの `/blog/{slug}` または `/idea/{slug}` に解決され、未知のノートは生の wiki 記法のまま残る。
 
 ## コーディング規約
 

@@ -7,6 +7,7 @@ tags:
   - React
   - Architecture
   - Nextjs
+cover: boundary.svg
 published: true
 ---
 
@@ -15,6 +16,8 @@ published: true
 App Router 導入時に迷うのは「どこまでサーバーで描画するか」です。初期は Client Component に寄せがちですが、データ取得とHTML生成をサーバー側に寄せるほど初期表示は軽くなります。
 
 判断基準はシンプルで、**インタラクションが必要な部分だけ Client** にします。一覧取得、詳細本文、メタ情報は Server Component で十分なことが多いです。
+
+![[boundary.svg|Server で固めて、Client は交互作用だけ]]
 
 ## データ取得パターン
 

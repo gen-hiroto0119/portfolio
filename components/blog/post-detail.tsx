@@ -13,6 +13,7 @@ import {
   lineHeight,
   maxWidth,
   motion,
+  radius,
   spacing,
 } from "@/lib/theme/tokens.stylex";
 
@@ -48,6 +49,13 @@ const styles = stylex.create({
     lineHeight: lineHeight.tight,
     color: colors.fg,
     marginBottom: spacing.xl,
+  },
+  cover: {
+    marginBottom: spacing.xl,
+    borderRadius: radius.md,
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: colors.border,
   },
   body: {
     marginBottom: spacing.xl,
@@ -101,6 +109,20 @@ export function PostDetail({ post }: PostDetailProps) {
           </div>
         </div>
         <h1 {...stylex.props(styles.title)}>{post.title}</h1>
+        {post.coverUrl ? (
+          // Attachments are runtime paths from content/; next/image needs static imports or remote config.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.coverUrl}
+            alt=""
+            {...stylex.props(
+              styles.cover,
+              x.display.block,
+              x.width["100%"],
+              x.height.auto,
+            )}
+          />
+        ) : null}
       </header>
       <div {...stylex.props(styles.body, x.width["100%"])}>
         <MdxContent source={post.content} />

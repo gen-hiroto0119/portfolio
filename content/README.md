@@ -9,12 +9,13 @@ frontmatter は [lib/content/schema.ts](../lib/content/schema.ts) の Zod スキ
 content/
 ├── blog/       → /blog/:slug
 ├── idea/       → /idea/:slug
+├── attachments/ → 画像（Obsidian 埋め込み / cover）
 └── templates/  → Obsidian テンプレート（サイト非公開）
 ```
 
 ## Obsidian（Vault = `content/`）
 
-このフォルダを Obsidian Vault として開き、MDX を直接編集できます。サイトが読むのは **frontmatter の YAML** のみです（インライン `#タグ` や `[[リンク]]` は自動連携しません）。
+このフォルダを Obsidian Vault として開き、MDX を直接編集できます。サイトが読む frontmatter は **YAML** です。本文の `![[image]]` と `[[note]]` はビルド時に変換されます（インライン `#タグ` は自動連携しません）。
 
 ### 日付の書き方
 
@@ -55,6 +56,17 @@ Blog / Idea の日付は **カレンダー日付**（時刻なし）です。ア
 
 `published: false` のファイルはビルド対象から除外されます。下書きは残したくない場合はファイルごと削除してください。
 
+### 本文の Obsidian 記法
+
+| 書き方 | 例 | 結果 |
+|--------|-----|------|
+| 画像埋め込み | `![[boundary.svg\|キャプション]]` | `/attachments/...` の Markdown 画像 |
+| ノート間リンク | `[[command-palette-shortcuts]]` | `/idea/{slug}` または `/blog/{slug}` |
+| ラベル付きリンク | `[[nextjs-app-router-patterns\|App Router]]` | 表示名だけ差し替え |
+| コレクション指定 | `[[blog/nextjs-app-router-patterns]]` | slug が Blog / Idea で重複するとき |
+
+画像の置き場と cover は [attachments/README.md](attachments/README.md)。見つからない画像・ノートは **生の `![[...]]` / `[[...]]` のまま**残します（存在しない URL にはしません）。見出しフラグメント（`[[note#heading]]`）はノート先頭へリンクし、`#heading` は無視します。
+
 ---
 
 ## Blog — `content/blog/`
@@ -70,6 +82,7 @@ Blog / Idea の日付は **カレンダー日付**（時刻なし）です。ア
 | `date` | `YYYY-MM-DD` | ✅ | — | 公開日（新しい順に並ぶ） |
 | `category` | `tech` \| `photo` \| `daily` | — | `tech` | カテゴリタブのフィルタ |
 | `tags` | string[] | ✅ | — | タグ（空配列可） |
+| `cover` | string | — | — | カバー画像。`hero.png` / `attachments/...` / `/attachments/...` / `https://...` |
 | `published` | boolean | — | `true` | 公開フラグ |
 
 ### 例
@@ -84,9 +97,22 @@ tags:
   - Design
   - Engineering
   - Process
+cover: boundary.svg
 published: true
 ---
 ```
+
+### 画像（attachments）
+
+画像は Vault 内の [`attachments/`](attachments/) に置きます。詳細は [attachments/README.md](attachments/README.md)。
+
+| 書き方 | 例 |
+|--------|-----|
+| Obsidian 埋め込み | `![[boundary.svg\|キャプション]]` |
+| Markdown | `![キャプション](../attachments/blog/my-post/hero.png)` |
+| cover | frontmatter の `cover: boundary.svg` |
+
+ビルド時に `/attachments/...` へ解決され、`app/attachments/[...path]` がファイルを配信します。
 
 ### 表示先
 
@@ -120,6 +146,7 @@ published: true
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|-----|------|-----------|------|
 | `title` | string | ✅ | — | メモのタイトル |
+| `description` | string | ✅ | — | 一覧・詳細・OGP 用の要約 |
 | `planted` | `YYYY-MM-DD` | ✅ | — | 最初に書いた日 |
 | `tended` | `YYYY-MM-DD` | ✅ | — | 最後に手入れした日 |
 | `status` | 下表 | ✅ | — | 育ち具合 |
@@ -147,8 +174,7 @@ status: seedling
 tags:
   - UX
   - Keyboard
-related:
-  - static-preview-draft-flow
+related: []
 published: true
 ---
 ```

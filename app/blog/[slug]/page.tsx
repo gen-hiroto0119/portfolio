@@ -33,6 +33,17 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.date,
       url: `${site.url}/blog/${slug}`,
+      ...(post.coverUrl
+        ? {
+            images: [
+              {
+                url: post.coverUrl.startsWith("http")
+                  ? post.coverUrl
+                  : `${site.url}${post.coverUrl}`,
+              },
+            ],
+          }
+        : {}),
     },
   };
 }

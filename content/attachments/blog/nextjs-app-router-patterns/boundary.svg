@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" fill="none">
+  <rect width="1200" height="640" fill="#0A0A0B"/>
+  <rect x="64" y="96" width="480" height="448" rx="8" stroke="#EDEBE8" stroke-opacity="0.35" stroke-width="2"/>
+  <rect x="656" y="96" width="480" height="448" rx="8" stroke="#FF4D00" stroke-opacity="0.7" stroke-width="2"/>
+  <text x="96" y="160" font-family="monospace" font-size="28" fill="#8A8782" letter-spacing="0.12em">SERVER</text>
+  <text x="688" y="160" font-family="monospace" font-size="28" fill="#FF4D00" letter-spacing="0.12em">CLIENT</text>
+  <text x="96" y="260" font-family="sans-serif" font-size="36" fill="#EDEBE8">MDX / data / meta</text>
+  <text x="96" y="320" font-family="sans-serif" font-size="24" fill="#8A8782">HTML íHk˙Åã</text>
+  <text x="688" y="260" font-family="sans-serif" font-size="36" fill="#EDEBE8">§í\(`Q</text>
+  <text x="688" y="320" font-family="sans-serif" font-size="24" fill="#8A8782">keyboard / theme / filter</text>
+  <path d="M 560 320 H 640" stroke="#EDEBE8" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M 624 304 L 640 320 L 624 336" stroke="#EDEBE8" stroke-opacity="0.4" stroke-width="2" fill="none"/>
+  <text x="64" y="600" font-family="monospace" font-size="14" fill="#8A8782" letter-spacing="0.08em">BLOG ATTACHMENT / BOUNDARY</text>
+</svg>

@@ -1,5 +1,5 @@
 import type { CompileOptions } from "@mdx-js/mdx";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 import * as stylex from "@stylexjs/stylex";
 import x from "@stylexjs/atoms";
@@ -120,11 +120,22 @@ const styles = stylex.create({
     backgroundColor: "transparent",
   },
   image: {
-    marginBlock: spacing.lg,
+    marginBlock: 0,
     borderRadius: radius.md,
     borderWidth: "1px",
     borderStyle: "solid",
     borderColor: colors.border,
+  },
+  figure: {
+    marginBlock: spacing.lg,
+  },
+  figcaption: {
+    marginTop: spacing.sm,
+    fontFamily: fonts.mono,
+    fontSize: fontSize.xs,
+    letterSpacing: letterSpacing.wide,
+    color: colors.fgMuted,
+    textAlign: "center",
   },
   tableWrapper: {
     marginBlock: spacing.lg,
@@ -180,11 +191,41 @@ function H3({
 }
 
 function Paragraph({ children, ...props }: ComponentPropsWithoutRef<"p">) {
+  // Markdown wraps lone images in <p>; promote figure/img to avoid invalid nesting.
+  if (isStandaloneMedia(children)) {
+    return <>{children}</>;
+  }
+
   return (
     <p {...stylex.props(styles.paragraph)} {...props}>
       {children}
     </p>
   );
+}
+
+function isStandaloneMedia(children: ReactNode): boolean {
+  const items = Array.isArray(children) ? children : [children];
+  const meaningful = items.filter((child) => {
+    if (child === null || child === undefined || child === false) {
+      return false;
+    }
+    if (typeof child === "string") {
+      return child.trim().length > 0;
+    }
+    return true;
+  });
+
+  if (meaningful.length !== 1) {
+    return false;
+  }
+
+  const only = meaningful[0];
+  if (typeof only !== "object" || only === null || !("type" in only)) {
+    return false;
+  }
+
+  const type = (only as { type?: unknown }).type;
+  return type === Image || type === "img" || type === "figure";
 }
 
 function Anchor({ children, href, ...props }: ComponentPropsWithoutRef<"a">) {
@@ -315,18 +356,39 @@ function Figure({
   return <figure {...props}>{children}</figure>;
 }
 
-function Image({ alt, ...props }: ComponentPropsWithoutRef<"img">) {
-  return (
+function Image({ alt, src, title, ...props }: ComponentPropsWithoutRef<"img">) {
+  const caption = alt?.trim() || title?.trim() || "";
+  const image = (
+    // MDX/attachment images are resolved at runtime; dimensions are unknown at build time.
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       alt={alt ?? ""}
+      src={src}
+      title={title}
+      loading="lazy"
+      decoding="async"
       {...stylex.props(
         styles.image,
         x.display.block,
         x.maxWidth["100%"],
         x.height.auto,
+        x.width["100%"],
       )}
       {...props}
     />
+  );
+
+  if (!caption) {
+    return (
+      <span {...stylex.props(styles.figure, x.display.block)}>{image}</span>
+    );
+  }
+
+  return (
+    <figure {...stylex.props(styles.figure)}>
+      {image}
+      <figcaption {...stylex.props(styles.figcaption)}>{caption}</figcaption>
+    </figure>
   );
 }
 

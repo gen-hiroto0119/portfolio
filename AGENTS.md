@@ -38,9 +38,10 @@ portfolio/
 │   ├── lab/
 │   ├── design/
 │   └── about/
-├── content/                # MDX（Obsidian Vault = blog + idea）
+├── content/                # MDX（Obsidian Vault = blog + idea + attachments）
 │   ├── blog/
-│   └── idea/
+│   ├── idea/
+│   └── attachments/        # 画像（![[embed]] / cover）
 ├── components/             # UI コンポーネント（セクション別サブフォルダ）
 ├── lib/
 │   ├── content/            # MDX 読み込み・Zod スキーマ
@@ -60,7 +61,7 @@ portfolio/
 |------|------|---------------------------|
 | `content/blog/` | 記事 | `title`, `description`, `date`, `category` (tech/photo/daily), `tags`, `published` |
 | `app/works/_entries/` | 実績 | `{slug}.meta.ts` + `{slug}.case.md` — スキーマは `app/works/_lib/schema.ts` |
-| `content/idea/` | メモ | `title`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
+| `content/idea/` | メモ | `title`, `description`, `planted`, `tended`, `status` (seedling/budding/evergreen), `tags`, `related` (slug 配列), `published` |
 
 `published` は省略時 `true`。`false` の場合は一覧・詳細・sitemap・RSS から除外される。
 
@@ -74,16 +75,16 @@ portfolio/
 3. slug はファイル名（拡張子除く）
 4. `npm run dev` で表示確認
 
-### Obsidian 移行（予定）
+### Obsidian 移行
 
 ```
 content/
 ├── blog/
 ├── idea/
-└── attachments/   # 画像（予定）
+└── attachments/   # 画像（![[image]] / cover 対応済み）
 ```
 
-移行時は WikiLink (`[[note]]`) と `![[image]]` の変換レイヤーを `lib/content` に追加する。現状は標準 MDX のみ。
+`![[image]]` 埋め込みは `lib/content` で `/attachments/...` に変換される。WikiLink（`[[note]]` / `[[note|label]]`）は公開済みの `/blog/{slug}` または `/idea/{slug}` に解決され、未知のノートは生の wiki 記法のまま残る。
 
 ## コーディング規約
 

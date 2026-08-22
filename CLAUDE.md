@@ -15,6 +15,7 @@
 | 目的 | ファイル |
 |------|----------|
 | 記事・実績・メモの追加 | `content/**/*.mdx` |
+| 画像（Blog / Idea） | `content/attachments/` |
 | frontmatter 定義 | `lib/content/schema.ts` |
 | データ取得 | `lib/content/index.ts` |
 | MDX 見た目 | `components/mdx/mdx-content.tsx` |
@@ -24,7 +25,7 @@
 ## コンテンツ方針
 
 - **MDX + Git が正**。CMS は使わない。
-- 将来 **Obsidian Git** で `content/` を Vault 化する予定。WikiLink 対応は未実装。
+- Obsidian Git で `content/` を Vault 化する。`![[image]]` と `[[note]]` は `lib/content` で変換される。
 - 新規コンテンツは既存 MDX の frontmatter・トーンに合わせる。
 
 ## 実装時の注意

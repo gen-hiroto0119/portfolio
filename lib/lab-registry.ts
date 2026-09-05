@@ -19,7 +19,7 @@ export const labExperiments: LabExperiment[] = [
     no: "001",
     title: "Orbit Lines",
     description:
-      "異なる軌道で回る点群と、距離に応じて結ばれる細い線。マウスで緩く引き寄せられます。",
+      "点が回りながら、近くの点どうしを線で結びます。マウスを近づけると、点が少し引き寄せられます。",
     date: "2026-07",
     Component: OrbitLines,
   },
@@ -28,7 +28,7 @@ export const labExperiments: LabExperiment[] = [
     no: "002",
     title: "Dither Gradient",
     description:
-      "Bayer 行列による ordered dithering で 2 色のグラデーションを描画。しきい値が波打つように動きます。",
+      "Bayer行列を使い、2色の点でグラデーションを描いています。模様がゆっくり動きます。",
     date: "2026-07",
     Component: DitherGradient,
   },
@@ -37,7 +37,7 @@ export const labExperiments: LabExperiment[] = [
     no: "003",
     title: "Type Grid",
     description:
-      "等間隔に敷いた文字が、マウスとの距離に応じて opacity・scale・字形が変化します。",
+      "マウスを近づけると、文字の濃さ、大きさ、形が変わります。",
     date: "2026-07",
     Component: TypeGrid,
   },

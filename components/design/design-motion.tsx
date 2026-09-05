@@ -1,158 +1,36 @@
 "use client";
 
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
+import { Button } from "@base-ui/react/button";
 import { useState } from "react";
 
-import {
-  colors,
-  fontSize,
-  fonts,
-  letterSpacing,
-  lineHeight,
-  motion,
-  radius,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
-
 const MOTION_DEMOS = [
-  { name: "durationFast", duration: motion.durationFast },
-  { name: "durationBase", duration: motion.durationBase },
-  { name: "durationSlow", duration: motion.durationSlow },
+  { name: "150 ms", className: "duration-150" },
+  { name: "200 ms", className: "duration-200" },
+  { name: "300 ms", className: "duration-300" },
 ] as const;
 
-const sectionStyles = stylex.create({
-  section: {
-    paddingBottom: spacing.xxl,
-  },
-  sectionLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-    marginBottom: spacing.lg,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: {
-      default: "1fr",
-      "@media (min-width: 640px)": "repeat(3, 1fr)",
-    },
-    gap: spacing.lg,
-  },
-  demo: {
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  label: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-  },
-  track: {
-    backgroundColor: colors.bgSubtle,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-    borderRadius: radius.sm,
-  },
-  box: {
-    left: spacing.sm,
-    marginTop: "-0.625rem",
-    backgroundColor: colors.accent,
-    borderRadius: radius.sm,
-    transitionProperty: "transform",
-    transitionTimingFunction: motion.easing,
-    transform: "translateX(0)",
-  },
-  boxActive: {
-    transform: "translateX(calc(100% + 4rem))",
-  },
-  easing: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.sm,
-    color: colors.fg,
-    marginTop: spacing.md,
-    lineHeight: lineHeight.snug,
-  },
-  easingValue: {
-    color: colors.fgMuted,
-  },
-});
-
-type MotionDemoProps = {
-  name: string;
-  duration: string;
-};
-
-function MotionDemo({ name, duration }: MotionDemoProps) {
-  const [hovered, setHovered] = useState(false);
+function MotionDemo({ name, className }: { name: string; className: string }) {
+  const [active, setActive] = useState(false);
 
   return (
-    <div
-      {...stylex.props(
-        sectionStyles.demo,
-        x.display.flex,
-        x.flexDirection.column,
-        x.minHeight["6rem"],
-        x.justifyContent.center,
-      )}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <p {...stylex.props(sectionStyles.label, x.margin._0)}>{name}</p>
-      <div
-        {...stylex.props(
-          sectionStyles.track,
-          x.position.relative,
-          x.height["2rem"],
-          x.overflow.hidden,
-        )}
-      >
-        <div
-          {...stylex.props(
-            sectionStyles.box,
-            x.position.absolute,
-            x.top["50%"],
-            x.width["1.25rem"],
-            x.height["1.25rem"],
-            hovered && sectionStyles.boxActive,
-          )}
-          style={{ transitionDuration: duration }}
-        />
-      </div>
-    </div>
+    <Button aria-label={`${name}の動きを試す`} aria-pressed={active} onClick={() => setActive((value) => !value)} className="rounded-md border border-border p-5 text-left hover:bg-surface">
+      <span className="mb-4 block font-mono text-xs text-muted-foreground">{name}</span>
+      <span aria-hidden className="relative block h-8 overflow-hidden rounded bg-surface">
+        <span className={`absolute top-1.5 size-5 rounded-sm bg-foreground transition-[left] ease-out motion-reduce:transition-none ${className} ${active ? "left-[calc(100%-1.75rem)]" : "left-2"}`} />
+      </span>
+    </Button>
   );
 }
 
 export function DesignMotionSection() {
   return (
-    <section aria-labelledby="design-motion" {...stylex.props(sectionStyles.section)}>
-      <h2
-        id="design-motion"
-        {...stylex.props(sectionStyles.sectionLabel, x.textTransform.uppercase)}
-      >
-        04 — Motion
-      </h2>
-      <div {...stylex.props(sectionStyles.grid)}>
-        {MOTION_DEMOS.map((demo) => (
-          <MotionDemo key={demo.name} name={demo.name} duration={demo.duration} />
-        ))}
+    <section aria-labelledby="design-motion" className="pb-20">
+      <h2 id="design-motion" className="mb-6 border-b border-border pb-3 text-xs text-muted-foreground">動き</h2>
+      <p className="mb-6 text-sm leading-7 text-muted-foreground">クリックすると、アニメーションにかかる時間の違いを確認できます。</p>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {MOTION_DEMOS.map((demo) => <MotionDemo key={demo.name} {...demo} />)}
       </div>
-      <p {...stylex.props(sectionStyles.easing)}>
-        easing{" "}
-        <span {...stylex.props(sectionStyles.easingValue)}>
-          cubic-bezier(0.2, 0, 0, 1)
-        </span>
-      </p>
+      <p className="mt-4 text-xs leading-6 text-muted-foreground">動きを減らす設定に対応しています。</p>
     </section>
   );
 }

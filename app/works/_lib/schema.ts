@@ -8,20 +8,10 @@ export const workSchema = z.object({
   slug: z.string().min(1),
   title: z.string().min(1),
   description: z.string().min(1),
-  date: calendarDateSchema,
+  date: calendarDateSchema.optional(),
   role: z.string().min(1),
   stack: z.array(z.string()),
   client: z.string().optional(),
-  challenge: z.string().min(1),
-  outcome: z.string().min(1),
-  metrics: z
-    .array(
-      z.object({
-        label: z.string().min(1),
-        value: z.string().min(1),
-      }),
-    )
-    .optional(),
   links: z
     .array(
       z.object({
@@ -35,10 +25,6 @@ export const workSchema = z.object({
 });
 
 export type Work = z.infer<typeof workSchema>;
-
-export type WorkWithContent = Work & {
-  content: string;
-};
 
 function formatZodError(error: z.ZodError): string {
   return error.issues

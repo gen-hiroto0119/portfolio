@@ -1,44 +1,13 @@
 "use client";
 
 import { Monitor, Moon, Sun } from "lucide-react";
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
 
 import { iconSize, iconStroke } from "@/lib/icons";
-import {
-  colors,
-  motion,
-  radius,
-} from "@/lib/theme/tokens.stylex";
 
 import { useTheme, type Theme } from "./theme-provider";
 
 const THEME_CYCLE: Theme[] = ["dark", "light", "system"];
 
-const styles = stylex.create({
-  button: {
-    backgroundColor: "transparent",
-    color: colors.fgMuted,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    transitionProperty: "color, border-color, background-color",
-    transitionDuration: motion.durationFast,
-    transitionTimingFunction: motion.easing,
-    ":hover": {
-      color: colors.fg,
-      borderColor: colors.borderStrong,
-      backgroundColor: colors.bgSubtle,
-    },
-    ":focus-visible": {
-      outlineWidth: "2px",
-      outlineStyle: "solid",
-      outlineColor: colors.accent,
-      outlineOffset: "2px",
-    },
-  },
-});
 
 const THEME_LABELS: Record<Theme, string> = {
   dark: "Dark theme",
@@ -75,16 +44,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      {...stylex.props(
-        styles.button,
-        x.display["inline-flex"],
-        x.alignItems.center,
-        x.justifyContent.center,
-        x.width["2rem"],
-        x.height["2rem"],
-        x.padding._0,
-        x.cursor.pointer,
-      )}
+      className="icon-button"
       aria-label={`Theme: ${THEME_LABELS[theme]}. Activate to switch theme.`}
       onClick={() => setTheme(nextTheme(theme))}
     >

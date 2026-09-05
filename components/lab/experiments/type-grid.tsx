@@ -1,31 +1,12 @@
 "use client";
 
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useTheme } from "@/components/theme/theme-provider";
-import { colors, fonts } from "@/lib/theme/tokens.stylex";
 
 import { useLabAnimation } from "../use-lab-animation";
 
 const GLYPHS = ["あ", "A", "■", "0", "×", "◇"] as const;
-
-const styles = stylex.create({
-  grid: {
-    fontFamily: fonts.mono,
-  },
-  cell: {
-    color: colors.fg,
-    transitionProperty: "opacity, transform, color",
-    transitionDuration: "80ms",
-    transitionTimingFunction: "linear",
-    willChange: "transform, opacity",
-  },
-  cellAccent: {
-    color: colors.accent,
-  },
-});
 
 type CellState = {
   opacity: number;
@@ -90,7 +71,7 @@ export function TypeGrid() {
   return (
     <div
       ref={containerRef}
-      style={{ width: "100%", height: "100%" }}
+      className="h-full w-full"
       onMouseMove={(event) => {
         mouseRef.current = { x: event.clientX, y: event.clientY };
       }}
@@ -100,25 +81,12 @@ export function TypeGrid() {
     >
       <div
         ref={gridRef}
-        {...stylex.props(
-          x.display.grid,
-          x.gridTemplateColumns["repeat(12, 1fr)"],
-          x.gridTemplateRows["repeat(6, 1fr)"],
-          x.width["100%"],
-          x.height["100%"],
-          x.alignItems.center,
-          x.justifyItems.center,
-          x.userSelect.none,
-          styles.grid,
-        )}
+        className="grid h-full w-full grid-cols-12 grid-rows-6 items-center justify-items-center font-mono select-none"
       >
         {cells.map((cell, index) => (
           <span
             key={index}
-            {...stylex.props(
-              styles.cell,
-              cell.glyphIndex >= 3 && styles.cellAccent,
-            )}
+            className={`transition-[opacity,transform,color] duration-[80ms] ease-linear motion-reduce:transition-none ${cell.glyphIndex >= 3 ? "text-accent" : "text-foreground"}`}
             style={{
               opacity: cell.opacity,
               transform: `scale(${cell.scale})`,

@@ -1,190 +1,36 @@
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
-
-import {
-  colors,
-  fontSize,
-  fonts,
-  letterSpacing,
-  lineHeight,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
-
-const SAMPLE_JA = "デザインとビジネスの文脈から、技術でかたちにする。";
-const SAMPLE_EN = "The quick brown fox 0123";
-
 const FONT_SAMPLES = [
-  { label: "display", family: fonts.display },
-  { label: "body", family: fonts.body },
-  { label: "mono", family: fonts.mono },
+  { label: "本文 / Inter・Noto Sans JP", className: "font-sans", text: "日本語の文字を確認するためのサンプルです。" },
+  { label: "コード / JetBrains Mono", className: "font-mono", text: "const message = 'Hello, world!';" },
 ] as const;
 
 const FONT_SIZE_SCALE = [
-  { name: "xs", size: fontSize.xs },
-  { name: "sm", size: fontSize.sm },
-  { name: "base", size: fontSize.base },
-  { name: "lg", size: fontSize.lg },
-  { name: "xl", size: fontSize.xl },
-  { name: "xxl", size: fontSize.xxl },
-  { name: "display", size: fontSize.display },
+  { name: "text-xs", value: "12 px", className: "text-xs" },
+  { name: "text-sm", value: "14 px", className: "text-sm" },
+  { name: "text-base", value: "16 px", className: "text-base" },
+  { name: "text-xl", value: "20 px", className: "text-xl" },
+  { name: "text-2xl", value: "24 px", className: "text-2xl" },
+  { name: "text-4xl", value: "36 px", className: "text-4xl" },
 ] as const;
-
-const sectionStyles = stylex.create({
-  section: {
-    paddingBottom: spacing.xxl,
-  },
-  sectionLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-    marginBottom: spacing.lg,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-  },
-  stack: {
-    gap: spacing.xl,
-  },
-  familyBlock: {
-    gap: spacing.sm,
-    paddingBottom: spacing.lg,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-  },
-  familyLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-  },
-  sampleJa: {
-    fontSize: fontSize.lg,
-    lineHeight: lineHeight.snug,
-    color: colors.fg,
-  },
-  sampleEn: {
-    fontSize: fontSize.base,
-    lineHeight: lineHeight.normal,
-    color: colors.fgMuted,
-  },
-  scaleHeading: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-    marginTop: spacing.md,
-    marginBottom: spacing.md,
-  },
-  scaleList: {
-    gap: spacing.md,
-  },
-  scaleRow: {
-    gap: spacing.xxs,
-  },
-  scaleMeta: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    color: colors.fgFaint,
-  },
-  scaleSample: {
-    fontFamily: fonts.body,
-    lineHeight: lineHeight.tight,
-    color: colors.fg,
-  },
-});
 
 export function DesignTypographySection() {
   return (
-    <section
-      aria-labelledby="design-typography"
-      {...stylex.props(sectionStyles.section)}
-    >
-      <h2
-        id="design-typography"
-        {...stylex.props(sectionStyles.sectionLabel, x.textTransform.uppercase)}
-      >
-        02 — Typography
-      </h2>
-      <div
-        {...stylex.props(
-          sectionStyles.stack,
-          x.display.flex,
-          x.flexDirection.column,
-        )}
-      >
+    <section aria-labelledby="design-typography" className="pb-20">
+      <h2 id="design-typography" className="mb-6 border-b border-border pb-3 text-xs text-muted-foreground">文字</h2>
+      <div className="space-y-8">
         {FONT_SAMPLES.map((sample) => (
-          <div
-            key={sample.label}
-            {...stylex.props(
-              sectionStyles.familyBlock,
-              x.display.flex,
-              x.flexDirection.column,
-            )}
-          >
-            <p
-              {...stylex.props(
-                sectionStyles.familyLabel,
-                x.textTransform.uppercase,
-                x.margin._0,
-              )}
-            >
-              {sample.label}
-            </p>
-            <p
-              {...stylex.props(sectionStyles.sampleJa, x.margin._0)}
-              style={{ fontFamily: sample.family }}
-            >
-              {SAMPLE_JA}
-            </p>
-            <p
-              {...stylex.props(sectionStyles.sampleEn, x.margin._0)}
-              style={{ fontFamily: sample.family }}
-            >
-              {SAMPLE_EN}
-            </p>
+          <div key={sample.label} className="border-b border-border pb-8">
+            <p className="mb-4 text-xs text-muted-foreground">{sample.label}</p>
+            <p className={`break-words text-xl leading-relaxed ${sample.className}`}>{sample.text}</p>
+            <p className={`mt-2 text-sm text-muted-foreground ${sample.className}`}>The quick brown fox 0123456789</p>
           </div>
         ))}
-
-        <div>
-          <p
-            {...stylex.props(
-              sectionStyles.scaleHeading,
-              x.textTransform.uppercase,
-            )}
-          >
-            fontSize scale
-          </p>
-          <div
-            {...stylex.props(
-              sectionStyles.scaleList,
-              x.display.flex,
-              x.flexDirection.column,
-            )}
-          >
-            {FONT_SIZE_SCALE.map((item) => (
-              <div
-                key={item.name}
-                {...stylex.props(
-                  sectionStyles.scaleRow,
-                  x.display.flex,
-                  x.flexDirection.column,
-                )}
-              >
-                <p {...stylex.props(sectionStyles.scaleMeta, x.margin._0)}>
-                  {item.name}
-                </p>
-                <p
-                  {...stylex.props(sectionStyles.scaleSample, x.margin._0)}
-                  style={{ fontSize: item.size }}
-                >
-                  {SAMPLE_EN}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div className="space-y-6">
+          {FONT_SIZE_SCALE.map((item) => (
+            <div key={item.name} className="grid items-baseline gap-2 sm:grid-cols-[9rem_1fr]">
+              <p className="font-mono text-[10px] text-muted-foreground">{item.name} · {item.value}</p>
+              <p className={`tracking-tight ${item.className}`}>文字サイズのサンプル。Sample text.</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

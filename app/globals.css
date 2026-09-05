@@ -1,69 +1,99 @@
-/*
- * The reset lives in a cascade layer so that StyleX rules (emitted into
- * @layer priority1..6 by useCSSLayers) can override it. Unlayered CSS would
- * always beat layered CSS regardless of specificity.
- */
-@layer reset {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
+@import "tailwindcss";
 
-  * {
-    margin: 0;
-  }
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-  html {
-    height: 100%;
-  }
-
-  body {
-    min-height: 100%;
-  }
-
-  img,
-  picture,
-  video,
-  canvas,
-  svg {
-    display: block;
-    max-width: 100%;
-  }
-
-  input,
-  button,
-  textarea,
-  select {
-    font: inherit;
-  }
-
-  p,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    overflow-wrap: break-word;
-  }
+:root {
+  --background: #ffffff;
+  --surface: #f7f7f8;
+  --foreground: #202124;
+  --muted-foreground: #71717a;
+  --border: #e8e8eb;
+  --accent: #202124;
+  --syntax-comment: #66707c;
+  --syntax-keyword: #c7253c;
+  --syntax-string: #164e87;
+  --syntax-title: #6f42c1;
+  --syntax-literal: #005cc5;
+  --syntax-tag: #16733d;
 }
-
-@stylex;
-
-/*
- * Dual-theme syntax highlighting (rehype-pretty-code / shiki).
- * Tokens carry inline --shiki-light / --shiki-dark custom properties;
- * html[data-theme] (set pre-paint by the theme init script) picks one.
- * Dark is the site default, so it is also the fallback when data-theme
- * is absent (e.g. JS disabled).
- */
-code[data-theme*=" "],
-code[data-theme*=" "] span {
-  color: var(--shiki-dark);
+html[data-theme="dark"] {
+  --background: #141414;
+  --surface: #1e1e20;
+  --foreground: #eeeeef;
+  --muted-foreground: #a1a1aa;
+  --border: #303033;
+  --accent: #eeeeef;
+  --syntax-comment: #9da6b1;
+  --syntax-keyword: #ff7b72;
+  --syntax-string: #a5d6ff;
+  --syntax-title: #d2a8ff;
+  --syntax-literal: #79c0ff;
+  --syntax-tag: #7ee787;
+  color-scheme: dark;
 }
-
-html[data-theme="light"] code[data-theme*=" "],
-html[data-theme="light"] code[data-theme*=" "] span {
-  color: var(--shiki-light);
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --font-sans: "Inter Variable", "Noto Sans JP Variable", sans-serif;
+  --font-mono: "JetBrains Mono Variable", monospace;
+}
+@layer base {
+  html { min-height: 100%; scroll-padding-top: 5rem; }
+  button, [role="button"] { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  :focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
+  ::selection { background: color-mix(in srgb, var(--foreground) 16%, transparent); }
+}
+@layer components {
+  .icon-button { @apply inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface hover:text-foreground; }
+  .button { @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-surface disabled:opacity-50; }
+  .button-primary { @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-80 disabled:opacity-50; }
+  .field { @apply w-full rounded-md border border-border bg-background px-3 py-2 text-sm; }
+  .prose-content { @apply text-[15px] leading-8 text-foreground; overflow-wrap: anywhere; }
+  .prose-content > * + * { margin-top: 1.5em; }
+  .prose-content h2 { @apply mt-12 text-2xl font-semibold tracking-tight; }
+  .prose-content h3 { @apply mt-10 text-xl font-semibold; }
+  .prose-content h4 { @apply mt-8 text-lg font-medium; }
+  .prose-content a { @apply underline decoration-border underline-offset-4 hover:decoration-foreground; }
+  .prose-content ul { @apply list-disc pl-6; }
+  .prose-content ol { @apply list-decimal pl-6; }
+  .prose-content li + li { margin-top: .5em; }
+  .prose-content blockquote { @apply border-l-2 border-border pl-5 text-muted-foreground; }
+  .prose-content pre { @apply overflow-x-auto rounded-md bg-surface p-5 text-[13px] leading-6; }
+  .prose-content :not(pre) > code { @apply rounded bg-surface px-1.5 py-0.5 font-mono text-[.9em]; }
+  .prose-content img { @apply mx-auto h-auto max-w-full rounded-md; }
+  .prose-content hr { @apply my-10 border-border; }
+  .prose-content table { @apply w-full text-left text-sm; }
+  .prose-content th, .prose-content td { @apply border-b border-border p-3; }
+  .syntax-highlight { color: var(--foreground); }
+  .syntax-highlight code { @apply font-mono; }
+  .syntax-highlight .hljs-comment,
+  .syntax-highlight .hljs-quote { color: var(--syntax-comment); }
+  .syntax-highlight .hljs-keyword,
+  .syntax-highlight .hljs-selector-tag,
+  .syntax-highlight .hljs-deletion { color: var(--syntax-keyword); }
+  .syntax-highlight .hljs-string,
+  .syntax-highlight .hljs-regexp,
+  .syntax-highlight .hljs-doctag { color: var(--syntax-string); }
+  .syntax-highlight .hljs-title,
+  .syntax-highlight .hljs-section { color: var(--syntax-title); }
+  .syntax-highlight .hljs-number,
+  .syntax-highlight .hljs-literal,
+  .syntax-highlight .hljs-built_in,
+  .syntax-highlight .hljs-type,
+  .syntax-highlight .hljs-attr,
+  .syntax-highlight .hljs-attribute,
+  .syntax-highlight .hljs-symbol,
+  .syntax-highlight .hljs-variable,
+  .syntax-highlight .hljs-meta { color: var(--syntax-literal); }
+  .syntax-highlight .hljs-name,
+  .syntax-highlight .hljs-selector-class,
+  .syntax-highlight .hljs-selector-id,
+  .syntax-highlight .hljs-addition { color: var(--syntax-tag); }
+  .syntax-highlight .hljs-emphasis { font-style: italic; }
+  .syntax-highlight .hljs-strong { font-weight: 600; }
 }

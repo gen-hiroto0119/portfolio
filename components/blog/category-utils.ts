@@ -5,11 +5,11 @@ export type CategoryFilter = "all" | BlogCategory;
 export function getCategoryLabel(category: BlogCategory): string {
   switch (category) {
     case "tech":
-      return "TECH";
+      return "技術";
     case "photo":
-      return "PHOTO";
+      return "写真";
     case "daily":
-      return "DAILY";
+      return "日常";
     default: {
       const _exhaustive: never = category;
       return _exhaustive;
@@ -20,13 +20,13 @@ export function getCategoryLabel(category: BlogCategory): string {
 export function getFilterLabel(filter: CategoryFilter): string {
   switch (filter) {
     case "all":
-      return "ALL";
+      return "すべて";
     case "tech":
-      return "TECH";
+      return "技術";
     case "photo":
-      return "PHOTO";
+      return "写真";
     case "daily":
-      return "DAILY";
+      return "日常";
     default: {
       const _exhaustive: never = filter;
       return _exhaustive;

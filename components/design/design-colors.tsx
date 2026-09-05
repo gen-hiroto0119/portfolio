@@ -1,129 +1,27 @@
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
-
-import {
-  colors,
-  fontSize,
-  fonts,
-  letterSpacing,
-  lineHeight,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
-
 const COLOR_TOKENS = [
-  { name: "bg", dark: "#0A0A0B", light: "#F7F5F2" },
-  { name: "bgSubtle", dark: "#111113", light: "#EFECE7" },
-  { name: "bgElevated", dark: "#17171A", light: "#FFFFFF" },
-  { name: "fg", dark: "#EDEBE8", light: "#141414" },
-  { name: "fgMuted", dark: "#8A8782", light: "#6B6862" },
-  { name: "fgFaint", dark: "#55534E", light: "#A8A49D" },
-  { name: "border", dark: "#232326", light: "#DDD9D2" },
-  { name: "borderStrong", dark: "#3A3A3F", light: "#C2BDB4" },
-  { name: "accent", dark: "#FF4D00", light: "#E64500" },
-  { name: "accentFg", dark: "#0A0A0B", light: "#FFFFFF" },
-  { name: "accentMuted", dark: "rgba(255,77,0,0.15)", light: "rgba(230,69,0,0.12)" },
-  { name: "selection", dark: "rgba(255,77,0,0.30)", light: "rgba(230,69,0,0.25)" },
+  { name: "background", label: "背景", light: "#FFFFFF", dark: "#141414", className: "bg-background" },
+  { name: "surface", label: "面", light: "#F7F7F8", dark: "#1E1E20", className: "bg-surface" },
+  { name: "foreground", label: "本文", light: "#202124", dark: "#EEEEEF", className: "bg-foreground" },
+  { name: "muted-foreground", label: "補足", light: "#71717A", dark: "#A1A1AA", className: "bg-muted-foreground" },
+  { name: "border", label: "境界", light: "#E8E8EB", dark: "#303033", className: "bg-border" },
+  { name: "accent", label: "強調", light: "#202124", dark: "#EEEEEF", className: "bg-accent" },
 ] as const;
-
-const sectionStyles = stylex.create({
-  section: {
-    paddingBottom: spacing.xxl,
-  },
-  sectionLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-    marginBottom: spacing.lg,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-  },
-  hint: {
-    fontFamily: fonts.body,
-    fontSize: fontSize.sm,
-    lineHeight: lineHeight.normal,
-    color: colors.fgMuted,
-    marginBottom: spacing.lg,
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: {
-      default: "repeat(2, 1fr)",
-      "@media (min-width: 640px)": "repeat(3, 1fr)",
-      "@media (min-width: 1024px)": "repeat(4, 1fr)",
-    },
-    gap: spacing.md,
-  },
-  swatch: {
-    gap: spacing.xs,
-  },
-  color: {
-    aspectRatio: "4 / 3",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-  },
-  tokenName: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fg,
-  },
-  values: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    color: colors.fgMuted,
-    lineHeight: lineHeight.snug,
-  },
-});
-
-const swatchStyles = stylex.create({
-  bg: { backgroundColor: colors.bg },
-  bgSubtle: { backgroundColor: colors.bgSubtle },
-  bgElevated: { backgroundColor: colors.bgElevated },
-  fg: { backgroundColor: colors.fg },
-  fgMuted: { backgroundColor: colors.fgMuted },
-  fgFaint: { backgroundColor: colors.fgFaint },
-  border: { backgroundColor: colors.border },
-  borderStrong: { backgroundColor: colors.borderStrong },
-  accent: { backgroundColor: colors.accent },
-  accentFg: { backgroundColor: colors.accentFg },
-  accentMuted: { backgroundColor: colors.accentMuted },
-  selection: { backgroundColor: colors.selection },
-});
 
 export function DesignColorsSection() {
   return (
-    <section aria-labelledby="design-colors" {...stylex.props(sectionStyles.section)}>
-      <h2
-        id="design-colors"
-        {...stylex.props(sectionStyles.sectionLabel, x.textTransform.uppercase)}
-      >
-        01 — Colors
-      </h2>
-      <p {...stylex.props(sectionStyles.hint, x.maxWidth["40rem"])}>
-        スウォッチはトークンを参照しているため、ヘッダーのテーマ切り替えで色面も変わります。
+    <section aria-labelledby="design-colors" className="pb-20">
+      <h2 id="design-colors" className="mb-6 border-b border-border pb-3 text-xs text-muted-foreground">色</h2>
+      <p className="mb-8 max-w-xl text-sm leading-7 text-muted-foreground">
+        背景や文字に使っている色です。テーマを切り替えると、ライト・ダークそれぞれの配色を確認できます。
       </p>
-      <div {...stylex.props(sectionStyles.grid)}>
+      <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3">
         {COLOR_TOKENS.map((token) => (
-          <div
-            key={token.name}
-            {...stylex.props(
-              sectionStyles.swatch,
-              x.display.flex,
-              x.flexDirection.column,
-            )}
-          >
-            <div {...stylex.props(sectionStyles.color, swatchStyles[token.name])} />
-            <p {...stylex.props(sectionStyles.tokenName, x.margin._0)}>
-              {token.name}
-            </p>
-            <p {...stylex.props(sectionStyles.values, x.margin._0)}>
-              dark {token.dark}
-              <br />
-              light {token.light}
+          <div key={token.name}>
+            <div aria-hidden className={`mb-3 aspect-[3/2] rounded-md border border-border ${token.className}`} />
+            <p className="text-sm font-medium">{token.label}</p>
+            <p className="mt-1 font-mono text-[10px] text-muted-foreground">{token.name}</p>
+            <p className="mt-2 font-mono text-[10px] leading-5 text-muted-foreground">
+              Light {token.light}<br />Dark {token.dark}
             </p>
           </div>
         ))}

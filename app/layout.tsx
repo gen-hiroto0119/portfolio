@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
 
 import { CommandPaletteProvider } from "@/components/command-palette/command-palette-provider";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
@@ -11,8 +9,6 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { getLocaleInitScript } from "@/lib/i18n/locale-script";
 import { getThemeInitScript } from "@/lib/theme/theme-script";
 import { site } from "@/lib/site";
-import { lightTheme } from "@/lib/theme/themes.stylex";
-import { colors, fonts, motion } from "@/lib/theme/tokens.stylex";
 import "@fontsource-variable/space-grotesk";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-jp";
@@ -40,23 +36,6 @@ export const metadata: Metadata = {
   },
 };
 
-const lightThemeClassName = stylex.props(lightTheme).className ?? "";
-
-const layoutStyles = stylex.create({
-  body: {
-    minHeight: "100%",
-    backgroundColor: colors.bg,
-    color: colors.fg,
-    fontFamily: fonts.body,
-    transitionProperty: "background-color, color",
-    transitionDuration: motion.durationBase,
-    transitionTimingFunction: motion.easing,
-    "::selection": {
-      backgroundColor: colors.selection,
-    },
-  },
-});
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -74,26 +53,16 @@ export default async function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: getThemeInitScript(lightThemeClassName),
+            __html: getThemeInitScript(),
           }}
         />
       </head>
-      <body
-        {...stylex.props(
-          layoutStyles.body,
-          x.isolation.isolate,
-          x.display.flex,
-          x.flexDirection.column,
-        )}
-      >
-        <ThemeProvider lightThemeClassName={lightThemeClassName}>
+      <body className="isolate flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
+        <ThemeProvider>
           <LocaleProvider>
             <CommandPaletteProvider contentItems={contentItems}>
               <Header />
-              <main
-                id="main"
-                {...stylex.props(x.flex._1, x.display.flex, x.flexDirection.column)}
-              >
+              <main id="main" className="flex flex-1 flex-col">
                 {children}
               </main>
               <Footer />

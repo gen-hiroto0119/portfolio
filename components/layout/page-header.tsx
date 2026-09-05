@@ -1,49 +1,8 @@
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
-
-import {
-  colors,
-  fontSize,
-  fonts,
-  lineHeight,
-  maxWidth,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
-
-const styles = stylex.create({
-  shell: {
-    maxWidth: maxWidth.content,
-    marginInline: "auto",
-    paddingBlock: spacing.section,
-    paddingInline: spacing.lg,
-  },
-  title: {
-    fontFamily: fonts.display,
-    fontSize: fontSize.xxl,
-    lineHeight: lineHeight.tight,
-    color: colors.fg,
-    marginBottom: spacing.md,
-  },
-  description: {
-    fontFamily: fonts.body,
-    fontSize: fontSize.lg,
-    lineHeight: lineHeight.snug,
-    color: colors.fgMuted,
-  },
-});
-
-type PageHeaderProps = {
-  title: string;
-  description: string;
-};
-
-export function PageHeader({ title, description }: PageHeaderProps) {
+export function PageHeader({ title, description }: { title: string; description: string }) {
   return (
-    <header {...stylex.props(styles.shell, x.width["100%"])}>
-      <h1 {...stylex.props(styles.title)}>{title}</h1>
-      <p {...stylex.props(styles.description, x.maxWidth["36rem"])}>
-        {description}
-      </p>
+    <header className="mx-auto w-full max-w-4xl px-6 pb-12 pt-16 sm:px-10 sm:pt-20">
+      <h1 className="text-3xl font-medium tracking-tight">{title}</h1>
+      <p className="mt-5 max-w-xl text-sm leading-7 text-muted-foreground">{description}</p>
     </header>
   );
 }

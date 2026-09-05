@@ -1,39 +1,30 @@
 # Hiroto Portfolio
 
-デザインとエンジニアリングのポートフォリオサイト。
+Hiroto Furugenの個人サイト。作品の紹介と、開発や日々の記録を載せています。
 
 ## 技術スタック
 
-- **Next.js 16** (App Router, SSG)
-- **TypeScript**
-- **StyleX** — スタイリングとデザイントークン
-- **MDX** — コンテンツ (`gray-matter` + `next-mdx-remote`)
+- Next.js 16 / React 19 / TypeScript
+- Tailwind CSS / Base UI
+- Tiptap / Supabase Auth・Postgres・Storage
+- Vercel
 
 ## 開発
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev
 npm run build
-npm run start
 npm run lint
-npx tsc --noEmit
+npm test
 ```
 
-本番 URL は `NEXT_PUBLIC_SITE_URL` 環境変数で上書きできます（未設定時は `https://hiroto-portfolio.vercel.app`）。
+`.env.local` に `NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` を設定します。公開URLは `NEXT_PUBLIC_SITE_URL` で指定します。
 
-## コンテンツの追加
+## コンテンツ
 
-`content/` 配下に Blog / Idea の MDX を追加します。Works は `app/works/_entries/` を編集します。
+ブログは `/admin` から GitHub でログインし、管理者として記事を作成・編集・公開します。下書きの保存と公開は別の操作です。記事本文と画像は Supabase に保存し、Gitからは読み込みません。
 
-| パス | 用途 |
-|---|---|
-| `content/blog/` | ブログ記事（MDX + frontmatter） |
-| `content/idea/` | アイデアメモ（MDX + frontmatter） |
-| `app/works/_entries/` | ケーススタディ（`*.meta.ts` + `*.case.md`） |
+作品は `app/works/_entries/` に `*.meta.ts` と `*.tsx` を用意し、`index.ts` で登録します。タイトル・担当・公開状態などは共通管理し、本文やレイアウトは作品ごとにコードで組みます。
 
-Blog / Idea のファイル名（拡張子除く）が URL の slug になります。
-
-## デザイントークン
-
-`lib/theme/tokens.stylex.ts` に色・タイポグラフィ・スペーシングなどのセマンティックトークンを定義しています。ライトテーマは `lib/theme/themes.stylex.ts` を参照してください。
+色と本文のスタイルは `app/globals.css`、プロフィールとコピーは `lib/profile.ts` と `lib/i18n/messages.ts` にあります。

@@ -1,8 +1,6 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
 import {
@@ -23,115 +21,9 @@ import {
   type CommandItem,
 } from "@/lib/commands";
 import type { ContentCommandData } from "@/lib/content-commands";
-import {
-  colors,
-  fontSize,
-  fonts,
-  letterSpacing,
-  motion,
-  radius,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
 
 import { useCommandPalette } from "./command-palette-provider";
 
-const styles = stylex.create({
-  backdrop: {
-    WebkitBackdropFilter: "blur(4px)",
-    backgroundColor: `color-mix(in srgb, ${colors.bg} 60%, transparent)`,
-  },
-  popup: {
-    transform: "translateX(-50%)",
-    width: `min(calc(100% - ${spacing.lg} * 2), 36rem)`,
-    maxHeight: "min(24rem, calc(100dvh - 20% - 2rem))",
-    backgroundColor: colors.bgElevated,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    boxShadow: `0 ${spacing.md} ${spacing.xl} color-mix(in srgb, ${colors.bg} 50%, transparent)`,
-    touchAction: "pan-y",
-    overscrollBehavior: "contain",
-  },
-  input: {
-    paddingBlock: spacing.md,
-    paddingInline: spacing.lg,
-    backgroundColor: "transparent",
-    color: colors.fg,
-    borderWidth: 0,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-    fontFamily: fonts.body,
-    fontSize: fontSize.base,
-    outline: "none",
-    "::placeholder": {
-      color: colors.fgFaint,
-    },
-  },
-  list: {
-    paddingBlock: spacing.xs,
-    flexGrow: 1,
-    flexShrink: 1,
-    minHeight: 0,
-    touchAction: "pan-y",
-    overscrollBehavior: "contain",
-    WebkitOverflowScrolling: "touch",
-  },
-  groupLabel: {
-    paddingBlock: spacing.xs,
-    paddingInline: spacing.lg,
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgFaint,
-  },
-  option: {
-    paddingBlock: spacing.sm,
-    paddingInline: spacing.lg,
-    fontFamily: fonts.mono,
-    fontSize: fontSize.sm,
-    color: colors.fg,
-    transitionProperty: "background-color, color",
-    transitionDuration: motion.durationFast,
-    transitionTimingFunction: motion.easing,
-  },
-  optionSelected: {
-    backgroundColor: colors.accentMuted,
-    color: colors.fg,
-  },
-  optionIndicator: {
-    backgroundColor: colors.accent,
-    opacity: 0,
-  },
-  optionIndicatorVisible: {
-    opacity: 1,
-  },
-  footer: {
-    gap: spacing.md,
-    paddingBlock: spacing.sm,
-    paddingInline: spacing.lg,
-    borderTopWidth: "1px",
-    borderTopStyle: "solid",
-    borderTopColor: colors.border,
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    color: colors.fgFaint,
-  },
-  empty: {
-    paddingBlock: spacing.lg,
-    paddingInline: spacing.lg,
-    fontFamily: fonts.mono,
-    fontSize: fontSize.sm,
-    color: colors.fgMuted,
-  },
-  optionMeta: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    color: colors.fgFaint,
-    flexShrink: 0,
-  },
-});
 
 type CommandPaletteProps = {
   contentItems?: ContentCommandData[];
@@ -291,67 +183,53 @@ export function CommandPalette({
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop
-          {...stylex.props(
-            styles.backdrop,
-            x.position.fixed,
-            x.inset._0,
-            x.backdropFilter["blur(4px)"],
-          )}
+          className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm"
         />
         <Dialog.Popup
-          {...stylex.props(
-            styles.popup,
-            x.position.fixed,
-            x.top["20%"],
-            x.left["50%"],
-            x.display.flex,
-            x.flexDirection.column,
-            x.overflow.hidden,
-          )}
+          className="fixed left-1/2 top-[15%] z-50 flex max-h-[70dvh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-border bg-background shadow-xl"
           initialFocus={inputRef}
         >
+          <Dialog.Title className="sr-only">サイト内を検索</Dialog.Title>
           <input
             ref={inputRef}
             type="text"
             role="combobox"
+            aria-label="サイト内を検索"
             aria-expanded={open}
             aria-controls={listboxId}
             aria-activedescendant={
               selectedCommand ? `command-option-${selectedCommand.id}` : undefined
             }
             aria-autocomplete="list"
-            placeholder="ページ・記事・メモを検索…"
+            placeholder="ページ・記事を検索…"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
               setSelectedIndex(0);
             }}
             onKeyDown={handleInputKeyDown}
-            {...stylex.props(styles.input, x.width["100%"], x.flexShrink._0)}
+            className="w-full shrink-0 border-b border-border bg-transparent px-6 py-4 text-sm outline-none"
           />
 
           <div
             id={listboxId}
             role="listbox"
             aria-label="Commands"
-            {...stylex.props(styles.list, x.overflowY.auto)}
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-2"
           >
             {flatCommands.length === 0 ? (
-              <p {...stylex.props(styles.empty, x.textAlign.center)}>
-                一致するコマンドがありません
+              <p className="px-6 py-10 text-center text-sm text-muted-foreground">
+                検索結果が見つかりませんでした
               </p>
             ) : (
               groupedCommands.map(({ group, items }) => {
                 const groupContent = (
                   <div
                     key={group}
-                    {...stylex.props(x.display.flex, x.flexDirection.column)}
+                    className="flex flex-col"
                   >
                     <div
-                      {...stylex.props(
-                        styles.groupLabel,
-                        x.textTransform.uppercase,
-                      )}
+                      className="px-6 pb-1 pt-4 text-xs text-muted-foreground"
                     >
                       {group}
                     </div>
@@ -366,14 +244,7 @@ export function CommandPalette({
                           id={`command-option-${command.id}`}
                           role="option"
                           aria-selected={isSelected}
-                          {...stylex.props(
-                            styles.option,
-                            x.position.relative,
-                            x.display.flex,
-                            x.alignItems.center,
-                            x.cursor.pointer,
-                            isSelected && styles.optionSelected,
-                          )}
+                          className={`relative flex cursor-pointer items-center px-6 py-3 text-sm ${isSelected ? "bg-surface" : ""}`}
                           onPointerMove={(event) => {
                             if (event.pointerType === "mouse") {
                               setSelectedIndex(index);
@@ -382,27 +253,14 @@ export function CommandPalette({
                           onClick={() => executeCommand(command)}
                         >
                           <span
-                            {...stylex.props(
-                              styles.optionIndicator,
-                              x.position.absolute,
-                              x.left._0,
-                              x.top._0,
-                              x.bottom._0,
-                              x.width["2px"],
-                              isSelected && styles.optionIndicatorVisible,
-                            )}
+                            className="hidden"
                           />
                           {command.meta ? (
                             <span
-                              {...stylex.props(
-                                x.display.flex,
-                                x.alignItems.center,
-                                x.justifyContent["space-between"],
-                                x.width["100%"],
-                              )}
+                              className="flex w-full items-center justify-between gap-4"
                             >
                               <span>{command.label}</span>
-                              <span {...stylex.props(styles.optionMeta)}>
+                              <span className="shrink-0 text-xs text-muted-foreground">
                                 {command.meta}
                               </span>
                             </span>
@@ -421,7 +279,7 @@ export function CommandPalette({
           </div>
 
           <div
-            {...stylex.props(styles.footer, x.display.flex, x.flexShrink._0)}
+            className="flex shrink-0 gap-4 border-t border-border px-6 py-3 text-xs text-muted-foreground"
           >
             <span>↑↓ 移動</span>
             <span>↵ 実行</span>

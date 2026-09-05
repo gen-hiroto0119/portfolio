@@ -2,7 +2,7 @@ export const site = {
   name: "Hiroto Furugen",
   shortName: "Hiroto",
   description:
-    "本質的な課題を、技術とビジネスの両輪でかたちにする。マーケティング・PdM・バックエンド開発を横断する Hiroto Furugen のポートフォリオ。",
+    "Hiroto Furugenの個人サイト。つくったものや、ソフトウェア開発で学んだこと、日々の記録をまとめています。",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiroto-portfolio.vercel.app",
   socials: {
     github: "https://github.com/gen-hiroto0119",
@@ -18,7 +18,6 @@ export type NavItem = {
 export const navItems: NavItem[] = [
   { label: "Works", href: "/works" },
   { label: "Blog", href: "/blog" },
-  { label: "Idea", href: "/idea" },
   { label: "Lab", href: "/lab" },
   { label: "Design", href: "/design" },
   { label: "About", href: "/about" },

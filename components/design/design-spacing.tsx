@@ -1,171 +1,40 @@
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
-
-import {
-  colors,
-  fontSize,
-  fonts,
-  letterSpacing,
-  lineHeight,
-  radius,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
-
 const SPACING_SCALE = [
-  { name: "xxs", token: spacing.xxs },
-  { name: "xs", token: spacing.xs },
-  { name: "sm", token: spacing.sm },
-  { name: "md", token: spacing.md },
-  { name: "lg", token: spacing.lg },
-  { name: "xl", token: spacing.xl },
-  { name: "xxl", token: spacing.xxl },
-  { name: "section", token: spacing.section },
+  { name: "1", value: "4 px", className: "w-1" },
+  { name: "2", value: "8 px", className: "w-2" },
+  { name: "3", value: "12 px", className: "w-3" },
+  { name: "4", value: "16 px", className: "w-4" },
+  { name: "6", value: "24 px", className: "w-6" },
+  { name: "8", value: "32 px", className: "w-8" },
+  { name: "12", value: "48 px", className: "w-12" },
+  { name: "20", value: "80 px", className: "w-20" },
 ] as const;
 
-// Text labels are literals because tokens resolve to var() references at runtime.
 const RADIUS_SCALE = [
-  { name: "sm", token: radius.sm, value: "2px" },
-  { name: "md", token: radius.md, value: "4px" },
+  { name: "rounded-sm", value: "4 px", className: "rounded-sm" },
+  { name: "rounded-md", value: "6 px", className: "rounded-md" },
+  { name: "rounded-lg", value: "8 px", className: "rounded-lg" },
 ] as const;
-
-const sectionStyles = stylex.create({
-  section: {
-    paddingBottom: spacing.xxl,
-  },
-  sectionLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-    marginBottom: spacing.lg,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-  },
-  spacingList: {
-    gap: spacing.md,
-    marginBottom: spacing.xl,
-  },
-  spacingRow: {
-    gap: spacing.md,
-  },
-  spacingLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-  },
-  spacingBar: {
-    height: "3px",
-    backgroundColor: colors.accent,
-    borderRadius: radius.sm,
-  },
-  radiusHeading: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgMuted,
-    marginBottom: spacing.md,
-  },
-  radiusRow: {
-    gap: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  radiusSample: {
-    backgroundColor: colors.bgSubtle,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: colors.border,
-  },
-  radiusLabel: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.sm,
-    color: colors.fg,
-    lineHeight: lineHeight.snug,
-  },
-  radiusValue: {
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    color: colors.fgMuted,
-  },
-});
 
 export function DesignSpacingSection() {
   return (
-    <section
-      aria-labelledby="design-spacing"
-      {...stylex.props(sectionStyles.section)}
-    >
-      <h2
-        id="design-spacing"
-        {...stylex.props(sectionStyles.sectionLabel, x.textTransform.uppercase)}
-      >
-        03 — Spacing &amp; Radius
-      </h2>
-      <div
-        {...stylex.props(
-          sectionStyles.spacingList,
-          x.display.flex,
-          x.flexDirection.column,
-        )}
-      >
+    <section aria-labelledby="design-spacing" className="pb-20">
+      <h2 id="design-spacing" className="mb-6 border-b border-border pb-3 text-xs text-muted-foreground">余白と角丸</h2>
+      <div className="mb-10 space-y-4">
         {SPACING_SCALE.map((item) => (
-          <div
-            key={item.name}
-            {...stylex.props(
-              sectionStyles.spacingRow,
-              x.display.grid,
-              x.gridTemplateColumns["4rem 1fr"],
-              x.alignItems.center,
-            )}
-          >
-            <p {...stylex.props(sectionStyles.spacingLabel, x.margin._0)}>
-              {item.name}
-            </p>
-            <div
-              {...stylex.props(sectionStyles.spacingBar)}
-              style={{ width: item.token }}
-            />
+          <div key={item.name} className="grid grid-cols-[6rem_1fr] items-center gap-4">
+            <p className="font-mono text-[10px] text-muted-foreground">{item.name} · {item.value}</p>
+            <div aria-hidden className={`h-1 rounded-full bg-foreground ${item.className}`} />
           </div>
         ))}
       </div>
-
-      <p
-        {...stylex.props(
-          sectionStyles.radiusHeading,
-          x.textTransform.uppercase,
-        )}
-      >
-        radius
-      </p>
-      {RADIUS_SCALE.map((item) => (
-        <div
-          key={item.name}
-          {...stylex.props(
-            sectionStyles.radiusRow,
-            x.display.flex,
-            x.alignItems.center,
-          )}
-        >
-          <div
-            {...stylex.props(
-              sectionStyles.radiusSample,
-              x.width["4rem"],
-              x.height["4rem"],
-            )}
-            style={{ borderRadius: item.token }}
-          />
-          <div>
-            <p {...stylex.props(sectionStyles.radiusLabel, x.margin._0)}>
-              {item.name}
-            </p>
-            <p {...stylex.props(sectionStyles.radiusValue, x.margin._0)}>
-              {item.value}
-            </p>
+      <div className="flex flex-wrap gap-8">
+        {RADIUS_SCALE.map((item) => (
+          <div key={item.name}>
+            <div aria-hidden className={`mb-3 size-16 border border-border bg-surface ${item.className}`} />
+            <p className="font-mono text-[10px] text-muted-foreground">{item.name}<br />{item.value}</p>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   );
 }

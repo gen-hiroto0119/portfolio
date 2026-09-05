@@ -6,7 +6,7 @@ import { DesignPageHeader } from "@/components/design/design-page-header";
 export const metadata: Metadata = {
   title: "Design",
   description:
-    "このサイトのデザインシステム — トークン、タイポグラフィ、コンポーネントのリファレンス。",
+    "色、文字、余白、ボタンなど、このサイトで使っているスタイルをまとめています。",
 };
 
 export default function DesignPage() {
@@ -14,8 +14,8 @@ export default function DesignPage() {
     <>
       <DesignPageHeader
         label="Design"
-        title="このサイトの設計。"
-        description="このページはサイト自身のトークンとコンポーネントをそのまま描画しています。"
+        title="このサイトのデザイン"
+        description="色、文字、余白、ボタンなど、このサイトで使っているスタイルをまとめています。"
       />
       <DesignPageContent />
     </>

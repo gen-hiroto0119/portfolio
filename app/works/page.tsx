@@ -7,7 +7,7 @@ import { getAllWorks } from "@/app/works/_lib/get-works";
 export const metadata: Metadata = {
   title: "Works",
   description:
-    "ビジネスの課題を、技術でかたちに。選ばれたプロジェクトとケーススタディ。",
+    "これまでに取り組んだ制作・開発と、その中で担当したことを紹介します。",
 };
 
 export default async function WorksPage() {
@@ -17,8 +17,8 @@ export default async function WorksPage() {
     <>
       <SectionPageHeader
         label="Works"
-        title="ビジネスの課題を、技術でかたちに。"
-        description="プロダクト設計からフロントエンド実装まで、課題の構造化と成果の可視化を軸にしたケーススタディ。"
+        title="つくったもの"
+        description="これまでに取り組んだ制作・開発と、その中で担当したことを紹介します。"
       />
       <WorkCardList works={works} />
     </>

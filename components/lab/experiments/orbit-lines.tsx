@@ -3,22 +3,9 @@
 import { useCallback, useEffect, useRef } from "react";
 
 import { useTheme } from "@/components/theme/theme-provider";
+import { getThemeColors } from "@/lib/theme/theme-colors";
 
 import { useLabAnimation } from "../use-lab-animation";
-
-// Canvas colors map to tokens: dark bg #0A0A0B / accent #FF4D00, light bg #F7F5F2 / accent #E64500
-const PALETTE = {
-  dark: {
-    bg: "#0A0A0B",
-    dot: "#EDEBE8",
-    accent: "#FF4D00",
-  },
-  light: {
-    bg: "#F7F5F2",
-    dot: "#141414",
-    accent: "#E64500",
-  },
-} as const;
 
 type Point = {
   angle: number;
@@ -65,7 +52,7 @@ export function OrbitLines() {
       if (!ctx) return;
 
       const { width, height } = sizeRef.current;
-      const palette = PALETTE[resolvedTheme];
+      const palette = getThemeColors(resolvedTheme);
       const cx = width / 2;
       const cy = height / 2;
       const time = timestamp * 0.001;
@@ -100,10 +87,8 @@ export function OrbitLines() {
           const dist = Math.hypot(a.x - b.x, a.y - b.y);
           if (dist < LINK_DISTANCE) {
             const alpha = (1 - dist / LINK_DISTANCE) * 0.9;
-            ctx.strokeStyle =
-              resolvedTheme === "dark"
-                ? `rgba(237, 235, 232, ${alpha * 0.18})`
-                : `rgba(20, 20, 20, ${alpha * 0.14})`;
+            ctx.strokeStyle = palette.fg;
+            ctx.globalAlpha = alpha * (resolvedTheme === "dark" ? 0.18 : 0.14);
             ctx.lineWidth = 0.75;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -113,8 +98,10 @@ export function OrbitLines() {
         }
       }
 
+      ctx.globalAlpha = 1;
+
       for (const point of points) {
-        ctx.fillStyle = palette.dot;
+        ctx.fillStyle = palette.fg;
         ctx.beginPath();
         ctx.arc(point.x, point.y, 1.75, 0, Math.PI * 2);
         ctx.fill();
@@ -166,7 +153,7 @@ export function OrbitLines() {
   return (
     <div
       ref={containerRef}
-      style={{ width: "100%", height: "100%" }}
+      className="h-full w-full"
       onMouseMove={(event) => {
         const rect = event.currentTarget.getBoundingClientRect();
         mouseRef.current = {

@@ -22,17 +22,21 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 const STORAGE_KEY = "locale";
 const LOCALE_CHANGE_EVENT = "portfolio-locale-change";
+let fallbackLocale: Locale | null = null;
 
 function notifyLocaleChange(): void {
   window.dispatchEvent(new Event(LOCALE_CHANGE_EVENT));
 }
 
 function readStoredLocale(): Locale {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "ja" || stored === "en") {
-    return stored;
+  if (fallbackLocale !== null) return fallbackLocale;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "ja" || stored === "en") return stored;
+    return "ja";
+  } catch {
+    return "ja";
   }
-  return "ja";
 }
 
 function applyLocale(locale: Locale): void {
@@ -75,7 +79,13 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   }, [locale]);
 
   const setLocale = useCallback((nextLocale: Locale) => {
-    localStorage.setItem(STORAGE_KEY, nextLocale);
+    try {
+      localStorage.setItem(STORAGE_KEY, nextLocale);
+      fallbackLocale = null;
+    } catch {
+      // Language changes still apply when the browser blocks persistent storage.
+      fallbackLocale = nextLocale;
+    }
     applyLocale(nextLocale);
     notifyLocaleChange();
   }, []);

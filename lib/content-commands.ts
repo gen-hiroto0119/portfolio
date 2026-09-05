@@ -1,11 +1,11 @@
 import "server-only";
 
 import { getAllWorks } from "@/app/works/_lib/get-works";
-import { getAllIdeas, getAllPosts } from "@/lib/content";
+import { getAllPosts } from "@/lib/content";
 
 export type ContentCommandData = {
   id: string;
-  group: "Works" | "Blog" | "Idea";
+  group: "Works" | "Blog";
   label: string;
   href: string;
   keywords: string[];
@@ -17,10 +17,9 @@ function getYearFromDate(date: string): string {
 }
 
 export async function getContentCommandData(): Promise<ContentCommandData[]> {
-  const [works, posts, notes] = await Promise.all([
+  const [works, posts] = await Promise.all([
     getAllWorks(),
     getAllPosts(),
-    getAllIdeas(),
   ]);
 
   const workCommands: ContentCommandData[] = works.map((work) => ({
@@ -29,7 +28,7 @@ export async function getContentCommandData(): Promise<ContentCommandData[]> {
     label: work.title,
     href: `/works/${work.slug}`,
     keywords: [work.slug, ...work.stack, work.role, "works", "作品"],
-    meta: getYearFromDate(work.date),
+    meta: work.date ? getYearFromDate(work.date) : undefined,
   }));
 
   const blogCommands: ContentCommandData[] = posts.map((post) => ({
@@ -48,21 +47,5 @@ export async function getContentCommandData(): Promise<ContentCommandData[]> {
     meta: post.date,
   }));
 
-  const ideaCommands: ContentCommandData[] = notes.map((note) => ({
-    id: `idea:${note.slug}`,
-    group: "Idea",
-    label: note.title,
-    href: `/idea/${note.slug}`,
-    keywords: [
-      note.slug,
-      ...note.tags,
-      note.status,
-      "idea",
-      "メモ",
-      "アイデア",
-    ],
-    meta: note.status,
-  }));
-
-  return [...workCommands, ...blogCommands, ...ideaCommands];
+  return [...workCommands, ...blogCommands];
 }

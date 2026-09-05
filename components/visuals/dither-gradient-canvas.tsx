@@ -7,7 +7,7 @@ import { useTheme } from "@/components/theme/theme-provider";
 
 type ResolvedTheme = "dark" | "light";
 
-// Canvas cannot read CSS variables — hardcoded to match tokens.stylex colors.
+// Canvas cannot read CSS variables — uses a dedicated palette for this Lab experiment.
 const PALETTE = {
   dark: { bg: "#0A0A0C", accent: "#3F4658" },
   light: { bg: "#EBE9EC", accent: "#B2B6C4" },

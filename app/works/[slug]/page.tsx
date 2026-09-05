@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { WorkDetail } from "@/components/works/work-detail";
-import { getAllWorks, getWork } from "@/app/works/_lib/get-works";
+import { getAllWorks, getWork, getWorkEntry } from "@/app/works/_lib/get-works";
 import { site } from "@/lib/site";
 
 type WorkPageProps = {
@@ -39,11 +39,13 @@ export async function generateMetadata({
 
 export default async function WorkPage({ params }: WorkPageProps) {
   const { slug } = await params;
-  const work = await getWork(slug);
+  const entry = await getWorkEntry(slug);
 
-  if (!work) {
+  if (!entry) {
     notFound();
   }
+
+  const { meta: work, Content } = entry;
 
   const allWorks = await getAllWorks();
   const currentIndex = allWorks.findIndex((w) => w.slug === slug);
@@ -62,5 +64,9 @@ export default async function WorkPage({ params }: WorkPageProps) {
         }
       : null;
 
-  return <WorkDetail work={work} prev={prev} next={next} />;
+  return (
+    <WorkDetail work={work} prev={prev} next={next}>
+      <Content />
+    </WorkDetail>
+  );
 }

@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 .obsidian/
+
+# Former local writing vault; articles are managed in the CMS.
+/Blog Content/
+
+# Supabase CLI cache
+/supabase/.temp/

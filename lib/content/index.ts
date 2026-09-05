@@ -1,150 +1,18 @@
 import "server-only";
 
-import fs from "node:fs/promises";
-import path from "node:path";
+import { unstable_cache } from "next/cache";
 
-import matter from "gray-matter";
+import { getPublishedPost, listPublishedPosts } from "@/lib/cms/posts";
+import type { BlogPost, BlogPostWithContent } from "@/lib/content/schema";
 
-import {
-  parseBlogFrontmatter,
-  parseIdeaFrontmatter,
-  type BlogPost,
-  type BlogPostWithContent,
-  type IdeaNote,
-  type IdeaNoteWithContent,
-} from "@/lib/content/schema";
-
-const CONTENT_ROOT = path.join(process.cwd(), "content");
-
-const BLOG_DIR = path.join(CONTENT_ROOT, "blog");
-const IDEA_DIR = path.join(CONTENT_ROOT, "idea");
-
-async function readMdxFiles(directory: string): Promise<
-  Array<{
-    slug: string;
-    filePath: string;
-    content: string;
-    data: Record<string, unknown>;
-  }>
-> {
-  let entries: string[];
-
-  try {
-    entries = await fs.readdir(directory);
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      "code" in error &&
-      error.code === "ENOENT"
-    ) {
-      return [];
-    }
-    throw error;
-  }
-
-  const files = entries.filter((entry) => entry.endsWith(".mdx"));
-
-  return Promise.all(
-    files.map(async (fileName) => {
-      const filePath = path.join(directory, fileName);
-      const raw = await fs.readFile(filePath, "utf8");
-      const { content, data } = matter(raw);
-
-      return {
-        slug: fileName.replace(/\.mdx$/, ""),
-        filePath,
-        content,
-        data: data as Record<string, unknown>,
-      };
-    }),
-  );
-}
-
-function compareByDateDesc(
-  leftDate: string,
-  rightDate: string,
-): number {
-  return rightDate.localeCompare(leftDate);
-}
-
-function isPublished<T extends { published: boolean }>(item: T): boolean {
-  return item.published;
-}
+const cmsPosts = unstable_cache(listPublishedPosts, ["cms-blog-list"], { tags: ["cms-blog"], revalidate: 300 });
+const cmsPost = unstable_cache(getPublishedPost, ["cms-blog-post"], { tags: ["cms-blog"], revalidate: 300 });
 
 export async function getAllPosts(): Promise<BlogPost[]> {
-  const files = await readMdxFiles(BLOG_DIR);
-
-  return files
-    .map((file) => ({
-      slug: file.slug,
-      ...parseBlogFrontmatter(file.data, file.filePath),
-    }))
-    .filter(isPublished)
-    .sort((left, right) => compareByDateDesc(left.date, right.date));
-}
-
-export async function getAllIdeas(): Promise<IdeaNote[]> {
-  const files = await readMdxFiles(IDEA_DIR);
-
-  return files
-    .map((file) => ({
-      slug: file.slug,
-      ...parseIdeaFrontmatter(file.data, file.filePath),
-    }))
-    .filter(isPublished)
-    .sort((left, right) =>
-      compareByDateDesc(left.tended, right.tended),
-    );
+  return cmsPosts();
 }
 
 export async function getPost(slug: string): Promise<BlogPostWithContent | null> {
-  const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
-
-  try {
-    const raw = await fs.readFile(filePath, "utf8");
-    const { content, data } = matter(raw);
-    const post = {
-      slug,
-      content,
-      ...parseBlogFrontmatter(data, filePath),
-    };
-
-    return post.published ? post : null;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      "code" in error &&
-      error.code === "ENOENT"
-    ) {
-      return null;
-    }
-    throw error;
-  }
-}
-
-export async function getIdea(
-  slug: string,
-): Promise<IdeaNoteWithContent | null> {
-  const filePath = path.join(IDEA_DIR, `${slug}.mdx`);
-
-  try {
-    const raw = await fs.readFile(filePath, "utf8");
-    const { content, data } = matter(raw);
-    const note = {
-      slug,
-      content,
-      ...parseIdeaFrontmatter(data, filePath),
-    };
-
-    return note.published ? note : null;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      "code" in error &&
-      error.code === "ENOENT"
-    ) {
-      return null;
-    }
-    throw error;
-  }
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
+  return cmsPost(slug);
 }

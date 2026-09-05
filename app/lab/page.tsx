@@ -7,7 +7,7 @@ import { labExperiments } from "@/lib/lab-registry";
 export const metadata: Metadata = {
   title: "Lab",
   description:
-    "インタラクションと描画の試作を常設展示する実験室。小さな UI 実験のギャラリー。",
+    "ブラウザで動くアニメーションや、マウスに反応する表現を試しています。",
 };
 
 export default function LabPage() {
@@ -15,8 +15,8 @@ export default function LabPage() {
     <>
       <LabPageHeader
         label="Lab"
-        title="実験室。"
-        description="小さな実験を常設展示するギャラリー。インタラクションと描画の試作を置いています。"
+        title="実験"
+        description="ブラウザで動くアニメーションや、マウスに反応する表現を試しています。"
       />
       <LabExperimentGrid experiments={labExperiments} />
     </>

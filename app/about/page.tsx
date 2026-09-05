@@ -5,7 +5,7 @@ import { AboutContent } from "@/components/about/about-content";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Hiroto のプロフィール — デザイン、エンジニアリング、ビジネスの交差点で活動するプロダクトデザイナー。",
+    "Hiroto Furugenのプロフィール。これまでの仕事や、取り組んでいることを紹介しています。",
 };
 
 export default function AboutPage() {

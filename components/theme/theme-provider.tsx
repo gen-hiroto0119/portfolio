@@ -24,17 +24,21 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const STORAGE_KEY = "theme";
 const THEME_CHANGE_EVENT = "portfolio-theme-change";
+let fallbackTheme: Theme | null = null;
 
 function notifyThemeChange(): void {
   window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
 function readStoredTheme(): Theme {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "light" || stored === "dark" || stored === "system") {
-    return stored;
+  if (fallbackTheme !== null) return fallbackTheme;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "light" || stored === "dark" || stored === "system") return stored;
+    return "light";
+  } catch {
+    return "light";
   }
-  return "system";
 }
 
 function resolveTheme(theme: Theme): ResolvedTheme {
@@ -45,18 +49,8 @@ function resolveTheme(theme: Theme): ResolvedTheme {
     : "dark";
 }
 
-function applyResolvedTheme(
-  resolved: ResolvedTheme,
-  lightThemeClassName: string,
-): void {
-  const classes = lightThemeClassName.split(" ").filter(Boolean);
+function applyResolvedTheme(resolved: ResolvedTheme): void {
   document.documentElement.dataset.theme = resolved;
-
-  if (resolved === "light") {
-    classes.forEach((cls) => document.documentElement.classList.add(cls));
-  } else {
-    classes.forEach((cls) => document.documentElement.classList.remove(cls));
-  }
 }
 
 function subscribeTheme(onStoreChange: () => void): () => void {
@@ -79,7 +73,7 @@ function getThemeSnapshot(): Theme {
 }
 
 function getServerThemeSnapshot(): Theme {
-  return "system";
+  return "light";
 }
 
 function getResolvedThemeSnapshot(): ResolvedTheme {
@@ -87,17 +81,15 @@ function getResolvedThemeSnapshot(): ResolvedTheme {
 }
 
 function getServerResolvedThemeSnapshot(): ResolvedTheme {
-  return "dark";
+  return "light";
 }
 
 type ThemeProviderProps = {
   children: ReactNode;
-  lightThemeClassName: string;
 };
 
 export function ThemeProvider({
   children,
-  lightThemeClassName,
 }: ThemeProviderProps) {
   const theme = useSyncExternalStore(
     subscribeTheme,
@@ -110,19 +102,25 @@ export function ThemeProvider({
     getServerResolvedThemeSnapshot,
   );
 
-  // Keep <html> classes in sync when resolvedTheme changes without setTheme
+  // Keep the <html> theme attribute in sync without setTheme
   // (OS preference change while on "system", or storage events from other tabs).
   useEffect(() => {
-    applyResolvedTheme(resolvedTheme, lightThemeClassName);
-  }, [resolvedTheme, lightThemeClassName]);
+    applyResolvedTheme(resolvedTheme);
+  }, [resolvedTheme]);
 
   const setTheme = useCallback(
     (nextTheme: Theme) => {
-      localStorage.setItem(STORAGE_KEY, nextTheme);
-      applyResolvedTheme(resolveTheme(nextTheme), lightThemeClassName);
+      try {
+        localStorage.setItem(STORAGE_KEY, nextTheme);
+        fallbackTheme = null;
+      } catch {
+        // Keep the switch usable when the browser blocks persistent storage.
+        fallbackTheme = nextTheme;
+      }
+      applyResolvedTheme(resolveTheme(nextTheme));
       notifyThemeChange();
     },
-    [lightThemeClassName],
+    [],
   );
 
   const value = useMemo(

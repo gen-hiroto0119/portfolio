@@ -1,5 +1,22 @@
-import type { Work } from "@/app/works/_lib/schema";
+import "server-only";
 
-import { scasWork } from "./scas.meta";
+import type { ComponentType } from "react";
 
-export const works: Work[] = [scasWork];
+import { parseWork, type Work } from "@/app/works/_lib/schema";
+
+import { insertWork } from "./insert.meta";
+import { InsertContent } from "./insert";
+
+export type WorkEntry = {
+  meta: Work;
+  Content: ComponentType;
+};
+
+// Register each work's metadata and page together. Only metadata is passed to
+// client-side lists; the content component stays on the server.
+export const workEntries: readonly WorkEntry[] = [
+  {
+    meta: parseWork(insertWork, "insert.meta.ts"),
+    Content: InsertContent,
+  },
+];

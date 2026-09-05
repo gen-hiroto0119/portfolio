@@ -1,140 +1,30 @@
-import * as stylex from "@stylexjs/stylex";
-import x from "@stylexjs/atoms";
-
-import { BorderGlow } from "@/components/visuals/border-glow";
 import type { LabExperiment } from "@/lib/lab-registry";
-import {
-  colors,
-  fontSize,
-  fonts,
-  letterSpacing,
-  lineHeight,
-  maxWidth,
-  radius,
-  spacing,
-} from "@/lib/theme/tokens.stylex";
-
-const BORDER_RADIUS = Number.parseInt(radius.sm, 10);
-
-const styles = stylex.create({
-  card: {
-    backgroundColor: colors.bg,
-  },
-  demo: {
-    backgroundColor: colors.bgSubtle,
-    borderBottomWidth: "1px",
-    borderBottomStyle: "solid",
-    borderBottomColor: colors.border,
-  },
-  body: {
-    padding: spacing.lg,
-    gap: spacing.sm,
-  },
-  meta: {
-    gap: spacing.md,
-    fontFamily: fonts.mono,
-    fontSize: fontSize.xs,
-    letterSpacing: letterSpacing.wide,
-    color: colors.fgFaint,
-  },
-  title: {
-    fontFamily: fonts.body,
-    fontSize: fontSize.base,
-    lineHeight: lineHeight.snug,
-    color: colors.fg,
-  },
-  description: {
-    fontFamily: fonts.body,
-    fontSize: fontSize.sm,
-    lineHeight: lineHeight.normal,
-    color: colors.fgMuted,
-  },
-});
 
 type LabExperimentCardProps = {
   experiment: LabExperiment;
 };
 
 export function LabExperimentCard({ experiment }: LabExperimentCardProps) {
-  const { Component, no, date, title, description } = experiment;
+  const { Component, date, title, description } = experiment;
 
   return (
-    <BorderGlow borderRadius={BORDER_RADIUS}>
-      <article
-        {...stylex.props(
-          x.display.flex,
-          x.flexDirection.column,
-          styles.card,
-        )}
-      >
-      <div
-        {...stylex.props(
-          x.height["16rem"],
-          x.overflow.hidden,
-          styles.demo,
-        )}
-      >
-        <Component />
-      </div>
-      <div
-        {...stylex.props(
-          x.display.flex,
-          x.flexDirection.column,
-          styles.body,
-        )}
-      >
-        <div
-          {...stylex.props(
-            x.display.flex,
-            x.justifyContent["space-between"],
-            x.textTransform.uppercase,
-            styles.meta,
-          )}
-        >
-          <span>No. {no}</span>
-          <span>{date}</span>
+    <article className="min-w-0">
+      <div className="h-64 overflow-hidden rounded-md bg-surface"><Component /></div>
+      <div className="pt-5">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-base leading-7 font-medium text-foreground">{title}</h2>
+          <time dateTime={date} className="shrink-0 text-xs text-muted-foreground">{date}</time>
         </div>
-        <h2 {...stylex.props(x.margin._0, styles.title)}>{title}</h2>
-        <p {...stylex.props(x.margin._0, styles.description)}>
-          {description}
-        </p>
+        <p className="mt-2 text-sm leading-7 text-muted-foreground">{description}</p>
       </div>
-      </article>
-    </BorderGlow>
+    </article>
   );
 }
 
-const gridStyles = stylex.create({
-  shell: {
-    maxWidth: maxWidth.wide,
-    marginInline: "auto",
-    paddingInline: spacing.lg,
-    paddingBottom: spacing.section,
-  },
-  grid: {
-    gridTemplateColumns: {
-      default: "1fr",
-      "@media (min-width: 768px)": "1fr 1fr",
-    },
-    gap: spacing.lg,
-  },
-});
-
-export function LabExperimentGrid({
-  experiments,
-}: {
-  experiments: LabExperiment[];
-}) {
+export function LabExperimentGrid({ experiments }: { experiments: LabExperiment[] }) {
   return (
-    <section
-      aria-label="Lab experiments"
-      {...stylex.props(x.width["100%"], gridStyles.shell)}
-    >
-      <div {...stylex.props(x.display.grid, gridStyles.grid)}>
-        {experiments.map((experiment) => (
-          <LabExperimentCard key={experiment.id} experiment={experiment} />
-        ))}
-      </div>
+    <section aria-label="実験" className="mx-auto grid w-full max-w-4xl gap-x-8 gap-y-12 px-6 pb-24 sm:px-8 md:grid-cols-2">
+      {experiments.map((experiment) => <LabExperimentCard key={experiment.id} experiment={experiment} />)}
     </section>
   );
 }

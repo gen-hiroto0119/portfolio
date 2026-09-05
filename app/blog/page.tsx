@@ -7,7 +7,7 @@ import { getAllPosts } from "@/lib/content";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "デザイン、エンジニアリング、プロダクト思考に関するエッセイと長文。",
+    "技術の話を中心に、ときどき写真や日々のことも。",
 };
 
 export default async function BlogPage() {
@@ -17,8 +17,8 @@ export default async function BlogPage() {
     <>
       <SectionPageHeader
         label="Blog"
-        title="考えを言葉に、言葉を設計に。"
-        description="技術記事、写真、日々のメモ。かたちの違う言葉をここに置いています。"
+        title="書いたこと"
+        description="技術の話を中心に、ときどき写真や日々のことも。"
       />
       <PostListFiltered posts={posts} />
     </>

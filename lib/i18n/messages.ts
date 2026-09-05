@@ -45,34 +45,34 @@ export const messages: Record<Locale, Messages> = {
     hero: {
       label: "Portfolio — 2026 / Tokyo",
       tagline:
-        "問いを立て、組み、届ける。プロダクト・コード・デザインの交差点に。",
+        "コードを書いたり、プロダクトを考えたり。つくったものと、その途中の記録です。",
       scroll: "Scroll ↓",
       stackLabel: "My Stack",
       stackAriaLabel: "使用技術スタック",
     },
     home: {
       about: {
-        p1: "プロダクト思考で問いを立て、エンジニアリングで組み、デザインで届ける——三つのレイヤーを分断せずに扱ってきました。マーケティング、プロダクトマネジメント、エンジニアリングと領域を横断してきました。",
-        p2: "AIが実装を加速するいまだからこそ、「何をつくるか」と「どう届けるか」がより問われます。課題の本質から入り、最後まで形にすることを大切にしています。",
-        link: "詳しく →",
+        p1: "いまつくっているのは、一行ずつ記録を残すメモアプリ「Insert」。これまで、プロダクトマネジメントとソフトウェア開発に取り組んできました。",
+        p2: "このサイトには、つくったものや開発中の気づき、日々考えたことを少しずつ書き残していきます。",
+        link: "プロフィールを見る →",
       },
-      allWorks: "すべての Works →",
-      allPosts: "すべての記事 →",
+      allWorks: "つくったものをすべて見る →",
+      allPosts: "記事一覧を見る →",
     },
     about: {
       intro: [
-        "プロダクト思考で問いを立て、エンジニアリングで組み、デザインで届ける——三つのレイヤーを分断せずに扱ってきました。マーケティング、プロダクトマネジメント、エンジニアリングと領域を横断してきました。",
-        "現在は友人と共同創業した hyphen technologies で Tech Lead として、SEO / GEO / AIO に対応したコンテンツ運用自動化プラットフォーム「SCAS」をつくっています。",
-        "AIが実装を加速するいまだからこそ、「何をつくるか」と「どう届けるか」がより問われます。課題の本質から入り、最後まで形にすることを大切にしています。",
+        "プロダクトの仕様を考えたり、コードを書いたり。プロダクトマネジメントとソフトウェア開発に取り組んできました。企画や設計から、実装するところまで。",
+        "いまつくっているのは「Insert」。作業中に試したことや考えたことを、一行ずつ残すメモアプリです。タスクごと、週ごとに記録を読み返せます。",
+        "大学での専攻は地理学。ゼミでは、植生や生態を研究する際に、機械学習と従来の統計手法でどんな違いが出るのかを比較しています。",
       ],
       timeline: [
         {
           id: "cyberagent-se",
           period: "2026.07 — 現在",
           organization: "CyberAgent",
-          role: "Software Engineer(長期インターン)",
+          role: "Software Engineer（長期インターン）",
           summary:
-            "CyberACE – GrowthTech – CARU にて、FastAPI・Google Cloud Platform・React を用いたフルスタック開発に従事。",
+            "CyberACE – GrowthTech – CARU で、FastAPI・Google Cloud・React を使い、バックエンドとフロントエンドを開発しています。",
         },
         {
           id: "google-ambassador",
@@ -80,47 +80,31 @@ export const messages: Record<Locale, Messages> = {
           organization: "Google",
           role: "Campus Ambassador",
           summary:
-            "全国の大学・大学院から選抜された約15名の一人として、生成AI「Gemini」のマーケティングチームと協働。フィールドマーケティングを軸に、イベント企画・運営、学生コミュニティ形成、大学教授・理系学部との連携をアカウントマネジメントとして推進。",
-        },
-        {
-          id: "hyphen",
-          period: "2026.03 — 現在",
-          organization: "hyphen technologies",
-          role: "Co-founder / Tech Lead",
-          summary:
-            "「情報の非対称を、技術で解く。」を掲げるソフトウェア企業を友人と共同創業。SEO / GEO / AIO に対応したコンテンツ運用自動化プラットフォーム「SCAS」の開発を Tech Lead として主導。複数業種での PoC を経て 2026 年 6 月に β 提供を開始。",
+            "全国の大学・大学院から選ばれた約15名の一人として、Geminiのマーケティングに参加しています。イベントの企画・運営、学生コミュニティづくり、大学の教員や理系学部との連携を担当しています。",
         },
         {
           id: "cyberagent-go",
           period: "2026.02 — 2026.03",
           organization: "CyberAgent",
-          role: "Backend Engineer(Go College)",
+          role: "Backend Engineer（Go College）",
           summary:
-            "Go 言語と API 開発を中心とした育成型インターン。実装力に加え、設計・責務分割・保守性と拡張性を意識した、システム全体を俯瞰する視点を養った。",
+            "Goを使ったAPI開発のインターンに参加しました。実装に加え、機能ごとの役割分担や、変更しやすい設計について学びました。",
         },
         {
           id: "layerx",
           period: "2025.08 — 2026.07",
           organization: "LayerX",
-          role: "Product Manager / Product Marketing Manager(長期インターン)",
+          role: "Product Manager / Product Marketing Manager（長期インターン）",
           summary:
-            "AIエージェント開発プラットフォーム「Ai Workforce」にて、プロダクト企画から仕様策定、改善提案まで従事。PdM として新機能開発とプロダクト戦略を主軸に、Agentic なシステム設計と AI ネイティブなプロダクト開発に深く関わる。ビジネスとエンジニアリングの間に立ち、市場理解と技術理解の両輪で意思決定を支えた。",
-        },
-        {
-          id: "gmo",
-          period: "2024.12 — 2025.07",
-          organization: "GMO Internet Group",
-          role: "マーケティングプランナー(長期インターン)",
-          summary:
-            "Google 広告・Yahoo! 広告の運用、予算管理、クリエイティブ改善、効果測定まで一連のプロセスを担当。事業部内で GEO・AIO・LLMO など最新技術活用のリードを担い、生成AI/LLM を業務高度化につなげた。",
+            "AIエージェント開発プラットフォーム「Ai Workforce」で、プロダクト企画や改善提案を担当しました。新機能やプロダクト戦略の検討にも携わりました。",
         },
         {
           id: "hosei",
-          period: "2024.04 — 2028.03(卒業見込)",
+          period: "2024.04 — 2028.03（卒業見込）",
           organization: "法政大学",
           role: "地理学専攻",
           summary:
-            "ゼミでは植生学・生態学における機械学習を利用した研究手法と、古典統計学手法の比較に取り組む。リベラルアーツと STEM を横断して学ぶ。",
+            "地理学を専攻しています。ゼミでは、植生学・生態学の研究に使う機械学習と従来の統計手法を比較しています。",
         },
       ],
     },
@@ -138,25 +122,25 @@ export const messages: Record<Locale, Messages> = {
     hero: {
       label: "Portfolio — 2026 / Tokyo",
       tagline:
-        "Ask, build, deliver. At the intersection of product, code, and design.",
+        "Writing code, thinking through products. A collection of things I've built and notes from the process.",
       scroll: "Scroll ↓",
       stackLabel: "My Stack",
       stackAriaLabel: "Technology stack",
     },
     home: {
       about: {
-        p1: "I ask questions through product thinking, build through engineering, and deliver through design—without separating those three layers. I've worked across marketing, product management, and engineering.",
-        p2: "As AI accelerates implementation, what to build and how to deliver matter more than ever. I start from the essence of the problem and see it through to the finish.",
-        link: "Learn more →",
+        p1: "I'm currently building Insert, a memo app for keeping records one line at a time. My work has included both product management and software development.",
+        p2: "This site is a place for my projects, things I notice while building them, and thoughts from everyday life. I'll keep adding to it as I go.",
+        link: "More about me →",
       },
-      allWorks: "All Works →",
+      allWorks: "All work →",
       allPosts: "All posts →",
     },
     about: {
       intro: [
-        "I ask questions through product thinking, build through engineering, and deliver through design—without treating those three layers separately. I've worked across marketing, product management, and engineering.",
-        "I'm currently building SCAS, a content operations automation platform for SEO / GEO / AIO, as Tech Lead at hyphen technologies, which I co-founded with a friend.",
-        "As AI accelerates implementation, what to build and how to deliver matter more than ever. I start from the essence of the problem and see it through to the finish.",
+        "Working out product details, writing code. I've worked in product management and software development, from planning and design through to implementation.",
+        "I'm currently building Insert: a memo app for recording things I've tried or thought about, one line at a time. The records can be read back by task or by week.",
+        "At university, my subject is geography. My seminar research looks at how machine learning and traditional statistical methods differ when studying vegetation and ecology.",
       ],
       timeline: [
         {
@@ -165,7 +149,7 @@ export const messages: Record<Locale, Messages> = {
           organization: "CyberAgent",
           role: "Software Engineer (Long-term Intern)",
           summary:
-            "Full-stack development with FastAPI, Google Cloud Platform, and React at CyberACE – GrowthTech – CARU.",
+            "I develop backend and frontend applications with FastAPI, Google Cloud, and React at CyberACE – GrowthTech – CARU.",
         },
         {
           id: "google-ambassador",
@@ -173,15 +157,7 @@ export const messages: Record<Locale, Messages> = {
           organization: "Google",
           role: "Campus Ambassador",
           summary:
-            "One of ~15 students selected nationwide from universities and graduate schools. Collaborated with the Gemini marketing team on field marketing, event planning and operations, student community building, and account management with professors and STEM faculties.",
-        },
-        {
-          id: "hyphen",
-          period: "2026.03 — Present",
-          organization: "hyphen technologies",
-          role: "Co-founder / Tech Lead",
-          summary:
-            "Co-founded a software company with the mission to \"resolve information asymmetry through technology.\" Lead development of SCAS, a content operations automation platform for SEO / GEO / AIO. Launched beta in June 2026 after PoCs across multiple industries.",
+            "I'm one of around 15 university and graduate students selected nationwide to work with the Gemini marketing team. I help plan and run events, build student communities, and coordinate with university faculty and STEM departments.",
         },
         {
           id: "cyberagent-go",
@@ -189,7 +165,7 @@ export const messages: Record<Locale, Messages> = {
           organization: "CyberAgent",
           role: "Backend Engineer (Go College)",
           summary:
-            "Development-focused internship centered on Go and API development. Built implementation skills along with a system-wide perspective on design, separation of concerns, maintainability, and extensibility.",
+            "I joined an internship focused on building APIs with Go. Alongside implementation, I learned how to separate responsibilities and design systems that are easier to change.",
         },
         {
           id: "layerx",
@@ -197,15 +173,7 @@ export const messages: Record<Locale, Messages> = {
           organization: "LayerX",
           role: "Product Manager / Product Marketing Manager (Long-term Intern)",
           summary:
-            "Worked on product planning, specification design, and improvement proposals for the AI agent development platform \"Ai Workforce.\" As PdM, focused on new feature development and product strategy, with deep involvement in agentic system design and AI-native product development. Bridged business and engineering with market and technical understanding.",
-        },
-        {
-          id: "gmo",
-          period: "2024.12 — 2025.07",
-          organization: "GMO Internet Group",
-          role: "Marketing Planner (Long-term Intern)",
-          summary:
-            "Managed end-to-end paid media operations for Google Ads and Yahoo! Ads, including budget management, creative optimization, and performance measurement. Led adoption of emerging technologies such as GEO, AIO, and LLMO, applying generative AI and LLMs to advance business operations.",
+            "I worked on product planning and improvements for Ai Workforce, an AI agent development platform, including new features and product strategy.",
         },
         {
           id: "hosei",
@@ -213,7 +181,7 @@ export const messages: Record<Locale, Messages> = {
           organization: "Hosei University",
           role: "Geography",
           summary:
-            "Seminar research comparing machine learning approaches with classical statistical methods in vegetation and ecology studies. Pursuing an interdisciplinary path across liberal arts and STEM.",
+            "I study geography, with seminar research comparing machine learning and traditional statistical methods in vegetation and ecology studies.",
         },
       ],
     },

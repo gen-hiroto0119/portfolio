@@ -10,11 +10,6 @@ import {
   type ReactNode,
 } from "react";
 
-import type { CommandItem } from "@/lib/commands";
-import type { ContentCommandData } from "@/lib/content-commands";
-
-import { CommandPalette } from "./command-palette";
-
 type CommandPaletteContextValue = {
   open: boolean;
   openPalette: () => void;
@@ -28,14 +23,10 @@ const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(
 
 type CommandPaletteProviderProps = {
   children: ReactNode;
-  contentItems?: ContentCommandData[];
-  extraCommands?: CommandItem[];
 };
 
 export function CommandPaletteProvider({
   children,
-  contentItems = [],
-  extraCommands = [],
 }: CommandPaletteProviderProps) {
   const [open, setOpen] = useState(false);
 
@@ -68,10 +59,6 @@ export function CommandPaletteProvider({
   return (
     <CommandPaletteContext.Provider value={value}>
       {children}
-      <CommandPalette
-        contentItems={contentItems}
-        extraCommands={extraCommands}
-      />
     </CommandPaletteContext.Provider>
   );
 }

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
+import { PostListLoading } from "@/components/blog/post-loading";
 import { PostListFiltered } from "@/components/blog/post-list-filtered";
 import { SectionPageHeader } from "@/components/blog/section-page-header";
 import { getAllPosts } from "@/lib/content";
@@ -10,9 +12,7 @@ export const metadata: Metadata = {
     "技術の話を中心に、ときどき写真や日々のことも。",
 };
 
-export default async function BlogPage() {
-  const posts = await getAllPosts();
-
+export default function BlogPage() {
   return (
     <>
       <SectionPageHeader
@@ -20,7 +20,14 @@ export default async function BlogPage() {
         title="書いたこと"
         description="技術の話を中心に、ときどき写真や日々のことも。"
       />
-      <PostListFiltered posts={posts} />
+      <Suspense fallback={<div className="mx-auto w-full max-w-4xl px-6 pb-24 sm:px-10"><PostListLoading /></div>}>
+        <PublishedPosts />
+      </Suspense>
     </>
   );
+}
+
+async function PublishedPosts() {
+  const posts = await getAllPosts();
+  return <PostListFiltered posts={posts} />;
 }

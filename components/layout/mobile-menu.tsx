@@ -2,15 +2,13 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useLocale } from "@/components/i18n/locale-provider";
 import { LocaleToggle } from "@/components/i18n/locale-toggle";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { navItems } from "@/lib/site";
 
-export function MobileMenu() {
-  const pathname = usePathname();
+export function MobileMenu({ pathname }: { pathname: string }) {
   const [open, setOpen] = useState(false);
   const { t } = useLocale();
   return (

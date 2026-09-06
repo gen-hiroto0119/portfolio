@@ -6,15 +6,25 @@ import { getAllWorks } from "@/app/works/_lib/get-works";
 import { getAllPosts } from "@/lib/content";
 
 export default async function Home() {
-  const [works, posts] = await Promise.all([getAllWorks(), getAllPosts()]);
+  const works = await getAllWorks();
   return (
     <div className="mx-auto w-full max-w-4xl px-6 pb-28 sm:px-10">
       <Hero />
       <div className="space-y-20 sm:space-y-24">
         <AboutSection />
         <FeaturedWorks works={works} />
-        <WritingSection posts={posts} />
+        <Suspense fallback={<PostListLoading />}>
+          <LatestWriting />
+        </Suspense>
       </div>
     </div>
   );
 }
+
+async function LatestWriting() {
+  const posts = await getAllPosts();
+  return <WritingSection posts={posts} />;
+}
+import { Suspense } from "react";
+
+import { PostListLoading } from "@/components/blog/post-loading";

@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { Loader2 } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 
+import { FeedbackNotice } from "@/components/feedback-notice";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 
 function subscribeReturnError(onChange: () => void) {
@@ -63,7 +64,7 @@ export function LoginForm({ initialError = "" }: { initialError?: string }) {
         {pending ? <Loader2 size={17} className="animate-spin" aria-hidden /> : <SiGithub size={17} aria-hidden />}
         {pending ? "GitHubに接続中…" : "GitHubでログイン"}
       </button>
-      {message && <p role="alert" className="text-sm leading-7 text-muted-foreground">{message}</p>}
+      {message && <FeedbackNotice key={message} title="ログインを完了できませんでした"><p>{message}</p></FeedbackNotice>}
       <p className="text-xs leading-6 text-muted-foreground">管理者として登録されたアカウントでログインしてください。</p>
     </div>
   );

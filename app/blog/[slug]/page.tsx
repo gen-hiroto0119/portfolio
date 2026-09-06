@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 
 import { PostDetail } from "@/components/blog/post-detail";
-import { getAllPosts, getPost } from "@/lib/content";
+import { getPost } from "@/lib/content";
 import { site } from "@/lib/site";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({ slug: post.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -39,6 +35,13 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
+  return <PublishedArticle slug={slug} />;
+}
+
+async function PublishedArticle({ slug }: { slug: string }) {
+  "use cache";
+  cacheLife("blog");
+  // Inherits cms-blog from getPost, including the rendered syntax highlighting.
   const post = await getPost(slug);
 
   if (!post) {

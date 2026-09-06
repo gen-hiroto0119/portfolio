@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
+import { FeedbackToasts } from "@/components/feedback-notice";
+import { CommandPalette } from "@/components/command-palette/command-palette";
 import { CommandPaletteProvider } from "@/components/command-palette/command-palette-provider";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { getContentCommandData } from "@/lib/content-commands";
@@ -36,13 +39,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+async function ContentCommands() {
+  const contentItems = await getContentCommandData();
+  return <CommandPalette contentItems={contentItems} />;
+}
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const contentItems = await getContentCommandData();
-
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
@@ -58,14 +64,18 @@ export default async function RootLayout({
         />
       </head>
       <body className="isolate flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
+        <FeedbackToasts />
         <ThemeProvider>
           <LocaleProvider>
-            <CommandPaletteProvider contentItems={contentItems}>
+            <CommandPaletteProvider>
               <Header />
               <main id="main" className="flex flex-1 flex-col">
                 {children}
               </main>
               <Footer />
+              <Suspense fallback={<CommandPalette />}>
+                <ContentCommands />
+              </Suspense>
             </CommandPaletteProvider>
           </LocaleProvider>
         </ThemeProvider>

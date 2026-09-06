@@ -2,6 +2,7 @@
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 import { useCommandPalette } from "@/components/command-palette/command-palette-provider";
 import { useLocale } from "@/components/i18n/locale-provider";
 import { LocaleToggle } from "@/components/i18n/locale-toggle";
@@ -10,7 +11,15 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { navItems } from "@/lib/site";
 
 export function HeaderNav() {
+  return <Suspense fallback={<Navigation />}><ActiveNavigation /></Suspense>;
+}
+
+function ActiveNavigation() {
   const pathname = usePathname();
+  return <Navigation pathname={pathname} />;
+}
+
+function Navigation({ pathname = "" }: { pathname?: string }) {
   const { openPalette } = useCommandPalette();
   const { t } = useLocale();
   return (
@@ -24,7 +33,7 @@ export function HeaderNav() {
       <div className="flex items-center gap-0.5">
         <button type="button" className="icon-button" aria-label={t.nav.openCommandPalette} onClick={openPalette}><Search size={16} strokeWidth={1.5} aria-hidden /></button>
         <div className="hidden md:contents"><LocaleToggle /><ThemeToggle /></div>
-        <MobileMenu />
+        <MobileMenu pathname={pathname} />
       </div>
     </nav>
   );

@@ -5,7 +5,7 @@ export const insertWork: Work = {
   title: "Insert",
   description:
     "作業中に試したことや考えたことを、一行ずつ残すメモアプリ。タスクごと、週ごとに読み返せます。",
-  role: "開発",
+  role: "Product Owner",
   stack: ["Next.js", "TypeScript"],
   featured: true,
   published: true,

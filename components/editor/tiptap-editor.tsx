@@ -28,6 +28,8 @@ import {
   X,
 } from "lucide-react";
 
+import { FeedbackNotice } from "@/components/feedback-notice";
+import { CmsError, userMessage } from "@/lib/cms/errors";
 import { codeLanguages, lowlight } from "@/lib/syntax-highlight";
 import { UploadAnchor, uploadAnchorKey } from "./upload-anchor";
 
@@ -153,18 +155,18 @@ export function TiptapEditor({ value, onChange, onUpload, media, busy = false, r
         undefined, undefined, (spec) => spec.id === id,
       )[0];
       if (!anchor) return;
-      if (!uploaded.length) throw new Error("画像が保存されませんでした。もう一度お試しください。");
-      if (optionsRef.current.readOnly) throw new Error("画像は保存されました。編集を再開してからライブラリで挿入してください。");
+      if (!uploaded.length) throw new CmsError("VALIDATION", "画像が保存されませんでした。もう一度お試しください。");
+      if (optionsRef.current.readOnly) throw new CmsError("VALIDATION", "画像は保存されました。編集を再開してからライブラリで挿入してください。");
 
       const inserted = editor.chain()
         .insertContentAt(anchor.from, uploaded.map(imageContent), { updateSelection: false })
         .setMeta(uploadAnchorKey, { remove: id })
         .run();
-      if (!inserted) throw new Error("この位置には画像を挿入できません。ライブラリから別の位置に追加してください。");
+      if (!inserted) throw new CmsError("VALIDATION", "この位置には画像を挿入できません。ライブラリから別の位置に追加してください。");
       setLibraryTab("library");
     } catch (cause) {
       if (!editor.isDestroyed) {
-        setError(cause instanceof Error ? cause.message : "画像をアップロードできませんでした。もう一度お試しください。");
+        setError(userMessage(cause, "画像を追加できませんでした。接続を確認し、ファイルを選び直してください。"));
       }
     } finally {
       if (!editor.isDestroyed) {
@@ -359,10 +361,7 @@ export function TiptapEditor({ value, onChange, onUpload, media, busy = false, r
       )}
 
       {error && (
-        <div role="alert" className="flex items-start justify-between gap-4 border-b border-border bg-surface px-4 py-3 text-sm">
-          <p>{error}</p>
-          <button type="button" aria-label="エラーを閉じる" onClick={() => setError(null)} className="shrink-0 rounded p-1"><X size={14} aria-hidden /></button>
-        </div>
+        <FeedbackNotice title="追加する内容を確認してください" onDismiss={() => setError(null)}><p>{error}</p><p>本文はそのまま編集できます。</p></FeedbackNotice>
       )}
 
       <div className={libraryOpen ? "grid min-w-0 md:grid-cols-[minmax(0,1fr)_15rem]" : "min-w-0"}>

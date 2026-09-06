@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { parseTiptapDocument, type TiptapDocument } from "@/lib/cms/document";
-import { CmsError } from "@/lib/cms/errors";
+import { CmsError, type CmsErrorField } from "@/lib/cms/errors";
 import { calendarDateSchema } from "@/lib/content/calendar-date";
 
 export const slugSchema = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "URL は半角英小文字・数字・ハイフンで入力してください。");
@@ -25,18 +25,32 @@ export type ValidatedDraftInput = Omit<z.output<typeof draftInputSchema>, "body"
 
 export function parseDraftInput(input: unknown): ValidatedDraftInput {
   const result = draftInputSchema.safeParse(input);
-  if (!result.success) throw new CmsError("VALIDATION", result.error.issues[0]?.message ?? "入力内容を確認してください。");
+  if (!result.success) {
+    const field = result.error.issues[0]?.path[0];
+    const messages: Record<CmsErrorField, string> = {
+      title: "タイトルは1〜180文字で入力してください。",
+      slug: "URLは120文字以内の半角英小文字・数字・ハイフンで入力してください。",
+      description: "概要は500文字以内で入力してください。",
+      date: "日付を選び直してください。",
+      category: "カテゴリを選び直してください。",
+      tags: "タグは1つ40文字以内、20個までで入力してください。",
+    };
+    if (typeof field === "string" && Object.hasOwn(messages, field)) {
+      throw new CmsError("VALIDATION", messages[field as CmsErrorField], field as CmsErrorField);
+    }
+    throw new CmsError("VALIDATION", "記事の情報を確認できませんでした。入力内容を控えてから、編集画面を開き直してください。");
+  }
   return { ...result.data, body: parseTiptapDocument(result.data.body) };
 }
 
 export function parsePostId(id: unknown): string {
   const result = z.uuid().safeParse(id);
-  if (!result.success) throw new CmsError("VALIDATION", "記事 ID が正しくありません。");
+  if (!result.success) throw new CmsError("VALIDATION", "記事を確認できませんでした。記事一覧から開き直してください。");
   return result.data;
 }
 
 export function parseRevision(value: unknown): number {
   const result = z.number().int().positive().safeParse(value);
-  if (!result.success) throw new CmsError("VALIDATION", "revision が正しくありません。");
+  if (!result.success) throw new CmsError("VALIDATION", "保存状態を確認できませんでした。文章を控えてから、記事を開き直してください。");
   return result.data;
 }

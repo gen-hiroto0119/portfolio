@@ -1,15 +1,16 @@
 "use server";
 import { revalidatePath, updateTag } from "next/cache";
-import { CmsError } from "@/lib/cms/errors";
+import { CmsError, publicFailure } from "@/lib/cms/errors";
 import { saveDraft, publishPost, unpublishPost } from "@/lib/cms/posts";
 import { prepareMediaUpload, completeMediaUpload, listMedia } from "@/lib/cms/media";
 
 function failure(error: unknown) {
-  return { ok: false as const, error: error instanceof CmsError ? error.message : "操作に失敗しました。もう一度お試しください。" };
+  if (!(error instanceof CmsError) || error.code === "DATABASE") console.error("CMS operation failed", error);
+  return publicFailure(error);
 }
 function refreshPublicContent() {
   updateTag("cms-blog");
-  revalidatePath("/", "layout");
+  // Public pages and search inherit cms-blog; don't evict unrelated routes.
   revalidatePath("/feed.xml");
   revalidatePath("/sitemap.xml");
 }

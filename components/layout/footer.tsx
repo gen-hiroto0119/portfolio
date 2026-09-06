@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { cacheLife } from "next/cache";
 import { SquarePen } from "lucide-react";
 import { site } from "@/lib/site";
 
-export function Footer() {
+export async function Footer() {
+  "use cache";
+  cacheLife("days");
   return (
     <footer className="mt-auto">
       <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-6 px-6 pb-10 pt-12 text-xs text-muted-foreground sm:px-10">

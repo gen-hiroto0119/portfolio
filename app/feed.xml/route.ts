@@ -29,7 +29,7 @@ export async function GET() {
     <link>${escapeXml(`${site.url}/blog`)}</link>
     <description>${escapeXml(site.description)}</description>
     <language>ja</language>
-    <lastBuildDate>${toRssDate(posts[0]?.date ?? new Date().toISOString().slice(0, 10))}</lastBuildDate>
+${posts.length ? `    <lastBuildDate>${new Date(Math.max(...posts.map(post => Date.parse(post.publishedAt)))).toUTCString()}</lastBuildDate>` : ""}
 ${items}
   </channel>
 </rss>`;

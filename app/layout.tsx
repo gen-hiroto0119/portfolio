@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -79,6 +80,7 @@ export default function RootLayout({
             </CommandPaletteProvider>
           </LocaleProvider>
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );

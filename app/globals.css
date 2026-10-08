@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
 :root {
   --background: #ffffff;
   --surface: #f7f7f8;
@@ -15,21 +13,6 @@
   --syntax-title: #6f42c1;
   --syntax-literal: #005cc5;
   --syntax-tag: #16733d;
-}
-html[data-theme="dark"] {
-  --background: #141414;
-  --surface: #1e1e20;
-  --foreground: #eeeeef;
-  --muted-foreground: #a1a1aa;
-  --border: #303033;
-  --accent: #eeeeef;
-  --syntax-comment: #9da6b1;
-  --syntax-keyword: #ff7b72;
-  --syntax-string: #a5d6ff;
-  --syntax-title: #d2a8ff;
-  --syntax-literal: #79c0ff;
-  --syntax-tag: #7ee787;
-  color-scheme: dark;
 }
 @theme inline {
   --color-background: var(--background);
@@ -49,10 +32,7 @@ html[data-theme="dark"] {
   ::selection { background: color-mix(in srgb, var(--foreground) 16%, transparent); }
 }
 @layer components {
-  .icon-button { @apply inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface hover:text-foreground; }
-  .button { @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-surface disabled:opacity-50; }
   .button-primary { @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-80 disabled:opacity-50; }
-  .field { @apply w-full rounded-md border border-border bg-background px-3 py-2 text-sm; }
   .prose-content { @apply text-[15px] leading-8 text-foreground; overflow-wrap: anywhere; }
   .prose-content > * + * { margin-top: 1.5em; }
   .prose-content h2 { @apply mt-12 text-2xl font-semibold tracking-tight; }

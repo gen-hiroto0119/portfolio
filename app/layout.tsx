@@ -1,10 +1,7 @@
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import Script from "next/script";
-import { getLocaleInitScript } from "@/lib/i18n/locale-script";
-import { getThemeInitScript } from "@/lib/theme/theme-script";
 import { site } from "@/lib/site";
-import "@fontsource-variable/space-grotesk";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-jp";
 import "@fontsource-variable/jetbrains-mono";
@@ -40,19 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: getLocaleInitScript(),
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: getThemeInitScript(),
-          }}
-        />
-      </head>
+    <html lang="ja">
       <body className="isolate flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
         {children}
         <SpeedInsights />

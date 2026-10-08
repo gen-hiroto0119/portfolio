@@ -42,8 +42,5 @@ next-env.d.ts
 
 .obsidian/
 
-# Former local writing vault; articles are managed in the CMS.
+# Legacy local writing vault.
 /Blog Content/
-
-# Supabase CLI cache
-/supabase/.temp/

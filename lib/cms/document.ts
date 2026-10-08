@@ -12,7 +12,6 @@ export type TiptapNode = {
 };
 export type TiptapDocument = TiptapNode & { type: "doc"; content: TiptapNode[] };
 
-export const EMPTY_DOCUMENT: TiptapDocument = { type: "doc", content: [{ type: "paragraph" }] };
 const BLOCKS = new Set(["paragraph", "heading", "blockquote", "bulletList", "orderedList", "codeBlock", "horizontalRule", "image", "table"]);
 const TABLE_PARTS = new Set(["tableRow", "tableCell", "tableHeader"]);
 const MAX_TABLE_ROWS = 100;
@@ -169,14 +168,4 @@ export function parseTiptapDocument(value: unknown): TiptapDocument {
   const document = parseNode(value, 0);
   if (document.type !== "doc" || !document.content) invalid();
   return document as TiptapDocument;
-}
-
-export function documentAssetIds(document: TiptapDocument): string[] {
-  const ids = new Set<string>();
-  const visit = (node: TiptapNode) => {
-    if (node.type === "image" && typeof node.attrs?.assetId === "string") ids.add(node.attrs.assetId);
-    node.content?.forEach(visit);
-  };
-  visit(document);
-  return [...ids];
 }

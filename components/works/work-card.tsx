@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { Work } from "@/app/works/_lib/schema";
+import type { Work } from "@/app/(legacy)/works/_lib/schema";
 
 type WorkCardProps = {
   work: Work;

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getAllWorks } from "@/app/works/_lib/get-works";
+import { getAllWorks } from "@/app/(legacy)/works/_lib/get-works";
 import { getAllPosts } from "@/lib/content";
 
 export type ContentCommandData = {

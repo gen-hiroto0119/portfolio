@@ -1,16 +1,6 @@
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Suspense } from "react";
-
-import { FeedbackToasts } from "@/components/feedback-notice";
-import { CommandPalette } from "@/components/command-palette/command-palette";
-import { CommandPaletteProvider } from "@/components/command-palette/command-palette-provider";
-import { LocaleProvider } from "@/components/i18n/locale-provider";
-import { getContentCommandData } from "@/lib/content-commands";
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
-import { ThemeProvider } from "@/components/theme/theme-provider";
 import { getLocaleInitScript } from "@/lib/i18n/locale-script";
 import { getThemeInitScript } from "@/lib/theme/theme-script";
 import { site } from "@/lib/site";
@@ -44,11 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-async function ContentCommands() {
-  const contentItems = await getContentCommandData();
-  return <CommandPalette contentItems={contentItems} />;
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -69,21 +54,7 @@ export default function RootLayout({
         />
       </head>
       <body className="isolate flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
-        <FeedbackToasts />
-        <ThemeProvider>
-          <LocaleProvider>
-            <CommandPaletteProvider>
-              <Header />
-              <main id="main" className="flex flex-1 flex-col">
-                {children}
-              </main>
-              <Footer />
-              <Suspense fallback={<CommandPalette />}>
-                <ContentCommands />
-              </Suspense>
-            </CommandPaletteProvider>
-          </LocaleProvider>
-        </ThemeProvider>
+        {children}
         <SpeedInsights />
         {process.env.VERCEL_ENV === "production" && (
           <>

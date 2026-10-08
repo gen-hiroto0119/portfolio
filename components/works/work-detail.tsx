@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import type { Work } from "@/app/works/_lib/schema";
+import type { Work } from "@/app/(legacy)/works/_lib/schema";
 
 type WorkDetailProps = {
   work: Work;

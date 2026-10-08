@@ -2,14 +2,14 @@ import "server-only";
 
 import { cacheLife, cacheTag } from "next/cache";
 
-import { getPublishedPost, listPublishedPosts } from "@/lib/cms/posts";
 import type { BlogPost, BlogPostWithContent } from "@/lib/content/schema";
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   "use cache";
   cacheLife("blog");
   cacheTag("cms-blog");
-  return listPublishedPosts();
+  // 新CMSの接続までは公開記事なし。ローカルの記事ファイルは読み込まない。
+  return [];
 }
 
 export async function getPost(slug: string): Promise<BlogPostWithContent | null> {
@@ -20,7 +20,7 @@ export async function getPost(slug: string): Promise<BlogPostWithContent | null>
 async function getCachedPost(slug: string): Promise<BlogPostWithContent | null> {
   "use cache";
   cacheLife("blog");
-  // The shared tag also expires old slugs and cached misses after publication.
   cacheTag("cms-blog");
-  return getPublishedPost(slug);
+  void slug;
+  return null;
 }

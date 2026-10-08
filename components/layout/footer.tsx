@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cacheLife } from "next/cache";
-import { SquarePen } from "lucide-react";
 import { site } from "@/lib/site";
 
 export async function Footer() {
@@ -15,9 +14,6 @@ export async function Footer() {
           <Link href="/design" className="hover:text-foreground">Design</Link>
           <a href={site.socials.github} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">GitHub ↗</a>
           <a href={site.socials.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">LinkedIn ↗</a>
-          <Link href="/admin" prefetch={false} aria-label="管理画面" title="管理画面" className="inline-flex size-8 items-center justify-center rounded-md transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
-            <SquarePen size={16} aria-hidden="true" />
-          </Link>
         </nav>
       </div>
     </footer>

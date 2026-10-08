@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/components/i18n/locale-provider";
 import { SectionLabel } from "@/components/home/section-label";
-import type { Work } from "@/app/works/_lib/schema";
+import type { Work } from "@/app/(legacy)/works/_lib/schema";
 
 export function FeaturedWorks({ works }: { works: Work[] }) {
   const { t, locale } = useLocale();

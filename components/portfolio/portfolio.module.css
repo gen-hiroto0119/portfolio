@@ -1,0 +1,95 @@
+.site {
+  --background: #fff;
+  --foreground: #171717;
+  --muted-foreground: #7c7c7c;
+  --border: #e5e5e5;
+  --surface: #fafafa;
+  --syntax-comment: #7c7c7c;
+  --syntax-keyword: #171717;
+  --syntax-string: #526977;
+  --syntax-title: #171717;
+  --syntax-literal: #526977;
+  --syntax-tag: #171717;
+  --syntax-attribute: #526977;
+  --gap: 16px;
+  min-height: 100svh;
+  color-scheme: light;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--portfolio-font), "Noto Sans JP Variable", sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 600px; margin-inline: auto; padding: 32px 24px; }
+.site a { text-underline-offset: 4px; }
+.site a:hover { text-decoration: underline; }
+.site :focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
+.site h1 { font-size: 20px; font-weight: 600; line-height: 28px; overflow-wrap: anywhere; }
+.site h2 { font-size: 14px; font-weight: 400; line-height: 20px; color: var(--muted-foreground); }
+.site strong { color: var(--foreground); font-weight: 400; }
+.skipLink { position: fixed; top: 8px; left: 8px; z-index: 100; padding: 8px; background: white; transform: translateY(-200%); }
+.skipLink:focus { transform: translateY(0); }
+.header { display: flex; align-items: center; justify-content: space-between; height: 40px; margin-bottom: var(--gap); }
+.avatarLink { width: 40px; height: 40px; display: block; }
+.avatarLink svg { width: 100%; height: 100%; }
+.main { display: flex; flex-direction: column; gap: var(--gap); }
+.intro { display: flex; flex-direction: column; gap: var(--gap); }
+.intro p { color: var(--muted-foreground); line-height: 19.25px; }
+.technology { display: inline-block; color: var(--foreground); white-space: nowrap; vertical-align: baseline; }
+.technology img { display: inline-block; width: 15px; height: 15px; margin-inline-end: 4px; vertical-align: -0.125em; }
+.section { border-top: 1px solid var(--border); padding-top: var(--gap); }
+.section > h2, .sectionHeading { margin-bottom: 8px; }
+.sectionHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.sectionHeading a { font-size: 12px; }
+.experience { display: flex; flex-direction: column; gap: 0; }
+.experienceRow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; line-height: 20px; padding-block: 4px; }
+.job { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.job img { width: 16px; height: 16px; object-fit: contain; align-self: center; flex-shrink: 0; }
+.date { color: var(--muted-foreground); white-space: nowrap; font-size: 12px; }
+.secondary { color: var(--muted-foreground); }
+.projects { min-height: 53px; }
+.footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); margin-top: var(--gap); padding-top: var(--gap); font-size: 12px; line-height: 20px; color: var(--muted-foreground); }
+.socials { display: flex; align-items: center; gap: 12px; }
+.socials a { display: inline-flex; padding-block: 2px; }
+.blogHeading { display: flex; flex-direction: column; gap: 8px; }
+.blogHeading p { color: var(--muted-foreground); line-height: 22px; }
+.posts { padding: 0; list-style: none; }
+.postRow { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 4px; line-height: 22px; }
+.postRow > span { min-width: 0; overflow-wrap: anywhere; }
+.postRow time { flex-shrink: 0; color: var(--muted-foreground); font-size: 12px; }
+.empty { display: flex; flex-direction: column; gap: 8px; padding-block: 8px; line-height: 22px; color: var(--muted-foreground); }
+.article { display: flex; flex-direction: column; gap: 16px; }
+.articleHeading { display: flex; flex-direction: column; gap: 8px; }
+.articleHeading time { font-size: 12px; line-height: 18px; color: var(--muted-foreground); }
+.articleBody { border-block: 1px solid var(--border); padding-block: 16px; }
+.articleBody :global(.prose-content) { font-size: 14px; line-height: 22px; color: var(--muted-foreground); }
+.articleBody :global(.prose-content) > * + * { margin-top: 16px; }
+.articleBody :is(h2, h3, h4, h5, h6) { color: var(--foreground); font-size: 14px; line-height: 22px; font-weight: 400; letter-spacing: normal; margin-top: 24px; }
+.articleBody :is(h2, h3, h4, h5, h6):first-child { margin-top: 0; }
+.articleBody :is(h2, h3, h4, h5, h6) + p { margin-top: 8px; }
+.articleBody a { color: var(--foreground); text-decoration: underline; }
+.articleBody blockquote { border-left: 1px solid var(--border); padding: 4px 0 4px 16px; }
+.articleBody pre { background: transparent; border-left: 1px solid var(--border); border-radius: 0; padding: 4px 0 4px 16px; font-size: 12px; line-height: 20px; max-width: 100%; }
+.articleBody :not(pre) > code { background: var(--surface); color: var(--foreground); padding: 1px 3px; }
+.articleBody img { border-radius: 0; }
+.articleBody table { font-size: 14px; }
+.articleBody li + li { margin-top: 4px; }
+.retry { align-self: flex-start; text-decoration: underline; text-underline-offset: 4px; }
+.search { margin-bottom: 12px; color: var(--muted-foreground); font-size: 12px; }
+.search summary { cursor: pointer; width: fit-content; }
+.searchFields { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-block: 12px; }
+.searchFields label { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.searchFields :is(input, select) { border: 1px solid var(--border); padding: 8px; background: white; color: var(--foreground); width: 100%; font: inherit; font-size: 14px; }
+.searchFields button { padding-block: 8px; text-decoration: underline; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (min-width: 600px) {
+  .container { padding-inline: 30px; }
+  .experienceRow { font-size: 13px; }
+}
+@media (max-width: 599px) {
+  .experience { gap: 16px; }
+  .experienceRow { flex-direction: column; gap: 8px; }
+  .postRow { flex-direction: column; gap: 4px; padding-block: 8px; }
+  .date { font-size: 14px; }
+}

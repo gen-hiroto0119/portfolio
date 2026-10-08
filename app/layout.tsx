@@ -1,5 +1,6 @@
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Suspense } from "react";
 
 import { FeedbackToasts } from "@/components/feedback-notice";
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.description,
+  verification: {
+    google: "ssWfIeurI-ISfNLYHK1mlYeqDZzqYm2nfiBx17FY1FA",
+  },
   openGraph: {
     siteName: site.name,
     locale: "ja_JP",
@@ -81,6 +85,22 @@ export default function RootLayout({
           </LocaleProvider>
         </ThemeProvider>
         <SpeedInsights />
+        {process.env.VERCEL_ENV === "production" && (
+          <>
+            <Script
+              src="https://www.googletagmanager.com/gtag/js?id=G-HPL2D9ZG54"
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-HPL2D9ZG54');
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

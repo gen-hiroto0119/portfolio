@@ -6,6 +6,7 @@ import { POST as manualSync } from "../../app/api/notion/sync/route";
 import { POST as notionWebhook } from "../../app/api/notion/webhook/[key]/route";
 import { storeWebhookVerificationWith } from "./blob";
 import { createNotionWebhookHandler } from "./webhook-handler";
+import { syncNotionPageWorkflow } from "./workflows";
 
 async function withEnv(values: Record<string, string | undefined>, run: () => Promise<void>) {
   const previous = Object.fromEntries(Object.keys(values).map((key) => [key, process.env[key]]));
@@ -150,5 +151,51 @@ test("webhook rejects invalid signatures and acknowledges unsupported signed eve
       headers: { "x-notion-signature": `sha256=${digest}` },
     }), { params: Promise.resolve({ key: pathSecret }) });
     assert.equal(ignored.status, 200);
+  });
+});
+
+test("signed page events start the coalescing workflow with receipt time while invalid signatures do not", async () => {
+  const pathSecret = "p".repeat(32);
+  const signatureSecret = "s".repeat(32);
+  const pageId = "00000000-0000-4000-8000-000000000002";
+  const body = JSON.stringify({
+    id: "00000000-0000-4000-8000-000000000001",
+    type: "page.content_updated",
+    entity: { id: pageId },
+  });
+  await withEnv({
+    BLOG_SYNC_ENABLED: "true",
+    NOTION_WEBHOOK_PATH_SECRET: pathSecret,
+    NOTION_WEBHOOK_SECRET: signatureSecret,
+    NOTION_API_KEY: "not-a-real-api-key",
+    NOTION_DATA_SOURCE_ID: "00000000-0000-4000-8000-000000000003",
+    BLOB_READ_WRITE_TOKEN: "mock",
+  }, async () => {
+    const started: Array<{ workflow: unknown; args: unknown[] }> = [];
+    const startWorkflow = (async (workflow: unknown, args: unknown[]) => {
+      started.push({ workflow, args });
+      return { runId: "workflow-run" };
+    }) as never;
+    const handler = createNotionWebhookHandler(undefined, startWorkflow);
+    const send = (signatureKey: string) => {
+      const signature = createHmac("sha256", signatureKey).update(body).digest("hex");
+      return handler(new Request("http://localhost", {
+        method: "POST", body, headers: { "x-notion-signature": `sha256=${signature}` },
+      }), { params: Promise.resolve({ key: pathSecret }) });
+    };
+    const before = Date.now();
+    assert.equal((await send("wrong")).status, 401);
+    assert.equal(started.length, 0);
+    const response = await send(signatureSecret);
+    const after = Date.now();
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), { runId: "workflow-run" });
+    assert.equal(started.length, 1);
+    assert.equal(started[0].workflow, syncNotionPageWorkflow);
+    assert.equal(started[0].args[0], pageId);
+    assert.equal(started[0].args[1], "page.content_updated");
+    assert.ok(typeof started[0].args[2] === "string");
+    const receivedAt = Date.parse(started[0].args[2] as string);
+    assert.ok(receivedAt >= before && receivedAt <= after);
   });
 });

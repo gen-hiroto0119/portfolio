@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { TiptapContent } from "@/components/blog/tiptap-content";
-import { PortfolioHeader, PortfolioFooter } from "@/components/portfolio/shell";
 import type { BlogPostWithContent } from "@/lib/content/schema";
 import styles from "@/components/portfolio/portfolio.module.css";
 
 export function PostDetail({ post }: { post: BlogPostWithContent }) {
   return <>
-    <PortfolioHeader />
     <main id="main" className={styles.main}>
       <Link href="/blog">← Blog</Link>
       <article className={styles.article}>
@@ -18,6 +16,5 @@ export function PostDetail({ post }: { post: BlogPostWithContent }) {
       </article>
       <Link href="/blog">← 記事一覧に戻る</Link>
     </main>
-    <PortfolioFooter />
   </>;
 }

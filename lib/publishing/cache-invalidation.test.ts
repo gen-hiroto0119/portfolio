@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { test } from "node:test";
 
 import { BLOG_CACHE_TAG } from "@/lib/content/cache-policy";
 import { createBlogCacheInvalidationHandler } from "./cache-handler";
-import { CacheInvalidationConfigurationError, requestBlogCacheInvalidation } from "./cache-invalidation";
+import { invalidateBlogCacheIfPending, CacheInvalidationConfigurationError, requestBlogCacheInvalidation } from "./cache-invalidation";
+import { ConcurrentPublicationError, type Snapshot } from "./model";
 
 async function withConfig(run: () => Promise<void>) {
   const values = {
@@ -95,4 +97,59 @@ test("missing or unsafe callback configuration fails before sending credentials"
     delete process.env.BLOG_SYNC_SECRET;
     await assert.rejects(requestBlogCacheInvalidation(neverFetch), CacheInvalidationConfigurationError);
   });
+});
+
+test("cache acknowledgement uses the original ETag and leaves a concurrent publication pending", async () => {
+  const original: Snapshot = { version: 1, generation: randomUUID(), posts: [], garbage: [], cacheInvalidationPending: true };
+  const post = {
+    id: randomUUID(), slug: "new-publication", title: "New publication", description: "",
+    date: "2026-01-01", category: "tech", tags: [], published: true,
+    publishedAt: "2026-01-01T00:00:00+09:00", revision: 1,
+    body: { type: "doc", content: [{ type: "paragraph" }] }, assets: [],
+    sourceEditedAt: "2026-01-01T00:00:00.000Z",
+  } as const;
+  const newer: Snapshot = { ...original, generation: randomUUID(), posts: [post] };
+  let current = { snapshot: original, etag: "original-etag" };
+  let reads = 0;
+  let invalidations = 0;
+  await assert.rejects(invalidateBlogCacheIfPending({
+    read: async () => { reads++; return current; },
+    write: async (snapshot, etag) => {
+      assert.equal(etag, "original-etag");
+      assert.equal(snapshot.generation, original.generation);
+      assert.equal(snapshot.cacheInvalidationPending, false);
+      if (etag !== current.etag) throw new ConcurrentPublicationError();
+      current = { snapshot, etag: "ack-etag" };
+    },
+    invalidate: async () => {
+      invalidations++;
+      current = { snapshot: newer, etag: "newer-etag" };
+    },
+  }), ConcurrentPublicationError);
+  assert.equal(reads, 1);
+  assert.equal(invalidations, 1);
+  assert.equal(current.snapshot.generation, newer.generation);
+  assert.equal(current.snapshot.posts[0]?.id, post.id);
+  assert.equal(current.snapshot.cacheInvalidationPending, true);
+});
+
+test("failed invalidation leaves the pending snapshot unacknowledged and clean snapshots skip", async () => {
+  const pending: Snapshot = { version: 1, generation: randomUUID(), posts: [], garbage: [], cacheInvalidationPending: true };
+  let writes = 0;
+  await assert.rejects(invalidateBlogCacheIfPending({
+    read: async () => ({ snapshot: pending, etag: "pending-etag" }),
+    write: async () => { writes++; },
+    invalidate: async () => { throw new Error("offline"); },
+  }), /offline/);
+  assert.equal(pending.cacheInvalidationPending, true);
+  assert.equal(writes, 0);
+
+  let invalidations = 0;
+  const result = await invalidateBlogCacheIfPending({
+    read: async () => ({ snapshot: { ...pending, cacheInvalidationPending: false }, etag: "clean-etag" }),
+    write: async () => { writes++; },
+    invalidate: async () => { invalidations++; },
+  });
+  assert.deepEqual(result, { invalidated: false });
+  assert.equal(invalidations, 0);
 });

@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { configuredSecret, constantTimeTextEqual, errorResponse, publishingConfigured, readBoundedBody, signatureMatches, webhookSetupEnabled } from "@/lib/publishing/auth";
 import { isBlobConfigured, storeWebhookVerificationWith, WebhookVerificationConflictError } from "@/lib/publishing/blob";
-import { reconcileBlogWorkflow } from "@/lib/publishing/workflows";
+import { reconcileBlogWorkflow, syncNotionPageWorkflow } from "@/lib/publishing/workflows";
 
 const eventSchema = z.object({
   id: z.uuid(),
@@ -15,8 +15,12 @@ const eventSchema = z.object({
 const eventEnvelope = z.object({ id: z.uuid(), type: z.string().min(1), entity: z.object({ id: z.uuid() }) });
 const supportedPageEvents = new Set(["page.created", "page.content_updated", "page.properties_updated", "page.deleted", "page.undeleted", "page.moved"]);
 
-export function createNotionWebhookHandler(storeVerification: (token: string) => Promise<void> = storeWebhookVerificationWith) {
+export function createNotionWebhookHandler(
+  storeVerification: (token: string) => Promise<void> = storeWebhookVerificationWith,
+  startWorkflow: typeof start = start,
+) {
   return async function POST(request: Request, context: { params: Promise<{ key: string }> }) {
+    const receivedAt = new Date().toISOString();
     if (process.env.BLOG_SYNC_ENABLED !== "true") return errorResponse(503);
     const { key } = await context.params;
     const expectedKey = process.env.NOTION_WEBHOOK_PATH_SECRET;
@@ -52,7 +56,7 @@ export function createNotionWebhookHandler(storeVerification: (token: string) =>
       if (envelope.data.type.startsWith("data_source") && envelope.data.entity.id.replaceAll("-", "").toLowerCase() === process.env.NOTION_DATA_SOURCE_ID?.replaceAll("-", "").toLowerCase()) {
         if (!publishingConfigured()) return errorResponse(503);
         try {
-          const run = await start(reconcileBlogWorkflow, []);
+          const run = await startWorkflow(reconcileBlogWorkflow, []);
           return Response.json({ runId: run.runId }, { status: 202 });
         } catch {
           return errorResponse(503);
@@ -62,7 +66,7 @@ export function createNotionWebhookHandler(storeVerification: (token: string) =>
     }
     if (!publishingConfigured()) return errorResponse(503);
     try {
-      const run = await start(reconcileBlogWorkflow, [parsed.data.entity.id]);
+      const run = await startWorkflow(syncNotionPageWorkflow, [parsed.data.entity.id, parsed.data.type, receivedAt]);
       return Response.json({ runId: run.runId }, { status: 202 });
     } catch {
       return errorResponse(503);

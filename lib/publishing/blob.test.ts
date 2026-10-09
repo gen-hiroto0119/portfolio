@@ -3,10 +3,58 @@ import { randomUUID } from "node:crypto";
 import { test } from "node:test";
 import { BlobPreconditionFailedError } from "@vercel/blob";
 
-import { ConcurrentPublicationError, type Snapshot } from "./model";
-import { readSnapshotWith, storeWebhookVerificationWith, writeSnapshotWith } from "./blob";
+import { ConcurrentPublicationError, type Snapshot, type SyncMarker } from "./model";
+import { readSnapshotWith, readSyncMarkerWith, storeWebhookVerificationWith, writeSnapshotWith, writeSyncMarkerWith } from "./blob";
 
 const snapshot: Snapshot = { version: 1, generation: randomUUID(), posts: [], garbage: [] };
+
+test("sync markers are private per-page records read without cache and written with CAS", async () => {
+  process.env.BLOB_READ_WRITE_TOKEN = "mock";
+  const marker: SyncMarker = {
+    version: 1, pageId: randomUUID(), token: "run-a", requestedAt: "2026-01-01T00:00:00.000Z",
+  };
+  const path = `blog/sync/${marker.pageId}.json`;
+  let read: { path: string; options: unknown } | undefined;
+  const serialized = JSON.stringify(marker);
+  const fakeGet = (async (received: string, options: unknown) => {
+    read = { path: received, options };
+    return { statusCode: 200, stream: new Blob([serialized]).stream(), blob: { etag: "etag-m", size: Buffer.byteLength(serialized) } };
+  }) as never;
+  assert.deepEqual(await readSyncMarkerWith(fakeGet, marker.pageId), { marker, etag: "etag-m" });
+  assert.equal(read?.path, path);
+  assert.deepEqual(read?.options, { access: "private", useCache: false });
+
+  const oversized = (async () => ({
+    statusCode: 200, stream: new Blob(["{}"]).stream(), blob: { etag: "etag-m", size: 4097 },
+  })) as never;
+  await assert.rejects(readSyncMarkerWith(oversized, marker.pageId), /同期マーカーが大きすぎます/);
+  const lyingSize = (async () => ({
+    statusCode: 200, stream: new Blob([" ".repeat(4097)]).stream(), blob: { etag: "etag-m", size: 1 },
+  })) as never;
+  await assert.rejects(readSyncMarkerWith(lyingSize, marker.pageId), /同期マーカーが大きすぎます/);
+  const corrupt = (async () => ({
+    statusCode: 200, stream: new Blob(["{\"version\":2}"]).stream(), blob: { etag: "etag-m", size: 13 },
+  })) as never;
+  await assert.rejects(readSyncMarkerWith(corrupt, marker.pageId), /同期マーカーの形式が不正です/);
+
+  let written: { path: string; body: unknown; options: unknown } | undefined;
+  const fakePut = (async (received: string, body: unknown, options: unknown) => {
+    written = { path: received, body, options };
+  }) as never;
+  await writeSyncMarkerWith(fakePut, marker, null);
+  assert.equal(written?.path, path);
+  assert.deepEqual(JSON.parse(String(written?.body)), marker);
+  assert.deepEqual(written?.options, {
+    access: "private", addRandomSuffix: false, allowOverwrite: false, contentType: "application/json; charset=utf-8",
+  });
+  await writeSyncMarkerWith(fakePut, marker, "etag-m");
+  assert.deepEqual(written?.options, {
+    access: "private", addRandomSuffix: false, allowOverwrite: true, ifMatch: "etag-m",
+    contentType: "application/json; charset=utf-8",
+  });
+  const conflictPut = (async () => { throw new BlobPreconditionFailedError(); }) as never;
+  await assert.rejects(writeSyncMarkerWith(conflictPut, marker, "etag-m"), ConcurrentPublicationError);
+});
 
 test("private snapshot reads bypass cache and return the SDK etag", async () => {
   process.env.BLOB_READ_WRITE_TOKEN = "mock";
@@ -21,6 +69,13 @@ test("private snapshot reads bypass cache and return the SDK etag", async () => 
   assert.deepEqual(received, { access: "private", useCache: false });
   assert.equal(result.etag, "etag-1");
   assert.equal(result.snapshot.generation, snapshot.generation);
+});
+
+test("a missing snapshot starts with invalidation explicitly clear", async () => {
+  process.env.BLOB_READ_WRITE_TOKEN = "mock";
+  const result = await readSnapshotWith((async () => null) as never);
+  assert.equal(result.etag, null);
+  assert.equal(result.snapshot.cacheInvalidationPending, false);
 });
 
 test("snapshot reads reject the provider size before parsing", async () => {

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { configuredSecret } from "./auth";
+import type { Snapshot, SnapshotRead } from "./model";
 
 export class CacheInvalidationConfigurationError extends Error {}
 
@@ -33,4 +34,22 @@ export async function requestBlogCacheInvalidation(fetcher: typeof fetch = fetch
   } catch {
     throw new Error("記事キャッシュの失効要求に失敗しました。");
   }
+}
+
+export type CacheAcknowledgementPorts = {
+  read: () => Promise<SnapshotRead>;
+  write: (snapshot: Snapshot, etag: string | null) => Promise<void>;
+  invalidate: () => Promise<void>;
+};
+
+// The acknowledgement writes back the snapshot it read, so a newer publication
+// committed while the request was in flight keeps its own pending flag.
+export async function invalidateBlogCacheIfPending(ports: CacheAcknowledgementPorts, force = false) {
+  const { snapshot, etag } = await ports.read();
+  if (!force && snapshot.cacheInvalidationPending === false) return { invalidated: false as const };
+  await ports.invalidate();
+  if (snapshot.cacheInvalidationPending !== false) {
+    await ports.write({ ...snapshot, cacheInvalidationPending: false }, etag);
+  }
+  return { invalidated: true as const };
 }

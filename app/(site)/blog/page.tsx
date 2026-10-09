@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PostList } from "@/components/portfolio/post-list";
-import { PortfolioHeader, PortfolioFooter } from "@/components/portfolio/shell";
 import { getAllPosts } from "@/lib/content";
 import styles from "@/components/portfolio/portfolio.module.css";
 
@@ -17,13 +16,11 @@ async function PublishedPosts() {
 
 export default function BlogPage() {
   return <>
-    <PortfolioHeader />
     <main id="main" className={styles.main}>
       <header className={styles.blogHeading}><h1>Blog</h1><p>開発やデザインについて、考えたこと。</p></header>
       <section className={styles.section} aria-label="記事一覧">
         <Suspense fallback={<p role="status" className={styles.secondary}>記事を読み込んでいます…</p>}><PublishedPosts /></Suspense>
       </section>
     </main>
-    <PortfolioFooter />
   </>;
 }

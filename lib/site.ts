@@ -9,16 +9,3 @@ export const site = {
     linkedin: "https://www.linkedin.com/in/gen-hiroto",
   },
 } as const;
-
-export type NavItem = {
-  label: string;
-  href: string;
-};
-
-export const navItems: NavItem[] = [
-  { label: "Works", href: "/works" },
-  { label: "Blog", href: "/blog" },
-  { label: "Lab", href: "/lab" },
-  { label: "Design", href: "/design" },
-  { label: "About", href: "/about" },
-];

@@ -1,3 +1,4 @@
+import { withWorkflow } from "workflow/next";
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -5,6 +6,5 @@ const nextConfig: NextConfig = {
   cacheLife: {
     blog: { stale: 30, revalidate: 300, expire: 3600 },
   },
-  experimental: { serverActions: { bodySizeLimit: "2mb" } },
 };
-export default nextConfig;
+export default withWorkflow(nextConfig);

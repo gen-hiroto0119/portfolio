@@ -16,20 +16,16 @@ type BlogOgImageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateImageMetadata({ params }: BlogOgImageProps) {
-  const { slug } = await params;
-  const post = await getPost(slug);
-  return post ? [{ id: String(post.revision), alt: post.title, size, contentType }] : [];
+export function generateImageMetadata() {
+  return [{ id: "current", alt, size, contentType }];
 }
 
-export default async function Image({ params, id }: BlogOgImageProps & { id: Promise<string> }) {
+export default async function Image({ params }: BlogOgImageProps) {
   await connection();
   const { slug } = await params;
   const post = await getPost(slug);
 
-  if (!post || String(post.revision) !== await id) {
-    notFound();
-  }
+  if (!post) notFound();
 
   return createPortfolioImage({
     label: "Blog",

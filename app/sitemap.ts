@@ -1,31 +1,15 @@
 import type { MetadataRoute } from "next";
 
-import { getAllWorks } from "@/app/(legacy)/works/_lib/get-works";
 import { getAllPosts } from "@/lib/content";
 import { site } from "@/lib/site";
 
 const staticRoutes: MetadataRoute.Sitemap = [
   { url: site.url, changeFrequency: "weekly", priority: 1 },
-  { url: `${site.url}/works`, changeFrequency: "weekly", priority: 0.9 },
   { url: `${site.url}/blog`, changeFrequency: "weekly", priority: 0.9 },
-  { url: `${site.url}/lab`, changeFrequency: "monthly", priority: 0.6 },
-  { url: `${site.url}/design`, changeFrequency: "monthly", priority: 0.5 },
-  { url: `${site.url}/about`, changeFrequency: "monthly", priority: 0.7 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [works, posts] = await Promise.all([
-    getAllWorks(),
-    getAllPosts(),
-  ]);
-
-  const workRoutes: MetadataRoute.Sitemap = works.map((work) => ({
-    url: `${site.url}/works/${work.slug}`,
-    lastModified: work.date,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
-
+  const posts = await getAllPosts();
   const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${site.url}/blog/${post.slug}`,
     lastModified: post.date,
@@ -33,5 +17,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...workRoutes, ...postRoutes];
+  return [...staticRoutes, ...postRoutes];
 }

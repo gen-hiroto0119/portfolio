@@ -6,7 +6,6 @@ export const blogCategorySchema = z.enum(["tech", "photo", "daily"]);
 
 export type BlogCategory = z.infer<typeof blogCategorySchema>;
 export type BlogPost = {
-  id: string;
   slug: string;
   title: string;
   description: string;
@@ -15,6 +14,5 @@ export type BlogPost = {
   tags: string[];
   published: true;
   publishedAt: string;
-  revision: number;
 };
 export type BlogPostWithContent = BlogPost & { body: TiptapDocument };

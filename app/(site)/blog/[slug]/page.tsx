@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 
 import { PostDetail } from "@/components/blog/post-detail";
@@ -45,9 +44,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 }
 
 async function PublishedArticle({ slug }: { slug: string }) {
-  "use cache";
-  cacheLife("blog");
-  // Inherits cms-blog from getPost, including the rendered syntax highlighting.
   const post = await getPost(slug);
 
   if (!post) {

@@ -10,46 +10,43 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Portfolio — Agent Guide
 
-Hiroto Furugen の個人サイト。Next.js App Router。公開トップ・ブログは CSS Modules、既存画面は Tailwind CSS と Base UI を使用する。
+Hiroto Furugen の個人サイト。Next.js App Router。現在の公開ページはトップとブログで、CSS Modules を使用する。
 
 ## コンテンツ方針
 
-- Blog の公開記事は現在空。`lib/content/index.ts` は空の一覧と記事なしを返し、新しい CMS が接続されるまで公開データを追加しない。
-- Git にサンプル記事やローカル検証用データを追加しない。管理画面・認証・記事や画像の保存先はない。
-- 将来の CMS が公開スナップショットを提供する場合に備え、Tiptap JSON の検証・表示を維持する。
-- Works は `app/(legacy)/works/_entries/` の共通メタ情報 (`*.meta.ts`) と作品別コンポーネント (`*.tsx`) で管理する。`index.ts` で両者を登録する。
-- Works の一覧・検索・SEOにはメタ情報だけを渡す。本文コンポーネントを Client Component の props に含めない。
+- Blog の公開記事は Blob の強整合スナップショットから取得する。Blob 設定がないビルドでは空の一覧になる。Git にサンプル記事やローカル検証用データを追加しない。
+- 管理画面はない。Notion の読み取り、同期用認証、private Vercel Blob の公開スナップショットを使用する。Supabase のランタイムコードとローカルマイグレーションはない。
+- 公開記事用の Tiptap JSON 検証・表示は `lib/cms/document.ts` と `components/blog/tiptap-content.tsx` に残す。既存の URL・画像検証を弱めない。
+- プロフィールと経歴のコピーは `app/(site)/page.tsx` にある。事実を保ち、経歴・実績を創作しない。
 - Idea は廃止済み。`Blog Content/` は Git 管理外の旧Vaultであり、サイトから読み込まない。
-- コピーは日本語を基本に、具体的で自然な文章にする。経歴・実績を創作しない。
+- Notion → Workflow → private Blob → Next.js の公開フローは実装済みだが、実サービスの秘密値がないため未接続。実サービスへの変更・記事公開は明示的な許可なしに行わない。
+- 日本語のコピーは具体的で自然な文章にする。
 
 ## 主要ファイル
 
 | 用途 | 場所 |
 |---|---|
-| 公開記事の取得（現在は空） | `lib/content/index.ts` |
+| 公開記事の取得 | `lib/content/index.ts` |
 | Tiptap JSON の検証・表示 | `lib/cms/document.ts`, `components/blog/tiptap-content.tsx` |
-| Worksの定義・表示 | `app/(legacy)/works/_entries/`, `components/works/work-detail.tsx` |
-| サイト設定・ナビ | `lib/site.ts` |
-| プロフィール・コピー | `lib/profile.ts`, `lib/i18n/messages.ts` |
-| Tailwind・色・本文スタイル | `app/globals.css` |
+| サイト設定 | `lib/site.ts` |
+| プロフィール・経歴コピー | `app/(site)/page.tsx` |
 | 公開トップ・ブログのレイアウトとCSS | `app/(site)/`, `components/portfolio/` |
-| DBマイグレーション | `supabase/migrations/` |
+| 共通フォールバック画面 | `app/error.tsx`, `app/not-found.tsx`, `components/page-recovery.tsx` |
 
 ## コーディング規約
 
-- 公開トップ・ブログは CSS Modules と CSS カスタムプロパティを使う。既存画面は Tailwind CSS を使い、UIの挙動は Base UI を優先する。StyleX を再導入しない。
+- 公開トップ・ブログは CSS Modules と CSS カスタムプロパティを使う。共通フォールバック画面では Tailwind CSS を使う。Base UI は使用していない。StyleX を再導入しない。
 - import はファイル先頭にまとめる。サーバー専用処理には `import "server-only"` を付ける。
 - union / enum の switch は default で never チェックを行う。
 - Next.js APIを変更する前に、インストール済みバージョンの `node_modules/next/dist/docs/` を読む。
-- `supabase/migrations/` は旧データモデルとセキュリティ設定の履歴として保持する。編集・適用せず、リモートデータを変更・削除しない。
 - 依頼外のリファクタ・ドキュメント・テストを追加しない。明示されない限り commit / push しない。
 
 ## コマンドと環境変数
 
-`npm run dev`、`npm run build`、`npm run lint`、`npm test` を使用する。
+`npm run dev`、`npm run build`、`npm run lint`、`npm test`、`npm run test:publishing` を使用する。
 
-Supabase 接続用の環境変数はない。`NEXT_PUBLIC_SITE_URL` は公開URLの指定に使う。
+`NEXT_PUBLIC_SITE_URL` は公開URLの指定に使う。連携の環境変数は `.env.example` を参照し、`BLOG_SYNC_ENABLED=false` を初期値とする。
 
 ## デプロイ
 
-デプロイや commit / push は明示的な依頼がない限り行わない。記事管理は当面 Notion を採用し、公開済み記事の編集は次の同期でサイトに反映する方針。Notion 接続は未実装で、今回の公開サイト刷新には含めない。MinRich の Rust 製公開プラグインとサイト側 SDK は後回し。
+実サービスへの変更・記事公開・デプロイや commit / push は明示的な依頼がない限り行わない。cron は設定せず、slug 変更前の URL は 404 とする。実サービスの配信は未検証。

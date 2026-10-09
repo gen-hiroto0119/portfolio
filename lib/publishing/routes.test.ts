@@ -4,6 +4,8 @@ import { test } from "node:test";
 
 import { POST as manualSync } from "../../app/api/notion/sync/route";
 import { POST as notionWebhook } from "../../app/api/notion/webhook/[key]/route";
+import { storeWebhookVerificationWith } from "./blob";
+import { createNotionWebhookHandler } from "./webhook-handler";
 
 async function withEnv(values: Record<string, string | undefined>, run: () => Promise<void>) {
   const previous = Object.fromEntries(Object.keys(values).map((key) => [key, process.env[key]]));
@@ -74,6 +76,54 @@ test("manual sync reports missing configuration without scheduling", async () =>
   await withEnv({ BLOG_SYNC_ENABLED: "false", BLOG_SYNC_SECRET: undefined }, async () => {
     const response = await manualSync(new Request("http://localhost/api/notion/sync", { method: "POST" }));
     assert.equal(response.status, 503);
+  });
+});
+
+test("signed bootstrap saves privately before acknowledging, retries idempotently, and reports conflicts", async () => {
+  const pathSecret = "p".repeat(32);
+  const candidate = "s".repeat(32);
+  await withEnv({
+    BLOG_SYNC_ENABLED: "true",
+    NOTION_WEBHOOK_PATH_SECRET: pathSecret,
+    NOTION_WEBHOOK_SECRET: undefined,
+    NOTION_WEBHOOK_SETUP_ENABLED: "true",
+    BLOB_READ_WRITE_TOKEN: "mock",
+  }, async () => {
+    let saved: string | undefined;
+    let writes = 0;
+    const put = (async (path: string, body: string, options: unknown) => {
+      assert.equal(path, "blog/setup/webhook-verification.json");
+      assert.deepEqual(options, {
+        access: "private", addRandomSuffix: false, allowOverwrite: false, contentType: "application/json",
+      });
+      await Promise.resolve();
+      saved = body;
+      writes++;
+    }) as never;
+    const get = (async () => saved === undefined ? null : {
+      statusCode: 200, blob: { size: Buffer.byteLength(saved) }, stream: new Blob([saved]).stream(),
+    }) as never;
+    const handler = createNotionWebhookHandler((token) => storeWebhookVerificationWith(token, put, undefined, get));
+    const send = (token: string, valid = true) => {
+      const body = JSON.stringify({ verification_token: token });
+      const signature = createHmac("sha256", valid ? token : "wrong").update(body).digest("hex");
+      return handler(new Request("http://localhost", {
+        method: "POST", body, headers: { "x-notion-signature": `sha256=${signature}` },
+      }), { params: Promise.resolve({ key: pathSecret }) });
+    };
+    assert.equal((await send(candidate, false)).status, 401);
+    assert.equal(writes, 0);
+    const response = await send(candidate);
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { ok: true });
+    assert.equal(JSON.parse(saved!).token, candidate);
+    assert.equal(writes, 1);
+    assert.equal((await send(candidate)).status, 200);
+    assert.equal((await send("t".repeat(32))).status, 409);
+    assert.equal(writes, 1);
+    process.env.NOTION_WEBHOOK_SETUP_ENABLED = "false";
+    assert.equal((await send(candidate)).status, 401);
+    assert.equal(writes, 1);
   });
 });
 

@@ -17,6 +17,6 @@ export function PortfolioFooter() {
       <a href={site.socials.github} aria-label="GitHub"><Image src="/portfolio/github.svg" alt="" width={16} height={16} /></a>
       <a href={site.socials.linkedin} aria-label="LinkedIn"><Image src="/portfolio/linkedin.svg" alt="" width={16} height={16} /></a>
     </nav>
-    <span aria-hidden="true">Follow Me ↗</span>
+    <span>HirotoFurugen</span>
   </footer>;
 }

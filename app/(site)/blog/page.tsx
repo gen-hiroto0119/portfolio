@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { SearchablePosts } from "@/components/portfolio/searchable-posts";
+import { PostList } from "@/components/portfolio/post-list";
 import { PortfolioHeader, PortfolioFooter } from "@/components/portfolio/shell";
 import { getAllPosts } from "@/lib/content";
 import styles from "@/components/portfolio/portfolio.module.css";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 async function PublishedPosts() {
-  return <SearchablePosts posts={await getAllPosts()} />;
+  return <PostList posts={await getAllPosts()} />;
 }
 
 export default function BlogPage() {

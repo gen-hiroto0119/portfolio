@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test lib/content/calendar-date.test.ts lib/og/title.test.ts",
-    "test:publishing": "NODE_OPTIONS=--conditions=react-server tsx --test lib/publishing/*.test.ts lib/content/index.test.ts"
+    "test:publishing": "NODE_OPTIONS=--conditions=react-server tsx --test lib/publishing/*.test.ts lib/content/index.test.ts lib/content/rss.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",

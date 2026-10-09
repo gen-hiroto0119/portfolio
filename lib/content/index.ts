@@ -24,7 +24,7 @@ export function createContentReaders(loadSnapshot: () => Promise<{ snapshot: Sna
         .map((post) => ({
           slug: post.slug, title: post.title, description: post.description,
           date: post.date, category: post.category, tags: post.tags, published: post.published,
-          publishedAt: post.publishedAt,
+          publishedAt: post.publishedAt, updatedAt: post.sourceEditedAt,
         }));
     },
     async getPost(slug: string): Promise<BlogPostWithContent | null> {
@@ -35,7 +35,7 @@ export function createContentReaders(loadSnapshot: () => Promise<{ snapshot: Sna
       return {
         slug: post.slug, title: post.title, description: post.description,
         date: post.date, category: post.category, tags: post.tags, published: post.published,
-        publishedAt: post.publishedAt, body: post.body,
+        publishedAt: post.publishedAt, updatedAt: post.sourceEditedAt, body: post.body,
       };
     },
   };

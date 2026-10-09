@@ -1,4 +1,5 @@
 import { getAllPosts } from "@/lib/content";
+import { rssLastBuildDate } from "@/lib/content/rss";
 import { site } from "@/lib/site";
 import { escapeXml } from "@/lib/xml";
 
@@ -8,6 +9,7 @@ function toRssDate(date: string): string {
 
 export async function GET() {
   const posts = await getAllPosts();
+  const lastBuildDate = rssLastBuildDate(posts);
 
   const items = posts
     .map((post) => {
@@ -29,7 +31,7 @@ export async function GET() {
     <link>${escapeXml(`${site.url}/blog`)}</link>
     <description>${escapeXml(site.description)}</description>
     <language>ja</language>
-${posts.length ? `    <lastBuildDate>${new Date(Math.max(...posts.map(post => Date.parse(post.publishedAt)))).toUTCString()}</lastBuildDate>` : ""}
+${lastBuildDate ? `    <lastBuildDate>${escapeXml(lastBuildDate)}</lastBuildDate>` : ""}
 ${items}
   </channel>
 </rss>`;

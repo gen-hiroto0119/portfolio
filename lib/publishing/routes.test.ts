@@ -35,6 +35,41 @@ test("manual sync denies invalid credentials before starting work", async () => 
   });
 });
 
+test("webhook bootstrap permits unsigned or candidate-signed requests only during setup", async () => {
+  const pathSecret = "p".repeat(32);
+  const candidate = "s".repeat(32);
+  const body = JSON.stringify({ verification_token: candidate });
+  const signature = `sha256=${createHmac("sha256", candidate).update(body).digest("hex")}`;
+  await withEnv({
+    BLOG_SYNC_ENABLED: "true",
+    NOTION_WEBHOOK_PATH_SECRET: pathSecret,
+    NOTION_WEBHOOK_SECRET: undefined,
+    NOTION_WEBHOOK_SETUP_ENABLED: "true",
+    BLOB_READ_WRITE_TOKEN: undefined,
+    BLOB_STORE_ID: undefined,
+    VERCEL_OIDC_TOKEN: undefined,
+  }, async () => {
+    const send = (value?: string, key = pathSecret) => notionWebhook(new Request("http://localhost", {
+      method: "POST", body,
+      headers: value === undefined ? {} : { "x-notion-signature": value },
+    }), { params: Promise.resolve({ key }) });
+    // Valid bootstrap reaches the storage configuration check without writing.
+    assert.equal((await send()).status, 503);
+    assert.equal((await send(signature)).status, 503);
+    assert.equal((await send("sha256=bad")).status, 401);
+    assert.equal((await send(signature, "wrong")).status, 401);
+    const wrongSignature = `sha256=${createHmac("sha256", "wrong").update(body).digest("hex")}`;
+    assert.equal((await send(wrongSignature)).status, 401);
+    process.env.NOTION_WEBHOOK_SETUP_ENABLED = "false";
+    assert.equal((await send(signature)).status, 401);
+    assert.equal((await send()).status, 401);
+    process.env.NOTION_WEBHOOK_SETUP_ENABLED = "true";
+    process.env.NOTION_WEBHOOK_SECRET = candidate;
+    assert.equal((await send(signature)).status, 401);
+    assert.equal((await send()).status, 401);
+  });
+});
+
 test("manual sync reports missing configuration without scheduling", async () => {
   await withEnv({ BLOG_SYNC_ENABLED: "false", BLOG_SYNC_SECRET: undefined }, async () => {
     const response = await manualSync(new Request("http://localhost/api/notion/sync", { method: "POST" }));

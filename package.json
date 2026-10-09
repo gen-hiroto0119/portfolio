@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test lib/content/calendar-date.test.ts lib/og/title.test.ts",
-    "test:publishing": "NODE_OPTIONS=--conditions=react-server tsx --test lib/publishing/*.test.ts lib/content/index.test.ts lib/content/rss.test.ts"
+    "test:publishing": "NODE_OPTIONS=--conditions=react-server tsx --test lib/publishing/*.test.ts lib/content/index.test.ts lib/content/rss.test.ts",
+    "test:delivery": "node scripts/delivery/run.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -20,7 +21,7 @@
     "highlight.js": "11.12.0",
     "lowlight": "3.3.0",
     "lucide-react": "^1.23.0",
-    "next": "16.3.4",
+    "next": "16.4.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "^0.0.1",
@@ -33,9 +34,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.4",
+    "eslint-config-next": "16.4.0",
     "tailwindcss": "4.3.3",
     "tsx": "4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "undici": "6.29.0"
   }
 }

@@ -5,6 +5,7 @@ import { ConcurrentPublicationError, PublicationError } from "./model";
 import { BlobConfigurationError, readSnapshot } from "./blob";
 import { publishingPorts } from "./ports";
 import { queryPages } from "./notion";
+import { CacheInvalidationConfigurationError, cacheInvalidationConfig, requestBlogCacheInvalidation } from "./cache-invalidation";
 
 function delay() {
   return Math.min(30_000, 10_000 * Math.max(1, getStepMetadata().attempt));
@@ -13,11 +14,13 @@ function delay() {
 async function syncPageStep(id: string) {
   "use step";
   try {
+    cacheInvalidationConfig();
     const result = await syncPage(id, publishingPorts());
     console.info("blog sync page", { id, action: result.action });
     return { ok: true as const, action: result.action };
   } catch (error) {
     if (error instanceof FatalError) throw error;
+    if (error instanceof CacheInvalidationConfigurationError) throw new FatalError(error.message);
     if (error instanceof PublicationError || (error instanceof Error && ["ZodError", "CmsError", "BlobConfigurationError"].includes(error.name))) {
       throw new FatalError(error instanceof PublicationError ? error.message : "Notion の公開データ形式を確認してください。");
     }
@@ -26,6 +29,17 @@ async function syncPageStep(id: string) {
   }
 }
 syncPageStep.maxRetries = 5;
+
+async function invalidateBlogCacheStep() {
+  "use step";
+  try {
+    await requestBlogCacheInvalidation();
+  } catch (error) {
+    if (error instanceof CacheInvalidationConfigurationError) throw new FatalError(error.message);
+    throw new RetryableError("記事キャッシュの失効を再試行します。", { retryAfter: delay() });
+  }
+}
+invalidateBlogCacheStep.maxRetries = 5;
 
 async function reconcileIdsStep() {
   "use step";
@@ -58,22 +72,26 @@ export async function reconcilePagesAndCleanup(
   ids: string[],
   sync: (id: string) => Promise<unknown>,
   cleanup: () => Promise<void>,
+  invalidate: () => Promise<void>,
 ) {
   const failures: string[] = [];
   for (const id of ids) {
     try {
       await sync(id);
+      // Also heal an earlier withdrawal whose write succeeded but invalidation failed.
+      await invalidate();
     } catch {
       failures.push(id);
     }
   }
   await cleanup();
   if (failures.length) throw new FatalError(`記事同期に失敗しました (${failures.length}件)。`);
+  if (!ids.length) await invalidate();
   return { count: ids.length };
 }
 
 export async function reconcileBlogWorkflow(targetPageId?: string) {
   "use workflow";
   const ids = targetPageId ? [targetPageId] : await reconcileIdsStep();
-  return reconcilePagesAndCleanup(ids, syncPageStep, cleanupStep);
+  return reconcilePagesAndCleanup(ids, syncPageStep, cleanupStep, invalidateBlogCacheStep);
 }

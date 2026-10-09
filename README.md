@@ -18,19 +18,44 @@ npm run build
 npm run lint
 npm test
 npm run test:publishing
+npm run test:delivery
 ```
 
 公開URLは `NEXT_PUBLIC_SITE_URL` で指定します。公開連携の設定例は `.env.example` にあります。`BLOG_SYNC_ENABLED=false` のままでは書き込みルートは無効です。
+
+## CI
+
+GitHub Actions の `quality` は lint・型生成・型検査・単体テスト・publishing tests を、`delivery` は本番ビルド後の隔離された HTTP キャッシュライフサイクルを検証します。どちらも Node 24 と `npm ci` を使います。delivery テストは実行時に合成記事とダミー認証情報を作り、private Blob 読み取りをモックします。Notion、実 Blob、Vercel デプロイ、実環境でのイベント到着やキャッシュ伝播は検証しません。
+
+ローカルで同じゲートを実行する場合:
+
+```bash
+npm ci
+npm run lint
+npx next typegen
+npx tsc --noEmit
+npm test
+npm run test:publishing
+npm run test:delivery
+```
+
+この workflow はブランチ保護を変更しません。`quality` と `delivery` を必須にする場合は、GitHub の branch protection rules で required status checks として手動設定してください。
 
 ## コンテンツ
 
 記事は private Blob の公開スナップショットから取得します。Blob 未設定時は空の一覧を返します。Git にサンプル記事やローカル検証用データを追加しないでください。公開記事用の Tiptap JSON 検証・表示は `lib/cms/document.ts` と `components/blog/tiptap-content.tsx` に残しています。プロフィールと経歴のコピーは `app/(site)/page.tsx` にあります。
 
-記事公開フローは Notion → Workflow → private Vercel Blob → Next.js です。`blog/snapshot.json` と `blog/assets/{uuid}` は private Blob に保存し、読み取りはリクエストごとに強整合スナップショットを確認します（永続キャッシュなし）。公開本文は段落、見出し、リスト、引用、コード、区切り線、表、Notion 画像に対応します。画像は HTTPS の許可された Notion ホストからのみ取得し、PNG/JPEG/GIF/WebP、4 MiB 以下に限定します。外部画像は Notion へアップロードしてください。古い画像は同期後の cleanup で削除されます。CAS 競合や失敗したステージ済み画像は安全のため private のまま残る場合があります。
+記事公開フローは Notion → Workflow → private Vercel Blob → Next.js です。`blog/snapshot.json` と `blog/assets/{uuid}` は private Blob に保存します。記事の読み取りは Next.js 16.4 の Cache Components（`use cache`）で共通スナップショットをキャッシュし、トップ・一覧・詳細・RSS・sitemap・OGP が同じ `blog` タグを使います。`blog` プロファイルはクライアント stale 30秒、サーバー再検証5分、期限1時間です。キャッシュ再生成時の Blob 読み取りは `useCache: false` のままです。公開本文は段落、見出し、リスト、引用、コード、区切り線、表、Notion 画像に対応します。画像は HTTPS の許可された Notion ホストからのみ取得し、PNG/JPEG/GIF/WebP、4 MiB 以下に限定します。外部画像は Notion へアップロードしてください。古い画像は同期後の cleanup で削除されます。CAS 競合や失敗したステージ済み画像は安全のため private のまま残る場合があります。
+
+Workflow はスナップショット保存後、独立した再試行可能なステップから `POST /api/notion/revalidate` を呼びます。Route Handler 内で `revalidateTag("blog", { expire: 0 })` を実行し、失効後のサーバーアクセスは古いデータを返さず再生成を待ちます。失効要求の成功応答を受け取るまで同期完了とは扱いません。自動再試行の上限に達したら同期は失敗となり、手動同期で再試行できます。既に取り下げ済みで変更なしの場合や空の全件照合でも失効を要求し、保存後に失効だけが失敗した状態を修復します。同期失敗・CAS競合で保存できなかった記事では失効を要求しません。
+
+Blob 更新とキャッシュ失効は原子的ではなく、その間は古い本文が表示され得ます。Next.js が管理する失効の伝播と、閲覧中・ブラウザーに保存済みの表示の即時回収までは保証しません。時間ベースの再検証は補助であり、Notion の同期自体を代替しません。RSS・OGP の応答と画像配信は引き続き `no-store` です。
 
 `.env.example` を `.env.local` にコピーし、private Vercel Blob store と Notion integration を用意して値を設定してください。Notion integration には対象の data source へのアクセスを付与します。Notion 側の公開プロパティは `公開状態`（select: `公開`）、`タイトル`、`slug`、`公開日`、`概要`、`タグ` です。`公開日` は日付のみで、時刻を含む値は意図的に拒否します。
 
 `BLOG_SYNC_SECRET`、`NOTION_WEBHOOK_PATH_SECRET`、`NOTION_WEBHOOK_SECRET` はサーバー側だけに設定し、いずれも32文字以上にします。手動同期は `POST /api/notion/sync` に `Authorization: Bearer …` を付けます。空 body は全件照合、`{"pageId":"<uuid>"}` は1ページ同期です。
+
+キャッシュ失効には同じ `BLOG_SYNC_SECRET` を使います。`NEXT_PUBLIC_SITE_URL` は同じ環境・Blob store を使うサイトの正規 HTTPS オリジンに設定してください（パス・認証情報・クエリなし）。失効用URLの自動推測やリダイレクト追従はしません。ローカルの非Vercel環境のみ localhost の HTTP を許可します。失効ルートへの通信を Deployment Protection 等で遮断しないでください。Preview の同期は無効のままにします。
 
 本番と Preview はそれぞれ別の private Blob store を割り当ててください。Preview では `BLOG_SYNC_ENABLED=false` を維持します。Vercel Workflow はデプロイ時にプロビジョニングされます。ローカル開発サーバー上の実行を耐久性のあるWorkflow実行として扱わないでください。
 

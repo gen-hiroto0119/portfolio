@@ -16,10 +16,6 @@ type BlogOgImageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateImageMetadata() {
-  return [{ id: "current", alt, size, contentType }];
-}
-
 export default async function Image({ params }: BlogOgImageProps) {
   await connection();
   const { slug } = await params;

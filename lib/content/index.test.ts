@@ -35,6 +35,7 @@ test("public post and list readers omit internal snapshot fields and unpublished
   const readers = createContentReaders(async () => ({ snapshot: current }));
   const list = await readers.getAllPosts();
   const post = await readers.getPost("published");
+  assert.deepEqual(list.map((post) => post.slug), ["published"]);
   assert.deepEqual(Object.keys(list[0]).sort(), ["category", "date", "description", "published", "publishedAt", "slug", "tags", "title", "updatedAt"]);
   assert.deepEqual(Object.keys(post ?? {}).sort(), ["body", "category", "date", "description", "published", "publishedAt", "slug", "tags", "title", "updatedAt"]);
   assert.equal(await readers.getPost("draft"), null);
@@ -56,11 +57,18 @@ test("public readers preserve publication time and expose the source edit time",
   assert.equal(detailPost?.updatedAt, sourceEditedAt);
 });
 
-test("a new request reader sees publication changes without persistent state", async () => {
+test("readers reflect edits, slug changes and withdrawals when the snapshot is refreshed", async () => {
   let current = snapshot("Before");
-  const firstRequest = createContentReaders(async () => ({ snapshot: current }));
-  assert.equal((await firstRequest.getPost("published"))?.title, "Before");
+  const readers = createContentReaders(async () => ({ snapshot: current }));
+  assert.equal((await readers.getPost("published"))?.title, "Before");
   current = snapshot("After");
-  const nextRequest = createContentReaders(async () => ({ snapshot: current }));
-  assert.equal((await nextRequest.getPost("published"))?.title, "After");
+  assert.equal((await readers.getPost("published"))?.title, "After");
+  assert.equal((await readers.getAllPosts())[0].title, "After");
+  current.posts[0].slug = "renamed";
+  assert.equal(await readers.getPost("published"), null);
+  assert.equal((await readers.getPost("renamed"))?.title, "After");
+  assert.deepEqual((await readers.getAllPosts()).map((post) => post.slug), ["renamed"]);
+  current.posts = [];
+  assert.equal(await readers.getPost("renamed"), null);
+  assert.deepEqual(await readers.getAllPosts(), []);
 });

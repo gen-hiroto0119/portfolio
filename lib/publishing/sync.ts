@@ -26,9 +26,11 @@ export async function syncPage(id: string, ports: SyncPorts) {
   id = uuid.parse(id);
   const { snapshot, etag } = await ports.read();
   const old = snapshot.posts.find((post) => post.id === id);
+  // An absent flag belongs to a snapshot written before healing was tracked.
+  const pending = snapshot.cacheInvalidationPending !== false;
   const page = await ports.page(id);
   const metadata = page ? pageMetadata(page, ports.dataSourceId) : null;
-  if (!metadata && !old) return { action: "unchanged" as const };
+  if (!metadata && !old) return { action: "unchanged" as const, needsInvalidation: pending };
   if (!metadata && old) {
     const confirmed = await ports.page(id);
     if (JSON.stringify(confirmed) !== JSON.stringify(page)) {
@@ -57,8 +59,8 @@ export async function syncPage(id: string, ports: SyncPorts) {
   if (next) posts.push(next);
   const active = new Set(posts.flatMap((post) => post.assets.map((asset) => asset.id)));
   const garbage = [...snapshot.garbage, ...(old?.assets ?? [])].filter((asset) => !active.has(asset.id));
-  await ports.write({ version: 1, generation: randomUUID(), posts, garbage }, etag);
-  return { action: next ? "published" as const : "withdrawn" as const };
+  await ports.write({ version: 1, generation: randomUUID(), posts, garbage, cacheInvalidationPending: true }, etag);
+  return { action: next ? "published" as const : "withdrawn" as const, needsInvalidation: true };
 }
 
 export async function cleanRetiredAssets(ports: Pick<SyncPorts, "read" | "write" | "removeAssets">) {

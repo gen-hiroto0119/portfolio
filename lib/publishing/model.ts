@@ -32,6 +32,8 @@ export const snapshotSchema = z.object({
   generation: uuid,
   posts: z.array(postSchema).max(1000),
   garbage: z.array(assetSchema),
+  // Absent on snapshots written before healing was tracked; treated as pending.
+  cacheInvalidationPending: z.boolean().optional(),
 }).superRefine((snapshot, ctx) => {
   for (const field of ["id", "slug"] as const) {
     if (new Set(snapshot.posts.map((post) => post[field])).size !== snapshot.posts.length) {
@@ -48,6 +50,15 @@ export type PublishedAsset = z.infer<typeof assetSchema>;
 export type PublishedPost = z.infer<typeof postSchema>;
 export type Snapshot = z.infer<typeof snapshotSchema>;
 export type SnapshotRead = { snapshot: Snapshot; etag: string | null };
+
+export const syncMarkerSchema = z.object({
+  version: z.literal(1),
+  pageId: uuid,
+  token: z.string().min(1).max(200),
+  requestedAt: z.iso.datetime({ offset: true }),
+});
+export type SyncMarker = z.infer<typeof syncMarkerSchema>;
+export type SyncMarkerRead = { marker: SyncMarker | null; etag: string | null };
 
 export class PublicationError extends Error {}
 export class ConcurrentPublicationError extends Error {}

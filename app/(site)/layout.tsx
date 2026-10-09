@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import { PortfolioHeader, PortfolioFooter } from "@/components/portfolio/shell";
 import styles from "@/components/portfolio/portfolio.module.css";
 
 const geist = localFont({
@@ -13,6 +14,10 @@ const geist = localFont({
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return <div className={`${geist.variable} ${styles.site}`}>
     <a href="#main" className={styles.skipLink}>本文へスキップ</a>
-    <div className={styles.container}>{children}</div>
+    <div className={styles.container}>
+      <PortfolioHeader />
+      {children}
+      <PortfolioFooter />
+    </div>
   </div>;
 }

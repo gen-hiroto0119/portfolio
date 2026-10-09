@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { PostList } from "@/components/portfolio/post-list";
-import { PortfolioHeader, PortfolioFooter } from "@/components/portfolio/shell";
 import { getAllPosts } from "@/lib/content";
 import styles from "@/components/portfolio/portfolio.module.css";
 
@@ -24,7 +23,6 @@ async function RecentPosts() {
 
 export default function HomePage() {
   return <>
-    <PortfolioHeader home />
     <main id="main" className={styles.main}>
       <section className={styles.intro} lang="en" aria-labelledby="intro-title">
         <h1 id="intro-title">I&apos;m Hiroto</h1>
@@ -51,6 +49,5 @@ export default function HomePage() {
         <Suspense fallback={<p role="status" className={styles.secondary}>記事を読み込んでいます…</p>}><RecentPosts /></Suspense>
       </section>
     </main>
-    <PortfolioFooter />
   </>;
 }

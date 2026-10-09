@@ -24,10 +24,11 @@ export async function POST(request: Request, context: { params: Promise<{ key: s
   try { body = JSON.parse(new TextDecoder().decode(raw)); } catch { return Response.json({ error: "Invalid request." }, { status: 400 }); }
 
   if (body && typeof body === "object" && "verification_token" in body) {
-    if (request.headers.has("x-notion-signature")) return errorResponse(401);
     const bootstrap = z.object({ verification_token: z.string().min(1) }).strict().safeParse(body);
     if (!bootstrap.success) return Response.json({ error: "Invalid request." }, { status: 400 });
     if (!webhookSetupEnabled()) return errorResponse(401);
+    const signature = request.headers.get("x-notion-signature");
+    if (signature !== null && !signatureMatches(raw, signature, bootstrap.data.verification_token)) return errorResponse(401);
     if (!isBlobConfigured()) return errorResponse(503);
     try {
       await storeWebhookVerificationWith(bootstrap.data.verification_token);

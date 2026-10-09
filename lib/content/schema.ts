@@ -14,5 +14,6 @@ export type BlogPost = {
   tags: string[];
   published: true;
   publishedAt: string;
+  updatedAt: string;
 };
 export type BlogPostWithContent = BlogPost & { body: TiptapDocument };

@@ -4,7 +4,7 @@ import { test } from "node:test";
 import type { Snapshot } from "@/lib/publishing/model";
 import { createContentReaders } from "./index";
 
-function snapshot(title: string): Snapshot {
+function snapshot(title: string, sourceEditedAt = "2026-01-01T00:00:00.000Z"): Snapshot {
   const post = {
     id: "00000000-0000-4000-8000-000000000031",
     slug: "published",
@@ -16,7 +16,7 @@ function snapshot(title: string): Snapshot {
     published: true,
     publishedAt: "2026-01-01T00:00:00+09:00",
     revision: 3,
-    sourceEditedAt: "2026-01-01T00:00:00.000Z",
+    sourceEditedAt,
     body: { type: "doc", content: [{ type: "paragraph" }] },
     assets: [{
       id: "00000000-0000-4000-8000-000000000032",
@@ -35,10 +35,25 @@ test("public post and list readers omit internal snapshot fields and unpublished
   const readers = createContentReaders(async () => ({ snapshot: current }));
   const list = await readers.getAllPosts();
   const post = await readers.getPost("published");
-  assert.deepEqual(Object.keys(list[0]).sort(), ["category", "date", "description", "published", "publishedAt", "slug", "tags", "title"]);
-  assert.deepEqual(Object.keys(post ?? {}).sort(), ["body", "category", "date", "description", "published", "publishedAt", "slug", "tags", "title"]);
+  assert.deepEqual(Object.keys(list[0]).sort(), ["category", "date", "description", "published", "publishedAt", "slug", "tags", "title", "updatedAt"]);
+  assert.deepEqual(Object.keys(post ?? {}).sort(), ["body", "category", "date", "description", "published", "publishedAt", "slug", "tags", "title", "updatedAt"]);
   assert.equal(await readers.getPost("draft"), null);
   assert.equal(await readers.getPost("missing"), null);
+});
+
+test("public readers preserve publication time and expose the source edit time", async () => {
+  const originalPublication = "2026-01-01T00:00:00+09:00";
+  const sourceEditedAt = "2026-02-03T04:05:06.000Z";
+  const current = snapshot("Edited title", sourceEditedAt);
+  const readers = createContentReaders(async () => ({ snapshot: current }));
+
+  const listPost = (await readers.getAllPosts())[0];
+  const detailPost = await readers.getPost("published");
+
+  assert.equal(listPost.publishedAt, originalPublication);
+  assert.equal(detailPost?.publishedAt, originalPublication);
+  assert.equal(listPost.updatedAt, sourceEditedAt);
+  assert.equal(detailPost?.updatedAt, sourceEditedAt);
 });
 
 test("a new request reader sees publication changes without persistent state", async () => {

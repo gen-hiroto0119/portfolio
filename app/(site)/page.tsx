@@ -27,7 +27,7 @@ export default function HomePage() {
       <section className={styles.intro} lang="en" aria-labelledby="intro-title">
         <h1 id="intro-title">I&apos;m Hiroto</h1>
         <p>I&apos;m a <strong>product engineer</strong> based in Tokyo, and I love <strong>Product Design</strong>. I&apos;m currently working as an engineer while attending university.</p>
-        <p>My main focus is on <strong>frontend</strong> and <strong>native development</strong>. I primarily use <Technology name="React" logo="react" />, <Technology name="Next.js" logo="nextjs" />, and <Technology name="Swift" logo="swift" />.</p>
+        <p>My main focus is on <strong>frontend</strong> and <strong>native development</strong>. I primarily use <Technology name="React" logo="react" />, <Technology name="Next.js" logo="nextjs" />, <Technology name="Deno" logo="deno" />, and <Technology name="Swift" logo="swift" />.</p>
         <p>Lately, I&apos;ve been drawn to <Technology name="Rust" logo="rust" /> and am building a <strong>macOS application</strong> with <strong>GPUI</strong>.</p>
       </section>
       <section className={styles.section} aria-labelledby="work-title">

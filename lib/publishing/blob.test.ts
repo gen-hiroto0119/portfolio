@@ -22,7 +22,7 @@ test("sync markers are private per-page records read without cache and written w
   }) as never;
   assert.deepEqual(await readSyncMarkerWith(fakeGet, marker.pageId), { marker, etag: "etag-m" });
   assert.equal(read?.path, path);
-  assert.deepEqual(read?.options, { access: "private", useCache: false });
+  assert.deepEqual(read?.options, { access: "private", useCache: false, headers: { "Accept-Encoding": "identity" } });
 
   const oversized = (async () => ({
     statusCode: 200, stream: new Blob(["{}"]).stream(), blob: { etag: "etag-m", size: 4097 },
@@ -66,7 +66,7 @@ test("private snapshot reads bypass cache and return the SDK etag", async () => 
     return { statusCode: 200, stream, blob: { etag: "etag-1", size: Buffer.byteLength(serialized) } };
   }) as never;
   const result = await readSnapshotWith(fakeGet);
-  assert.deepEqual(received, { access: "private", useCache: false });
+  assert.deepEqual(received, { access: "private", useCache: false, headers: { "Accept-Encoding": "identity" } });
   assert.equal(result.etag, "etag-1");
   assert.equal(result.snapshot.generation, snapshot.generation);
 });
@@ -77,6 +77,38 @@ test("a missing snapshot starts with invalidation explicitly clear", async () =>
   assert.equal(result.etag, null);
   assert.equal(result.snapshot.cacheInvalidationPending, false);
 });
+
+for (const record of ["snapshot", "marker"] as const) {
+  test(`${record} reads preserve the strong etag for conditional writes`, async () => {
+    process.env.BLOB_READ_WRITE_TOKEN = "mock";
+    const marker: SyncMarker = {
+      version: 1, pageId: randomUUID(), token: "run-a", requestedAt: "2026-01-01T00:00:00.000Z",
+    };
+    const strongEtag = '"object-version"';
+    const serialized = JSON.stringify(record === "snapshot" ? snapshot : marker);
+    const fakeGet = (async (_path: string, options: { headers?: Record<string, string> }) => ({
+      statusCode: 200, stream: new Blob([serialized]).stream(),
+      blob: {
+        size: Buffer.byteLength(serialized),
+        etag: options.headers?.["Accept-Encoding"] === "identity" ? strongEtag : `W/${strongEtag}`,
+      },
+    })) as never;
+    let writes = 0;
+    const fakePut = (async (_path: string, _body: unknown, options: { ifMatch?: string }) => {
+      if (options.ifMatch !== strongEtag) throw new BlobPreconditionFailedError();
+      writes++;
+    }) as never;
+    if (record === "snapshot") {
+      const read = await readSnapshotWith(fakeGet);
+      await writeSnapshotWith(fakePut, read.snapshot, read.etag);
+    } else {
+      const read = await readSyncMarkerWith(fakeGet, marker.pageId);
+      assert.ok(read.marker);
+      await writeSyncMarkerWith(fakePut, read.marker, read.etag);
+    }
+    assert.equal(writes, 1);
+  });
+}
 
 test("snapshot reads reject the provider size before parsing", async () => {
   process.env.BLOB_READ_WRITE_TOKEN = "mock";

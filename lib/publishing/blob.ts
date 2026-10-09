@@ -62,7 +62,9 @@ function emptySnapshot(): Snapshot {
 export async function readSnapshotWith(getBlob: typeof get): Promise<SnapshotRead> {
   if (!configured()) throw new BlobConfigurationError("公開スナップショットの保存先が設定されていません。");
   try {
-    const result = await getBlob(SNAPSHOT_PATH, { access: "private", useCache: false });
+    const result = await getBlob(SNAPSHOT_PATH, {
+      access: "private", useCache: false, headers: { "Accept-Encoding": "identity" },
+    });
     if (!result) return { snapshot: emptySnapshot(), etag: null };
     if (result.statusCode !== 200) throw new Error("Snapshot was not returned.");
     if (result.blob.size > MAX_SNAPSHOT_BYTES) throw new PublicationError("公開スナップショットが大きすぎます。");
@@ -117,7 +119,9 @@ export function syncMarkerPath(pageId: string) {
 export async function readSyncMarkerWith(getBlob: typeof get, pageId: string): Promise<SyncMarkerRead> {
   if (!configured()) throw new BlobConfigurationError("公開スナップショットの保存先が設定されていません。");
   try {
-    const result = await getBlob(syncMarkerPath(pageId), { access: "private", useCache: false });
+    const result = await getBlob(syncMarkerPath(pageId), {
+      access: "private", useCache: false, headers: { "Accept-Encoding": "identity" },
+    });
     if (!result) return { marker: null, etag: null };
     if (result.statusCode !== 200) throw new Error("Sync marker was not returned.");
     if (result.blob.size > MAX_MARKER_BYTES) {

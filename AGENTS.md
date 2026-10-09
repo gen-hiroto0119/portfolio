@@ -14,19 +14,19 @@ Hiroto Furugen の個人サイト。Next.js App Router。現在の公開ペー�
 
 ## コンテンツ方針
 
-- Blog の公開記事は現在空。`lib/content/index.ts` は空の一覧を返す。Git にサンプル記事やローカル検証用データを追加しない。
-- 管理画面・認証・CMS 接続・記事や画像の保存先はない。Supabase のランタイムコードとローカルマイグレーションはない。
+- Blog の公開記事は Blob の強整合スナップショットから取得する。Blob 設定がないビルドでは空の一覧になる。Git にサンプル記事やローカル検証用データを追加しない。
+- 管理画面はない。Notion の読み取り、同期用認証、private Vercel Blob の公開スナップショットを使用する。Supabase のランタイムコードとローカルマイグレーションはない。
 - 公開記事用の Tiptap JSON 検証・表示は `lib/cms/document.ts` と `components/blog/tiptap-content.tsx` に残す。既存の URL・画像検証を弱めない。
 - プロフィールと経歴のコピーは `app/(site)/page.tsx` にある。事実を保ち、経歴・実績を創作しない。
 - Idea は廃止済み。`Blog Content/` は Git 管理外の旧Vaultであり、サイトから読み込まない。
-- Notion → Integration Webhooks → Blob → Next.js の公開フローを計画中だが未実装。旧実装の整理ではリモートデータを変更しない。Notion 連携は別途合意した範囲で実装する。
+- Notion → Workflow → private Blob → Next.js の公開フローは実装済みだが、実サービスの秘密値がないため未接続。実サービスへの変更・記事公開は明示的な許可なしに行わない。
 - 日本語のコピーは具体的で自然な文章にする。
 
 ## 主要ファイル
 
 | 用途 | 場所 |
 |---|---|
-| 公開記事の取得（現在は空） | `lib/content/index.ts` |
+| 公開記事の取得 | `lib/content/index.ts` |
 | Tiptap JSON の検証・表示 | `lib/cms/document.ts`, `components/blog/tiptap-content.tsx` |
 | サイト設定 | `lib/site.ts` |
 | プロフィール・経歴コピー | `app/(site)/page.tsx` |
@@ -43,10 +43,10 @@ Hiroto Furugen の個人サイト。Next.js App Router。現在の公開ペー�
 
 ## コマンドと環境変数
 
-`npm run dev`、`npm run build`、`npm run lint`、`npm test` を使用する。
+`npm run dev`、`npm run build`、`npm run lint`、`npm test`、`npm run test:publishing` を使用する。
 
-`NEXT_PUBLIC_SITE_URL` は公開URLの指定に使う。Supabase や Notion の接続用環境変数はない。
+`NEXT_PUBLIC_SITE_URL` は公開URLの指定に使う。連携の環境変数は `.env.example` を参照し、`BLOG_SYNC_ENABLED=false` を初期値とする。
 
 ## デプロイ
 
-デプロイや commit / push は明示的な依頼がない限り行わない。Notion → Integration Webhooks → Blob → Next.js の連携は未実装。今回の変更ではリモートデータにアクセス・変更していない。
+実サービスへの変更・記事公開・デプロイや commit / push は明示的な依頼がない限り行わない。cron は設定せず、slug 変更前の URL は 404 とする。実サービスの配信は未検証。

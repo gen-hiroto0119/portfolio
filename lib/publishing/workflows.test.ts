@@ -57,7 +57,7 @@ test("a draft no-op skips body work, writes, and invalidation", async () => {
     invalidate: async () => { calls.push("invalidate"); },
   });
   assert.deepEqual(result, { action: "unchanged" });
-  assert.deepEqual(calls, ["sync", "cleanup"]);
+  assert.deepEqual(calls, ["register", "sync", "cleanup"]);
 });
 
 test("withdrawal bypasses a pending public timer and cannot be resurrected", async () => {
@@ -73,7 +73,7 @@ test("withdrawal bypasses a pending public timer and cannot be resurrected", asy
     invalidate: async () => { calls.push("invalidate"); },
   });
   assert.deepEqual(result, { action: "withdrawn" });
-  assert.deepEqual(calls, ["withdrawal-sync", "invalidate", "cleanup"]);
+  assert.deepEqual(calls, ["register", "withdrawal-sync", "invalidate", "cleanup"]);
 });
 
 test("superseded public notifications heal pending cache before exiting", async () => {
@@ -166,6 +166,102 @@ test("an A/B notification burst runs only the latest heavy sync after its wait",
   assert.equal(markers.get(pageId)?.marker.token, "run-b");
 });
 
+test("an immediate withdrawal supersedes an older public wait across republish", async () => {
+  const pageId = randomUUID();
+  const markers = new Map<string, { marker: SyncMarker; etag: string }>();
+  const markerPorts: SyncMarkerPorts = {
+    read: async (id) => {
+      const stored = markers.get(id);
+      return { marker: stored?.marker ?? null, etag: stored?.etag ?? null };
+    },
+    write: async (marker, etag) => {
+      const stored = markers.get(marker.pageId);
+      if ((stored?.etag ?? null) !== etag) throw new ConcurrentPublicationError();
+      markers.set(marker.pageId, { marker: structuredClone(marker), etag: randomUUID() });
+    },
+  };
+  const gate = () => {
+    let resume!: () => void;
+    let announce!: () => void;
+    const started = new Promise<void>((resolve) => { announce = resolve; });
+    const released = new Promise<void>((resolve) => { resume = resolve; });
+    return { started, release: resume, wait: async () => { announce(); await released; } };
+  };
+  const aGate = gate();
+  const cGate = gate();
+  let published = true;
+  let invalidations = 0;
+  const heavySyncs: string[] = [];
+  const steps = (timer: ReturnType<typeof gate>) => ({
+    classify: async () => ({ published }),
+    heal: async () => {},
+    register: (id: string, token: string, requestedAt: string) =>
+      registerSyncMarker(id, token, requestedAt, markerPorts),
+    wait: timer.wait,
+    syncCurrent: (id: string, token: string) => syncPageIfCurrentMarker(
+      id,
+      token,
+      markerPorts.read,
+      async () => {
+        assert.equal(published, true);
+        heavySyncs.push(token);
+        return { action: "published", needsInvalidation: true };
+      },
+    ),
+    sync: async () => {
+      assert.fail("a public notification must wait");
+    },
+    cleanup: async () => {},
+    invalidate: async () => { invalidations++; },
+  });
+
+  const a = coalescePageNotification(
+    pageId, "page.content_updated", "run-a", "2026-01-01T00:00:00.000Z", steps(aGate),
+  );
+  await aGate.started;
+  assert.equal(markers.get(pageId)?.marker.token, "run-a");
+
+  published = false;
+  const withdrawal = await coalescePageNotification(
+    pageId,
+    "page.properties_updated",
+    "run-b",
+    "2026-01-01T00:00:01.000Z",
+    {
+      ...steps(aGate),
+      classify: async () => ({ published: false }),
+      wait: async () => { assert.fail("withdrawal must not wait"); },
+      sync: async () => {
+        assert.equal(published, false);
+        assert.equal(markers.get(pageId)?.marker.token, "run-b");
+        return { action: "withdrawn", needsInvalidation: true };
+      },
+    },
+  );
+  assert.deepEqual(withdrawal, { action: "withdrawn" });
+  assert.equal(markers.get(pageId)?.marker.token, "run-b");
+  assert.equal(invalidations, 1);
+
+  published = true;
+  aGate.release();
+  assert.deepEqual(await a, { action: "superseded" });
+  assert.deepEqual(heavySyncs, []);
+  assert.equal(invalidations, 1);
+
+  const c = coalescePageNotification(
+    pageId, "page.content_updated", "run-c", "2026-01-01T00:00:02.000Z", steps(cGate),
+  );
+  await cGate.started;
+  assert.deepEqual(heavySyncs, []);
+  assert.equal(markers.get(pageId)?.marker.token, "run-c");
+  assert.equal(invalidations, 1);
+
+  cGate.release();
+  assert.deepEqual(await c, { action: "published" });
+  assert.deepEqual(heavySyncs, ["run-c"]);
+  assert.equal(invalidations, 2);
+});
+
 test("delete notifications bypass debounce even if the lookup still appears public", async () => {
   const calls: string[] = [];
   const result = await coalescePageNotification("page", "page.deleted", "delete-run", "2026-01-01T00:00:00.000Z", {
@@ -179,7 +275,7 @@ test("delete notifications bypass debounce even if the lookup still appears publ
     invalidate: async () => { calls.push("invalidate"); },
   });
   assert.deepEqual(result, { action: "withdrawn" });
-  assert.deepEqual(calls, ["immediate-sync", "invalidate", "cleanup"]);
+  assert.deepEqual(calls, ["register", "immediate-sync", "invalidate", "cleanup"]);
 });
 
 test("a stale public timer re-reads withdrawn state after immediate withdrawal sync", async () => {

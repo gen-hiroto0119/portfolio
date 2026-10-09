@@ -193,6 +193,7 @@ export async function coalescePageNotification(
     result = await steps.syncCurrent(pageId, token);
     if (result.action === "superseded") return { action: "superseded" as const };
   } else {
+    await steps.register(pageId, token, requestedAt);
     result = await steps.sync(pageId);
   }
   if (result.needsInvalidation) await steps.invalidate();

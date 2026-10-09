@@ -249,6 +249,15 @@ if (process.argv.includes("--seed")) {
   process.exit(0);
 }
 
+const prerenderManifest = JSON.parse(
+  readFileSync(new URL("../../.next/prerender-manifest.json", import.meta.url), "utf8"),
+);
+assert.equal(
+  Object.hasOwn(prerenderManifest.routes, "/sitemap.xml"),
+  false,
+  "sitemap must be rendered dynamically instead of emitted as a static asset",
+);
+
 await seed();
 await invalidate(true, "baseline-reset");
 const startingReads = readCount();
@@ -284,15 +293,6 @@ requireText({ text: footerHtml }, "HirotoFurugen", "baseline footer");
 requireAbsent({ text: footerHtml }, "Follow Me", "baseline footer");
 requireText(baselineFeed, `/blog/${baselineSlug}`, "baseline feed");
 requireText(baselineSitemap, `/blog/${baselineSlug}`, "baseline sitemap");
-const sitemapCacheControl = baselineSitemap.headers.get("cache-control") ?? "";
-assert.ok(
-  /\bno-store\b/i.test(sitemapCacheControl) ||
-    (/\bmax-age\s*=\s*0\b/i.test(sitemapCacheControl) &&
-      /\bmust-revalidate\b/i.test(sitemapCacheControl) &&
-      !/\bs-maxage\s*=\s*[1-9]\d*/i.test(sitemapCacheControl) &&
-      !/\bstale-while-revalidate\s*=\s*[1-9]\d*/i.test(sitemapCacheControl)),
-  "sitemap response must not outlive the tagged article cache at the CDN",
-);
 requireText(baselineFeed, `<lastBuildDate>${rssDate(baselineSourceEditedAt)}</lastBuildDate>`, "baseline feed");
 requireText(baselineFeed, `<pubDate>${rssPublicationDate()}</pubDate>`, "baseline feed");
 

@@ -36,7 +36,9 @@ npm run test:publishing
 
 Webhook URL は `https://<deployment-host>/api/notion/webhook/<NOTION_WEBHOOK_PATH_SECRET>` です。URL 全体を秘密として扱い、ログに出さないでください。Notion Webhooks では `page.created`、`page.content_updated`、`page.properties_updated`、`page.deleted`、`page.undeleted`、`page.moved` と、対象 data source の `data_source.created`、`data_source.updated`、`data_source.deleted`、`data_source.moved` を購読します。
 
-初回登録用の本番デプロイでは `BLOG_SYNC_ENABLED=true` と `NOTION_WEBHOOK_SETUP_ENABLED=true` を設定し、`NOTION_WEBHOOK_SECRET` は未設定にします。その間に Notion が送る unsigned verification request の候補を private Blob の `blog/setup/webhook-verification.json` に一度だけ保存します。候補を Blob から安全に取得して Notion 側で確認した後、順に `NOTION_WEBHOOK_SECRET` を設定し、setup mode を無効化して、再デプロイしてください。確認候補は署名秘密に自動設定されません。同一トークンの再送は受け付けますが、別トークンで再登録・ローテーションする場合は、オペレーターが Blob 上の候補ファイルを明示的に削除してから行ってください。
+初回登録用の本番デプロイでは `BLOG_SYNC_ENABLED=true` と `NOTION_WEBHOOK_SETUP_ENABLED=true` を設定し、`NOTION_WEBHOOK_SECRET` は未設定にします。その間に Notion が送る verification request の候補を private Blob の `blog/setup/webhook-verification.json` に一度だけ保存します。無署名リクエストと、候補の `verification_token` を鍵として生のリクエスト本文の HMAC-SHA256 が `X-Notion-Signature` と一致する署名付きリクエストを受け付けます。不正な署名は拒否します。候補による署名は整合性確認であり、独立した送信元認証ではありません。秘密URL、一時的な setup mode、Notion 側での候補の照合を併用します。候補を Blob から安全に取得して Notion 側で確認した後、順に `NOTION_WEBHOOK_SECRET` を設定し、setup mode を無効化して、再デプロイしてください。確認候補は署名秘密に自動設定されません。同一トークンの再送は受け付けますが、別トークンで再登録・ローテーションする場合は、オペレーターが Blob 上の候補ファイルを明示的に削除してから行ってください。
+
+画像配信は、レスポンス開始前に加えて最大64 KiBの各チャンクを渡す直前にも公開スナップショットをキャッシュなしで再確認します。取り下げを検知した場合や確認に失敗した場合、残りの転送と Blob の読み取りを中断します。転送開始後は404へ変更できず、本文の読み取りエラーになります。このため配信中のスナップショット読み取り回数・転送量が増えます。取り下げは Notion の変更が同期された後に効力を持ち、最後の確認とチャンク送出の間の競合、HTTP基盤が既にバッファしたデータ、送信済みデータの回収までを原子的に保証するものではありません。
 
 cron や自動スケジュール公開は設定しません。slug を変更した記事の旧 URL は自動リダイレクトせず 404 になります。
 

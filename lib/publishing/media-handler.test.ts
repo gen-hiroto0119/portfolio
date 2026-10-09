@@ -70,3 +70,76 @@ test("returns 404 if an asset is withdrawn before the response is returned", asy
   assert.equal(mediaReads, 1);
   assert.equal(response.headers.get("location"), null);
 });
+
+for (const failure of ["withdrawal", "snapshot failure"]) {
+  test(`interrupts an active transfer on ${failure}, even within one large Blob chunk`, async () => {
+    let unavailable = false;
+    let cancelled = false;
+    const source = new ReadableStream<Uint8Array>({
+      start(controller) { controller.enqueue(new Uint8Array(128 * 1024).fill(1)); },
+      cancel() { cancelled = true; },
+    });
+    const handler = createMediaHandler(async () => {
+      if (unavailable && failure === "snapshot failure") throw new Error("Snapshot unavailable");
+      return snapshot(unavailable ? [] : [asset]);
+    }, async () => ({ statusCode: 200, blob: { size: 128 * 1024 }, stream: source }));
+    const response = await handler(request(), { params: Promise.resolve({ assetId: asset.id }) });
+    const reader = response.body!.getReader();
+    assert.equal((await reader.read()).value?.byteLength, 64 * 1024);
+    unavailable = true;
+    await assert.rejects(reader.read(), /Media unavailable/);
+    assert.equal(cancelled, true);
+  });
+}
+
+test("does not send the first chunk after withdrawal between response creation and consumption", async () => {
+  let published = true;
+  let cancelled = false;
+  const source = new ReadableStream<Uint8Array>({
+    start(controller) { controller.enqueue(new Uint8Array([1])); },
+    cancel() { cancelled = true; },
+  });
+  const handler = createMediaHandler(async () => snapshot(published ? [asset] : []), async () => ({
+    statusCode: 200, blob: { size: 1 }, stream: source,
+  }));
+  const response = await handler(request(), { params: Promise.resolve({ assetId: asset.id }) });
+  published = false;
+  await assert.rejects(response.arrayBuffer(), /Media unavailable/);
+  assert.equal(cancelled, true);
+});
+
+for (const method of ["cancel", "abort"]) {
+  test(`cancels the Blob reader when the consumer uses ${method}`, async () => {
+    let cancelled = false;
+    const source = new ReadableStream<Uint8Array>({ cancel() { cancelled = true; } });
+    const abort = new AbortController();
+    const handler = createMediaHandler(async () => snapshot([asset]), async () => ({
+      statusCode: 200, blob: { size: 1 }, stream: source,
+    }));
+    const response = await handler(new Request(request(), { signal: abort.signal }), { params: Promise.resolve({ assetId: asset.id }) });
+    const reader = response.body!.getReader();
+    const reading = reader.read();
+    if (method === "cancel") {
+      await reader.cancel();
+      assert.equal((await reading).done, true);
+    } else {
+      abort.abort();
+      await assert.rejects(reading, /aborted/);
+    }
+    assert.equal(cancelled, true);
+  });
+}
+
+test("limits actual streamed bytes when Blob size metadata is incorrect", async () => {
+  let cancelled = false;
+  const source = new ReadableStream<Uint8Array>({
+    start(controller) { controller.enqueue(new Uint8Array(4 * 1024 * 1024 + 1)); },
+    cancel() { cancelled = true; },
+  });
+  const handler = createMediaHandler(async () => snapshot([asset]), async () => ({
+    statusCode: 200, blob: { size: 1 }, stream: source,
+  }));
+  const response = await handler(request(), { params: Promise.resolve({ assetId: asset.id }) });
+  await assert.rejects(response.arrayBuffer(), /Media unavailable/);
+  assert.equal(cancelled, true);
+});

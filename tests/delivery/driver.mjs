@@ -249,6 +249,15 @@ if (process.argv.includes("--seed")) {
   process.exit(0);
 }
 
+const prerenderManifest = JSON.parse(
+  readFileSync(new URL("../../.next/prerender-manifest.json", import.meta.url), "utf8"),
+);
+assert.equal(
+  Object.hasOwn(prerenderManifest.routes, "/sitemap.xml"),
+  false,
+  "sitemap must be rendered dynamically instead of emitted as a static asset",
+);
+
 await seed();
 await invalidate(true, "baseline-reset");
 const startingReads = readCount();

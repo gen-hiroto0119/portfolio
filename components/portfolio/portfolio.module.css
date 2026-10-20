@@ -20,12 +20,8 @@
 .header { display: flex; align-items: center; justify-content: space-between; height: 40px; margin-bottom: var(--gap); }
 .homeLink { display: inline-flex; align-items: center; min-height: 40px; }
 .headerActions { display: flex; align-items: center; gap: 12px; }
-.themeToggle { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; color: var(--foreground); background: transparent; border: 0; border-radius: 50%; }
-.themeToggle:hover { background: var(--surface); }
-.lightIcon { display: var(--light-display); }
-.darkIcon { display: var(--dark-display); }
 .main { display: flex; flex-direction: column; gap: var(--gap); }
-.intro { display: flex; flex-direction: column; gap: var(--gap); }
+.intro { display: flex; flex-direction: column; gap: var(--gap); margin-top: calc(125px - var(--gap)); }
 .intro p { color: var(--muted-foreground); line-height: 19.25px; }
 .technology { display: inline-block; color: var(--foreground); white-space: nowrap; vertical-align: baseline; }
 .technology img { display: inline-block; width: 15px; height: 15px; margin-inline-end: 4px; vertical-align: -0.125em; }
@@ -80,7 +76,6 @@
   .homeLink { min-height: 44px; }
   .headerActions { gap: 8px; }
   .headerActions nav a,
-  .themeToggle,
   .socials a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; }
   .sectionHeading a { display: inline-flex; align-items: center; min-height: 44px; }
   .socials { gap: 4px; margin-left: -14px; }

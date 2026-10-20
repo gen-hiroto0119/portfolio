@@ -1,69 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./ascii-portrait.module.css";
 
 const GLYPHS = ".:-=+*TERA%#@";
-const PORTRAITS = {
-  light: {
-    source: "/portfolio/thinker-coverage.webp",
-    fallback: "/portfolio/thinker-preview.webp",
-    ink: "#244cff",
-    label: "青いASCII文字で描いた、顎に手を添えて考える人",
-  },
-  dark: {
-    // SMK's photograph of the David head cast, KAS2232, released under CC0:
-    // https://commons.wikimedia.org/wiki/File:Michelangelo_Buonarroti,_Hoved_fra_statuen_af_David,_,_KAS2232,_Statens_Museum_for_Kunst.jpg
-    source: "/portfolio/david-photo.webp",
-    fallback: "/portfolio/david-ascii.svg",
-    ink: "#648cff",
-    label: "写真の明暗を青いASCII文字に変換したダビデ像",
-  },
+const SCRAMBLE_INTERVAL = 110;
+const PORTRAIT = {
+  // SMK's photograph of the David head cast, KAS2232, released under CC0:
+  // https://commons.wikimedia.org/wiki/File:Michelangelo_Buonarroti,_Hoved_fra_statuen_af_David,_,_KAS2232,_Statens_Museum_for_Kunst.jpg
+  source: "/portfolio/david-photo.webp",
+  fallback: "/portfolio/david-ascii.svg",
+  ink: "#648cff",
+  label: "写真の明暗を青いASCII文字に変換したダビデ像",
 };
+const INKS = [PORTRAIT.ink, "#7d9dff", "#968cff"];
 
 type Letter = {
   x: number;
   y: number;
-  offsetX: number;
-  offsetY: number;
   glyph: number;
+  displayGlyph: number;
+  tint: number;
 };
 
-function subscribeToTheme(onChange: () => void) {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  const preference = window.matchMedia("(prefers-color-scheme: dark)");
-  preference.addEventListener("change", onChange);
-  return () => {
-    observer.disconnect();
-    preference.removeEventListener("change", onChange);
-  };
-}
-
-function currentTheme(): keyof typeof PORTRAITS {
-  const theme = document.documentElement.dataset.theme;
-  if (theme === "light" || theme === "dark") return theme;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function serverTheme() {
-  return null;
-}
-
 export function AsciiPortrait() {
-  const theme = useSyncExternalStore(subscribeToTheme, currentTheme, serverTheme);
-  return <><Portrait mode="light" active={theme === "light"} /><Portrait mode="dark" active={theme === "dark"} /></>;
-}
-
-function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: boolean }) {
-  const portrait = PORTRAITS[mode];
   const frameRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!active) return;
     const frame = frameRef.current;
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
@@ -76,7 +42,7 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
     let loaded = false;
     let visible = true;
     let animation = 0;
-    let previousTime = 0;
+    let timer = 0;
     let width = 0;
     let height = 0;
     let cellWidth = 0;
@@ -93,9 +59,9 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
       for (const letter of letters) {
         context.drawImage(
           atlas,
-          letter.glyph * atlasSize, 0, atlasSize, atlasSize,
-          letter.x + letter.offsetX - size / 2,
-          letter.y + letter.offsetY - size / 2,
+          letter.displayGlyph * atlasSize, letter.tint * atlasSize, atlasSize, atlasSize,
+          letter.x - size / 2,
+          letter.y - size / 2,
           size, size,
         );
       }
@@ -103,49 +69,53 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
 
     function reset() {
       cancelAnimationFrame(animation);
+      window.clearTimeout(timer);
       animation = 0;
-      previousTime = 0;
+      timer = 0;
       pointer.active = false;
       for (const letter of letters) {
-        letter.offsetX = 0;
-        letter.offsetY = 0;
+        letter.displayGlyph = letter.glyph;
+        letter.tint = 0;
       }
       paint();
     }
 
-    function tick(time: number) {
+    function tick() {
       animation = 0;
-      if (disposed || !visible || document.hidden || reducedMotion.matches) return;
-      const dt = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : 1 / 60;
-      previousTime = time;
-      const ease = 1 - Math.exp(-12 * dt);
-      const radius = Math.min(width * 0.2, 90);
-      let unsettled = false;
+      if (disposed || !visible || document.hidden || reducedMotion.matches || !finePointer.matches) return;
+      const radius = Math.min(width * 0.16, 76);
+      let nearby = false;
+      let changed = false;
 
       for (const letter of letters) {
-        const dx = letter.x - pointer.x;
-        const dy = letter.y - pointer.y;
-        const distance = Math.hypot(dx, dy);
+        const distance = Math.hypot(letter.x - pointer.x, letter.y - pointer.y);
         const influence = pointer.active ? Math.max(0, 1 - distance / radius) ** 2 : 0;
-        const force = influence * cellWidth * 2.8;
-        const targetX = dx / Math.max(distance, 1) * force;
-        const targetY = dy / Math.max(distance, 1) * force;
-        letter.offsetX += (targetX - letter.offsetX) * ease;
-        letter.offsetY += (targetY - letter.offsetY) * ease;
-        if (Math.abs(targetX - letter.offsetX) + Math.abs(targetY - letter.offsetY) > 0.025) {
-          unsettled = true;
-        } else {
-          letter.offsetX = targetX;
-          letter.offsetY = targetY;
+        let nextGlyph = letter.glyph;
+        let nextTint = 0;
+        if (influence > 0) {
+          nearby = true;
+          if (Math.random() < influence * 0.85) {
+            // Stay near the original density to preserve the statue's shading.
+            const shift = (Math.random() < 0.5 ? -1 : 1) * (influence > 0.5 ? 2 : 1);
+            nextGlyph = Math.max(0, Math.min(GLYPHS.length - 1, letter.glyph + shift));
+            nextTint = Math.random() < 0.7 ? 1 : 2;
+          }
         }
+        if (nextGlyph !== letter.displayGlyph || nextTint !== letter.tint) changed = true;
+        letter.displayGlyph = nextGlyph;
+        letter.tint = nextTint;
       }
-      paint();
-      if (unsettled) animation = requestAnimationFrame(tick);
-      else previousTime = 0;
+      if (changed) paint();
+      if (nearby) {
+        timer = window.setTimeout(() => {
+          timer = 0;
+          wake();
+        }, SCRAMBLE_INTERVAL);
+      }
     }
 
     function wake() {
-      if (!animation && loaded && visible && !document.hidden && !reducedMotion.matches) {
+      if (!animation && !timer && !disposed && loaded && visible && !document.hidden && !reducedMotion.matches && finePointer.matches) {
         animation = requestAnimationFrame(tick);
       }
     }
@@ -157,7 +127,8 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
       reset();
       width = nextWidth;
       height = width * 2 / 3;
-      const dpr = Math.min(window.devicePixelRatio || 1, 3);
+      // Keep small glyphs crisp even on 1x screens.
+      const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -178,21 +149,17 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
       for (let row = 0; row < rows; row++) {
         for (let column = 0; column < columns; column++) {
           const i = (row * columns + column) * 4;
-          // Thinker's small grayscale source contains precomputed blue ink coverage.
           const luminance = (pixels[i] * 0.2126 + pixels[i + 1] * 0.7152 + pixels[i + 2] * 0.0722) / 255;
-          const coverage = mode === "dark"
-            ? Math.max(0, (luminance - 0.09) / 0.84)
-            : luminance;
+          const coverage = Math.max(0, (luminance - 0.09) / 0.84);
           if (coverage < 0.035) continue;
-          const tone = mode === "dark"
-            ? Math.min(1, coverage) ** 1.8
-            : Math.min(1, coverage / 0.55) ** 0.85;
+          const tone = Math.min(1, coverage) ** 1.8;
+          const glyph = Math.min(GLYPHS.length - 1, Math.floor(tone * GLYPHS.length));
           letters.push({
             x: (column + 0.5) * cellWidth,
             y: (row + 0.5) * cellHeight,
-            offsetX: 0,
-            offsetY: 0,
-            glyph: Math.min(GLYPHS.length - 1, Math.floor(tone * GLYPHS.length)),
+            glyph,
+            displayGlyph: glyph,
+            tint: 0,
           });
         }
       }
@@ -201,15 +168,17 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
       atlasSize = Math.ceil(cellHeight * 1.45 * dpr);
       atlas = document.createElement("canvas");
       atlas.width = atlasSize * GLYPHS.length;
-      atlas.height = atlasSize;
+      atlas.height = atlasSize * INKS.length;
       const ink = atlas.getContext("2d");
       if (!ink) return;
-      ink.fillStyle = portrait.ink;
       ink.font = `500 ${cellHeight * 1.16 * dpr}px "JetBrains Mono Variable", monospace`;
       ink.textAlign = "center";
       ink.textBaseline = "middle";
-      for (let index = 0; index < GLYPHS.length; index++) {
-        ink.fillText(GLYPHS[index], (index + 0.5) * atlasSize, atlasSize / 2);
+      for (let tint = 0; tint < INKS.length; tint++) {
+        ink.fillStyle = INKS[tint];
+        for (let index = 0; index < GLYPHS.length; index++) {
+          ink.fillText(GLYPHS[index], (index + 0.5) * atlasSize, (tint + 0.5) * atlasSize);
+        }
       }
       paint();
       setReady(true);
@@ -226,8 +195,7 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
     }
 
     function leave() {
-      pointer.active = false;
-      wake();
+      reset();
     }
 
     const resizeObserver = new ResizeObserver(resize);
@@ -244,7 +212,7 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
     reducedMotion.addEventListener("change", reset);
     finePointer.addEventListener("change", reset);
 
-    source.src = portrait.source;
+    source.src = PORTRAIT.source;
     Promise.all([
       source.decode(),
       document.fonts.load('500 12px "JetBrains Mono Variable"'),
@@ -259,6 +227,7 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
     return () => {
       disposed = true;
       cancelAnimationFrame(animation);
+      window.clearTimeout(timer);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       frame.removeEventListener("pointermove", move);
@@ -268,11 +237,11 @@ function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: bool
       reducedMotion.removeEventListener("change", reset);
       finePointer.removeEventListener("change", reset);
     };
-  }, [active, mode, portrait]);
+  }, []);
 
   return (
-    <figure ref={frameRef} className={`${styles.portrait} ${styles[mode]}`} role="img" aria-label={portrait.label}>
-      <Image src={portrait.fallback} alt="" width={1536} height={1024} unoptimized loading={active ? "eager" : "lazy"} fetchPriority={active ? "high" : "auto"} className={ready ? styles.fallbackHidden : styles.fallback} />
+    <figure ref={frameRef} className={styles.portrait} role="img" aria-label={PORTRAIT.label}>
+      <Image src={PORTRAIT.fallback} alt="" width={1536} height={1024} unoptimized loading="eager" fetchPriority="high" className={ready ? styles.fallbackHidden : styles.fallback} />
       <canvas ref={canvasRef} className={ready ? styles.canvasReady : styles.canvas} aria-hidden="true" />
     </figure>
   );

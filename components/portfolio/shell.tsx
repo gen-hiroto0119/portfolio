@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { SiteNavigation } from "./site-navigation";
-import { ThemeToggle } from "./theme-toggle";
 import { site } from "@/lib/site";
 import styles from "./portfolio.module.css";
 
@@ -11,7 +10,6 @@ export function PortfolioHeader() {
     <Link href="/" className={styles.homeLink}>HirotoFurugen</Link>
     <div className={styles.headerActions}>
       <nav aria-label="メインナビゲーション"><Suspense fallback={<Link href="/">Home</Link>}><SiteNavigation /></Suspense></nav>
-      <ThemeToggle />
     </div>
   </header>;
 }

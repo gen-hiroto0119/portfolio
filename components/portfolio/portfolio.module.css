@@ -1,19 +1,6 @@
 .site {
-  --background: #fff;
-  --foreground: #171717;
-  --muted-foreground: #7c7c7c;
-  --border: #e5e5e5;
-  --surface: #fafafa;
-  --syntax-comment: #7c7c7c;
-  --syntax-keyword: #171717;
-  --syntax-string: #526977;
-  --syntax-title: #171717;
-  --syntax-literal: #526977;
-  --syntax-tag: #171717;
-  --syntax-attribute: #526977;
   --gap: 16px;
   min-height: 100svh;
-  color-scheme: light;
   color: var(--foreground);
   background: var(--background);
   font-family: var(--portfolio-font), "Noto Sans JP Variable", sans-serif;
@@ -28,11 +15,15 @@
 .site h1 { font-size: 20px; font-weight: 600; line-height: 28px; overflow-wrap: anywhere; }
 .site h2 { font-size: 14px; font-weight: 400; line-height: 20px; color: var(--muted-foreground); }
 .site strong { color: var(--foreground); font-weight: 400; }
-.skipLink { position: fixed; top: 8px; left: 8px; z-index: 100; padding: 8px; background: white; transform: translateY(-200%); }
+.skipLink { position: fixed; top: 8px; left: 8px; z-index: 100; padding: 8px; background: var(--background); transform: translateY(-200%); }
 .skipLink:focus { transform: translateY(0); }
 .header { display: flex; align-items: center; justify-content: space-between; height: 40px; margin-bottom: var(--gap); }
-.avatarLink { width: 40px; height: 40px; display: block; }
-.avatarLink svg { width: 100%; height: 100%; }
+.homeLink { display: inline-flex; align-items: center; min-height: 40px; }
+.headerActions { display: flex; align-items: center; gap: 12px; }
+.themeToggle { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; color: var(--foreground); background: transparent; border: 0; border-radius: 50%; }
+.themeToggle:hover { background: var(--surface); }
+.lightIcon { display: var(--light-display); }
+.darkIcon { display: var(--dark-display); }
 .main { display: flex; flex-direction: column; gap: var(--gap); }
 .intro { display: flex; flex-direction: column; gap: var(--gap); }
 .intro p { color: var(--muted-foreground); line-height: 19.25px; }
@@ -52,6 +43,10 @@
 .footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); margin-top: var(--gap); padding-top: var(--gap); font-size: 12px; line-height: 20px; color: var(--muted-foreground); }
 .socials { display: flex; align-items: center; gap: 12px; }
 .socials a { display: inline-flex; padding-block: 2px; }
+.socials img,
+.technology img[src$="/nextjs-logo.svg"],
+.technology img[src$="/deno-logo.svg"],
+.technology img[src$="/rust-logo.svg"] { filter: var(--monochrome-filter); }
 .blogHeading { display: flex; flex-direction: column; gap: 8px; }
 .blogHeading p { color: var(--muted-foreground); line-height: 22px; }
 .posts { padding: 0; list-style: none; }

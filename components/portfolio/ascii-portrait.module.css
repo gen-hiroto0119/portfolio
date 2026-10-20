@@ -1,0 +1,41 @@
+.portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  margin: 0 0 12px;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.light { display: var(--light-display); }
+.dark { display: var(--dark-display); }
+
+.fallback,
+.fallbackHidden,
+.canvas,
+.canvasReady {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 180ms ease;
+}
+
+.canvas,
+.fallbackHidden {
+  opacity: 0;
+}
+
+.canvasReady,
+.fallback {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fallback,
+  .fallbackHidden,
+  .canvas,
+  .canvasReady {
+    transition: none;
+  }
+}

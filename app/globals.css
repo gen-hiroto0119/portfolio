@@ -1,18 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --surface: #f7f7f8;
-  --foreground: #202124;
-  --muted-foreground: #71717a;
-  --border: #e8e8eb;
-  --accent: #202124;
-  --syntax-comment: #66707c;
-  --syntax-keyword: #c7253c;
-  --syntax-string: #164e87;
-  --syntax-title: #6f42c1;
-  --syntax-literal: #005cc5;
-  --syntax-tag: #16733d;
+  color-scheme: light dark;
+  --background: light-dark(#fff, #191919);
+  --surface: light-dark(#fafafa, #242424);
+  --foreground: light-dark(#171717, #ededed);
+  --muted-foreground: light-dark(#7c7c7c, #a1a1a1);
+  --border: light-dark(#e5e5e5, #303030);
+  --accent: var(--foreground);
+  --syntax-comment: var(--muted-foreground);
+  --syntax-keyword: var(--foreground);
+  --syntax-string: light-dark(#526977, #a6c8e1);
+  --syntax-title: var(--foreground);
+  --syntax-literal: var(--syntax-string);
+  --syntax-tag: var(--foreground);
+  --syntax-attribute: var(--syntax-string);
+  --light-display: block;
+  --dark-display: none;
+  --monochrome-filter: none;
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --light-display: none;
+  --dark-display: block;
+  --monochrome-filter: invert(1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --light-display: none;
+    --dark-display: block;
+    --monochrome-filter: invert(1);
+  }
 }
 @theme inline {
   --color-background: var(--background);

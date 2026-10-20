@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { AsciiPortrait } from "@/components/portfolio/ascii-portrait";
 import { PostList } from "@/components/portfolio/post-list";
 import { getAllPosts } from "@/lib/content";
 import styles from "@/components/portfolio/portfolio.module.css";
@@ -24,8 +25,8 @@ async function RecentPosts() {
 export default function HomePage() {
   return <>
     <main id="main" className={styles.main}>
-      <section className={styles.intro} lang="en" aria-labelledby="intro-title">
-        <h1 id="intro-title">I&apos;m Hiroto</h1>
+      <section className={styles.intro} lang="en" aria-label="Profile">
+        <AsciiPortrait />
         <p>I&apos;m a <strong>product engineer</strong> based in Tokyo, and I love <strong>Product Design</strong>. I&apos;m currently working as an engineer while attending university.</p>
         <p>My main focus is on <strong>frontend</strong> and <strong>native development</strong>. I primarily use <Technology name="React" logo="react" />, <Technology name="Next.js" logo="nextjs" />, <Technology name="Deno" logo="deno" />, and <Technology name="Swift" logo="swift" />.</p>
         <p>Lately, I&apos;ve been drawn to <Technology name="Rust" logo="rust" /> and am building a <strong>macOS application</strong> with <strong>GPUI</strong>.</p>

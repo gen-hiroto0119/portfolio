@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import styles from "./ascii-portrait.module.css";
 
 const GLYPHS = ".:-=+*TERA%#@";
 const PORTRAITS = {
   light: {
-    source: "/portfolio/thinker-ascii.webp",
-    fallback: "/portfolio/thinker-ascii.webp",
+    source: "/portfolio/thinker-coverage.webp",
+    fallback: "/portfolio/thinker-preview.webp",
     ink: "#244cff",
     label: "青いASCII文字で描いた、顎に手を添えて考える人",
   },
@@ -30,17 +30,40 @@ type Letter = {
   glyph: number;
 };
 
-export function AsciiPortrait() {
-  return <><Portrait mode="light" /><Portrait mode="dark" /></>;
+function subscribeToTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  const preference = window.matchMedia("(prefers-color-scheme: dark)");
+  preference.addEventListener("change", onChange);
+  return () => {
+    observer.disconnect();
+    preference.removeEventListener("change", onChange);
+  };
 }
 
-function Portrait({ mode }: { mode: keyof typeof PORTRAITS }) {
+function currentTheme(): keyof typeof PORTRAITS {
+  const theme = document.documentElement.dataset.theme;
+  if (theme === "light" || theme === "dark") return theme;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function serverTheme() {
+  return null;
+}
+
+export function AsciiPortrait() {
+  const theme = useSyncExternalStore(subscribeToTheme, currentTheme, serverTheme);
+  return <><Portrait mode="light" active={theme === "light"} /><Portrait mode="dark" active={theme === "dark"} /></>;
+}
+
+function Portrait({ mode, active }: { mode: keyof typeof PORTRAITS; active: boolean }) {
   const portrait = PORTRAITS[mode];
   const frameRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (!active) return;
     const frame = frameRef.current;
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
@@ -134,12 +157,13 @@ function Portrait({ mode }: { mode: keyof typeof PORTRAITS }) {
       reset();
       width = nextWidth;
       height = width * 2 / 3;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 3);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const columns = width < 400 ? 68 : 90;
+      // Keep narrow screens detailed, without a sudden density jump at a breakpoint.
+      const columns = Math.round(Math.min(90, Math.max(80, 80 + (width - 272) * 10 / 268)));
       const rows = Math.round(columns / 1.85);
       cellWidth = width / columns;
       cellHeight = height / rows;
@@ -154,11 +178,11 @@ function Portrait({ mode }: { mode: keyof typeof PORTRAITS }) {
       for (let row = 0; row < rows; row++) {
         for (let column = 0; column < columns; column++) {
           const i = (row * columns + column) * 4;
-          // David uses the photograph's luminance; the Thinker uses its blue ink coverage.
+          // Thinker's small grayscale source contains precomputed blue ink coverage.
           const luminance = (pixels[i] * 0.2126 + pixels[i + 1] * 0.7152 + pixels[i + 2] * 0.0722) / 255;
           const coverage = mode === "dark"
             ? Math.max(0, (luminance - 0.09) / 0.84)
-            : Math.max(0, pixels[i + 2] - (pixels[i] + pixels[i + 1]) / 2) / 255;
+            : luminance;
           if (coverage < 0.035) continue;
           const tone = mode === "dark"
             ? Math.min(1, coverage) ** 1.8
@@ -192,10 +216,11 @@ function Portrait({ mode }: { mode: keyof typeof PORTRAITS }) {
     }
 
     function move(event: PointerEvent) {
-      if (!frame || !finePointer.matches || reducedMotion.matches || event.pointerType === "touch") return;
-      const rect = frame.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
+      if (!canvas || !finePointer.matches || reducedMotion.matches || event.pointerType === "touch") return;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      pointer.x = (event.clientX - rect.left) * width / rect.width;
+      pointer.y = (event.clientY - rect.top) * height / rect.height;
       pointer.active = true;
       wake();
     }
@@ -243,11 +268,11 @@ function Portrait({ mode }: { mode: keyof typeof PORTRAITS }) {
       reducedMotion.removeEventListener("change", reset);
       finePointer.removeEventListener("change", reset);
     };
-  }, [mode, portrait]);
+  }, [active, mode, portrait]);
 
   return (
     <figure ref={frameRef} className={`${styles.portrait} ${styles[mode]}`} role="img" aria-label={portrait.label}>
-      <Image src={portrait.fallback} alt="" width={1536} height={1024} unoptimized className={ready ? styles.fallbackHidden : styles.fallback} />
+      <Image src={portrait.fallback} alt="" width={1536} height={1024} unoptimized loading={active ? "eager" : "lazy"} fetchPriority={active ? "high" : "auto"} className={ready ? styles.fallbackHidden : styles.fallback} />
       <canvas ref={canvasRef} className={ready ? styles.canvasReady : styles.canvas} aria-hidden="true" />
     </figure>
   );

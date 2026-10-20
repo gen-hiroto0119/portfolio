@@ -76,8 +76,16 @@
   .experienceRow { font-size: 13px; }
 }
 @media (max-width: 599px) {
+  .header { height: 44px; }
+  .homeLink { min-height: 44px; }
+  .headerActions { gap: 8px; }
+  .headerActions nav a,
+  .themeToggle,
+  .socials a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; }
+  .sectionHeading a { display: inline-flex; align-items: center; min-height: 44px; }
+  .socials { gap: 4px; margin-left: -14px; }
   .experience { gap: 16px; }
   .experienceRow { flex-direction: column; gap: 8px; }
-  .postRow { flex-direction: column; gap: 4px; padding-block: 8px; }
+  .postRow { flex-direction: column; justify-content: center; min-height: 44px; gap: 4px; padding-block: 8px; }
   .date { font-size: 14px; }
 }

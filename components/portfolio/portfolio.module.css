@@ -1,5 +1,6 @@
 .site {
-  --gap: 16px;
+  --space-unit: 8px;
+  --gap: calc(var(--space-unit) * 2);
   min-height: 100svh;
   color: var(--foreground);
   background: var(--background);
@@ -20,13 +21,13 @@
 .header { display: flex; align-items: center; justify-content: space-between; height: 40px; margin-bottom: var(--gap); }
 .homeLink { display: inline-flex; align-items: center; min-height: 40px; }
 .headerActions { display: flex; align-items: center; gap: 12px; }
-.main { display: flex; flex-direction: column; gap: var(--gap); }
-.intro { display: flex; flex-direction: column; gap: var(--gap); margin-top: calc(125px - var(--gap)); }
+.main { display: flex; flex-direction: column; gap: calc(var(--space-unit) * 4); }
+.intro { display: flex; flex-direction: column; gap: var(--gap); margin-top: calc(var(--space-unit) * 16 - var(--gap)); margin-bottom: var(--gap); }
 .intro p { color: var(--muted-foreground); line-height: 19.25px; }
 .technology { display: inline-block; color: var(--foreground); white-space: nowrap; vertical-align: baseline; }
 .technology img { display: inline-block; width: 15px; height: 15px; margin-inline-end: 4px; vertical-align: -0.125em; }
 .section { border-top: 1px solid var(--border); padding-top: var(--gap); }
-.section > h2, .sectionHeading { margin-bottom: 8px; }
+.section > h2, .sectionHeading { margin-bottom: var(--space-unit); }
 .sectionHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .sectionHeading a { font-size: 12px; }
 .experience { display: flex; flex-direction: column; gap: 0; }

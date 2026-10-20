@@ -17,7 +17,7 @@ async function PublishedPosts() {
 export default function BlogPage() {
   return <>
     <main id="main" className={styles.main}>
-      <header className={styles.blogHeading}><h1>Blog</h1><p>開発やデザインについて、考えたこと。</p></header>
+      <header className={styles.blogHeading}><h1>Blog</h1></header>
       <section className={styles.section} aria-label="記事一覧">
         <Suspense fallback={<p role="status" className={styles.secondary}>記事を読み込んでいます…</p>}><PublishedPosts /></Suspense>
       </section>

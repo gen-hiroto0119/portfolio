@@ -1,15 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Suspense } from "react";
 import { SiteNavigation } from "./site-navigation";
 import { site } from "@/lib/site";
 import styles from "./portfolio.module.css";
 
-export function PortfolioHeader() {
+export function PortfolioHeader({ pathname }: { pathname: string }) {
   return <header className={styles.header}>
-    <Link href="/" className={styles.homeLink}>HirotoFurugen</Link>
+    <a href="/" className={styles.homeLink}>HirotoFurugen</a>
     <div className={styles.headerActions}>
-      <nav aria-label="メインナビゲーション"><Suspense fallback={<Link href="/">Home</Link>}><SiteNavigation /></Suspense></nav>
+      <nav aria-label="メインナビゲーション"><SiteNavigation pathname={pathname} /></nav>
     </div>
   </header>;
 }
@@ -17,8 +14,8 @@ export function PortfolioHeader() {
 export function PortfolioFooter() {
   return <footer className={styles.footer}>
     <nav aria-label="ソーシャルリンク" className={styles.socials}>
-      <a href={site.socials.github} aria-label="GitHub"><Image src="/portfolio/github.svg" alt="" width={16} height={16} /></a>
-      <a href={site.socials.linkedin} aria-label="LinkedIn"><Image src="/portfolio/linkedin.svg" alt="" width={16} height={16} /></a>
+      <a href={site.socials.github} aria-label="GitHub"><img src="/portfolio/github.svg" alt="" width={16} height={16} /></a>
+      <a href={site.socials.linkedin} aria-label="LinkedIn"><img src="/portfolio/linkedin.svg" alt="" width={16} height={16} /></a>
     </nav>
     <span>HirotoFurugen</span>
   </footer>;

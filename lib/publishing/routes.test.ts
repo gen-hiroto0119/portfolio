@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import { test } from "node:test";
 
-import { POST as manualSync } from "../../app/api/notion/sync/route";
-import { POST as notionWebhook } from "../../app/api/notion/webhook/[key]/route";
+import { manualSync } from "./sync-route";
+import { notionWebhook } from "./webhook-handler";
 import { storeWebhookVerificationWith } from "./blob";
 import { createNotionWebhookHandler } from "./webhook-handler";
 import { syncNotionPageWorkflow } from "./workflows";

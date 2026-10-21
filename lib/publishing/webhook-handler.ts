@@ -1,5 +1,3 @@
-import "server-only";
-
 import { start } from "workflow/api";
 import { z } from "zod";
 
@@ -73,3 +71,5 @@ export function createNotionWebhookHandler(
     }
   };
 }
+
+export const notionWebhook = createNotionWebhookHandler();

@@ -1,12 +1,11 @@
-import "server-only";
-
-import { revalidateTag } from "next/cache";
-
 import { BLOG_CACHE_TAG } from "@/lib/content/cache-policy";
+import { expireBlogCache } from "@/lib/content/snapshot-cache";
 import { bearerMatches, configuredSecret, errorResponse } from "./auth";
 
+type ExpireBlogCache = (tag: string, options: { expire: number }) => void | Promise<void>;
+
 export function createBlogCacheInvalidationHandler(
-  invalidate: typeof revalidateTag = revalidateTag,
+  invalidate: ExpireBlogCache = expireBlogCache,
 ) {
   return async function POST(request: Request) {
     if (process.env.BLOG_SYNC_ENABLED !== "true") return errorResponse(503);
@@ -14,7 +13,7 @@ export function createBlogCacheInvalidationHandler(
     if (!secret) return errorResponse(503);
     if (!bearerMatches(request, secret)) return errorResponse(401);
     try {
-      invalidate(BLOG_CACHE_TAG, { expire: 0 });
+      await invalidate(BLOG_CACHE_TAG, { expire: 0 });
       return Response.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
     } catch {
       return errorResponse(503);

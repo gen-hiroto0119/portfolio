@@ -1,20 +1,6 @@
-import "server-only";
-
-import { cacheLife, cacheTag } from "next/cache";
-
-import { isBlobConfigured, readSnapshot } from "@/lib/publishing/blob";
 import type { Snapshot } from "@/lib/publishing/model";
 import type { BlogPost, BlogPostWithContent } from "@/lib/content/schema";
-import { BLOG_CACHE_TAG } from "@/lib/content/cache-policy";
-
-async function publicSnapshot(): Promise<{ snapshot: Snapshot } | null> {
-  "use cache";
-  cacheLife("blog");
-  cacheTag(BLOG_CACHE_TAG);
-  if (!isBlobConfigured()) return null;
-  const { snapshot } = await readSnapshot();
-  return { snapshot };
-}
+import { loadPublicSnapshot } from "@/lib/content/snapshot-cache";
 
 export function createContentReaders(loadSnapshot: () => Promise<{ snapshot: Snapshot } | null>) {
   return {
@@ -44,6 +30,6 @@ export function createContentReaders(loadSnapshot: () => Promise<{ snapshot: Sna
   };
 }
 
-const readers = createContentReaders(publicSnapshot);
+const readers = createContentReaders(loadPublicSnapshot);
 export const getAllPosts = readers.getAllPosts;
 export const getPost = readers.getPost;

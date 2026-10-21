@@ -1,5 +1,3 @@
-import "server-only";
-
 import { timingSafeEqual, createHmac } from "node:crypto";
 import { z } from "zod";
 

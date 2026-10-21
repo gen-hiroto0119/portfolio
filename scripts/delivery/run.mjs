@@ -9,19 +9,27 @@ import { createServer } from "node:net";
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const outputRoot = join(projectRoot, "test-output", "delivery");
 const copyEntries = [
-  "app",
+  "src",
   "components",
   "lib",
   "public",
   "tests/delivery",
   "package.json",
   "package-lock.json",
-  "next.config.ts",
+  "vite.config.ts",
+  "vite.client.config.ts",
+  "css-modules.mjs",
   "tsconfig.json",
-  "postcss.config.js",
-  "eslint.config.mjs",
 ];
-const copyExclusions = new Set([".git", ".next", ".vercel", "node_modules"]);
+const copyExclusions = new Set([
+  ".git",
+  ".next",
+  ".vercel",
+  "node_modules",
+  "dist",
+  ".output",
+  ".nitro",
+]);
 const maxCapturedCharacters = 2_000_000;
 const buildTimeoutMs = 8 * 60 * 1000;
 const driverTimeoutMs = 4 * 60 * 1000;
@@ -186,7 +194,7 @@ async function waitForReady(record, baseUrl) {
   let lastFailure = "server did not respond";
 
   while (Date.now() < deadline && !interrupted) {
-    if (record.exit) throw new Error("Local Next.js server exited before readiness");
+    if (record.exit) throw new Error("Local server exited before readiness");
     try {
       const response = await fetch(`${baseUrl}/api/notion/revalidate`, {
         method: "POST",
@@ -202,7 +210,7 @@ async function waitForReady(record, baseUrl) {
     await delay(150);
   }
 
-  throw new Error(`Local Next.js server readiness timed out: ${lastFailure}`);
+  throw new Error(`Local server readiness timed out: ${lastFailure}`);
 }
 
 function redact(value, secrets) {
@@ -277,9 +285,11 @@ async function main() {
   const logs = { build: "", server: "", driver: "" };
   const driverPath = join(workDir, "tests/delivery/driver.mjs");
   const preloadPath = join(workDir, "tests/delivery/preload.mjs");
-  const nextPath = join(workDir, "node_modules/next/dist/bin/next");
+  const serverPath = join(workDir, ".output/server/index.mjs");
   const preloadOptions = `--import=${pathToFileURL(preloadPath).href}`;
   const isolatedEnv = { ...safeEnv, NODE_OPTIONS: preloadOptions };
+  const buildEnv = { ...isolatedEnv };
+  delete buildEnv.NODE_OPTIONS;
   let serverRecord;
   let failure;
 
@@ -314,9 +324,9 @@ async function main() {
 
     const build = await runCommand(
       "Production build",
-      process.execPath,
-      [nextPath, "build"],
-      { cwd: workDir, env: isolatedEnv },
+      "npm",
+      ["run", "build"],
+      { cwd: workDir, env: buildEnv },
       buildTimeoutMs,
     );
     logs.build += `${build.stdout}${build.stderr}`;
@@ -325,8 +335,11 @@ async function main() {
 
     serverRecord = launch(
       process.execPath,
-      [nextPath, "start", "--hostname", "127.0.0.1", "--port", String(port)],
-      { cwd: workDir, env: isolatedEnv },
+      [serverPath],
+      {
+        cwd: workDir,
+        env: { ...isolatedEnv, HOST: "127.0.0.1", PORT: String(port) },
+      },
     );
 
     await waitForReady(serverRecord, baseUrl);

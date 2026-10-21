@@ -1,5 +1,3 @@
-import "server-only";
-
 import { mediaPath, type TiptapNode, type TiptapDocument } from "@/lib/cms/document";
 import { z } from "zod";
 

@@ -1,9 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
-
-export function SiteNavigation() {
-  const home = useSelectedLayoutSegment() === null;
-  return <Link href={home ? "/blog" : "/"}>{home ? "Blog" : "Home"}</Link>;
+export function SiteNavigation({ pathname }: { pathname: string }) {
+  const home = pathname === "/";
+  return <a href={home ? "/blog" : "/"}>{home ? "Blog" : "Home"}</a>;
 }

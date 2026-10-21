@@ -1,5 +1,3 @@
-import "server-only";
-
 import { del, get, put, BlobPreconditionFailedError, BlobNotFoundError } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
 

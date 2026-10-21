@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 const baseUrl = process.env.ISR_BASE_URL;
 if (!baseUrl) throw new Error("ISR_BASE_URL must be explicitly provided by the delivery runner");
@@ -249,11 +249,8 @@ if (process.argv.includes("--seed")) {
   process.exit(0);
 }
 
-const prerenderManifest = JSON.parse(
-  readFileSync(new URL("../../.next/prerender-manifest.json", import.meta.url), "utf8"),
-);
 assert.equal(
-  Object.hasOwn(prerenderManifest.routes, "/sitemap.xml"),
+  existsSync(new URL("../../.output/public/sitemap.xml", import.meta.url)),
   false,
   "sitemap must be rendered dynamically instead of emitted as a static asset",
 );

@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { PublishedAsset, SnapshotRead } from "./model";
 import { assetSchema } from "./model";
 

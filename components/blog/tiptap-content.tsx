@@ -1,14 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
-import { Fragment, type ReactNode, createElement } from "react";
+import { Fragment, type Child, createElement } from "hono/jsx";
 import { CodeBlock } from "@/components/blog/code-block";
 import { parseTiptapDocument, type TiptapDocument, type TiptapNode } from "@/lib/cms/document";
 
-function renderNode(node: TiptapNode, index: number): ReactNode {
+function renderNode(node: TiptapNode, index: number): Child {
   const children = node.content?.map(renderNode);
   switch (node.type) {
-    case "doc": return <Fragment key={index}>{children}</Fragment>;
+    case "doc": return <Fragment key={String(index)}>{children}</Fragment>;
     case "text": {
-      let text: ReactNode = node.text;
+      let text: Child = node.text;
       for (const mark of node.marks ?? []) {
         switch (mark.type) {
           case "bold": text = <strong>{text}</strong>; break;
@@ -19,7 +18,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
           case "link": text = <a href={mark.attrs?.href} target="_blank" rel="noopener noreferrer">{text}</a>; break;
         }
       }
-      return <Fragment key={index}>{text}</Fragment>;
+      return <Fragment key={String(index)}>{text}</Fragment>;
     }
     case "paragraph": return <p key={index}>{children?.length ? children : <br />}</p>;
     case "heading": return createElement(`h${Math.max(2, Number(node.attrs?.level ?? 2))}`, { key: index }, children);

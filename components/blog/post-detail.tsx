@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { TiptapContent } from "@/components/blog/tiptap-content";
 import type { BlogPostWithContent } from "@/lib/content/schema";
 import styles from "@/components/portfolio/portfolio.module.css";
@@ -6,7 +5,7 @@ import styles from "@/components/portfolio/portfolio.module.css";
 export function PostDetail({ post }: { post: BlogPostWithContent }) {
   return <>
     <main id="main" className={styles.main}>
-      <Link href="/blog">← Blog</Link>
+      <a href="/blog">← Blog</a>
       <article className={styles.article}>
         <header className={styles.articleHeading}>
           <h1>{post.title}</h1>
@@ -14,7 +13,7 @@ export function PostDetail({ post }: { post: BlogPostWithContent }) {
         </header>
         <div className={styles.articleBody}><TiptapContent document={post.body} /></div>
       </article>
-      <Link href="/blog">← 記事一覧に戻る</Link>
+      <a href="/blog">← 記事一覧に戻る</a>
     </main>
   </>;
 }

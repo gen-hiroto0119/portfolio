@@ -1,5 +1,3 @@
-import "server-only";
-
 import { getMedia, readSnapshot, removeAssets, uploadAsset, writeSnapshot } from "./blob";
 import { fetchBody, fetchPage } from "./notion";
 import { uuid, type PublishedAsset } from "./model";

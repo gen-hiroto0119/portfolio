@@ -6,7 +6,7 @@ import { reconcileBlogWorkflow } from "@/lib/publishing/workflows";
 
 const uuid = z.uuid();
 
-export async function POST(request: Request) {
+export async function manualSync(request: Request) {
   if (process.env.BLOG_SYNC_ENABLED !== "true") return errorResponse(503);
   const secret = configuredSecret("BLOG_SYNC_SECRET");
   if (!secret) return errorResponse(503);

@@ -18,6 +18,11 @@
 /.next/
 /out/
 
+# hono / vite / nitro
+/dist/
+/.output/
+/.nitro/
+
 # production
 /build
 

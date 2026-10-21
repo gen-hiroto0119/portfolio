@@ -1,8 +1,6 @@
-"use client";
-
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import styles from "./ascii-portrait.module.css";
+/** @jsxImportSource hono/jsx/dom */
+import { useEffect, useRef, useState } from "hono/jsx";
+import styles from "../../components/portfolio/ascii-portrait.module.css";
 
 const GLYPHS = ".:-=+*TERA%#@";
 const SCRAMBLE_INTERVAL = 110;
@@ -241,7 +239,7 @@ export function AsciiPortrait() {
 
   return (
     <figure ref={frameRef} className={styles.portrait} role="img" aria-label={PORTRAIT.label}>
-      <Image src={PORTRAIT.fallback} alt="" width={1536} height={1024} unoptimized loading="eager" fetchPriority="high" className={ready ? styles.fallbackHidden : styles.fallback} />
+      <img src={PORTRAIT.fallback} alt="" width={1536} height={1024} loading="eager" fetchPriority="high" className={ready ? styles.fallbackHidden : styles.fallback} />
       <canvas ref={canvasRef} className={ready ? styles.canvasReady : styles.canvas} aria-hidden="true" />
     </figure>
   );

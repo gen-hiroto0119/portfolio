@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
+import type { Child } from "hono/jsx";
 
 import { lowlight } from "@/lib/syntax-highlight";
 
 type HighlightNode = ReturnType<typeof lowlight.highlight>["children"][number];
 
-function renderToken(node: HighlightNode, index: number): ReactNode {
+function renderToken(node: HighlightNode, index: number): Child {
   if (node.type === "text") return node.value;
   if (node.type !== "element") return null;
   const classes = node.properties.className;

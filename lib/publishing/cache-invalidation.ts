@@ -1,5 +1,3 @@
-import "server-only";
-
 import { configuredSecret } from "./auth";
 import type { Snapshot, SnapshotRead } from "./model";
 

@@ -1,8 +1,0 @@
-import type { APIRoute } from 'astro';
-import { contentForRequest } from '../../../server/content';
-import { createPortfolioImage } from '../../../server/og';
-export const GET: APIRoute = async ({ params }) => {
-  const post = await contentForRequest().getPost(params.slug ?? '');
-  if (!post) return new Response(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
-  return createPortfolioImage({ title: post.title, noStore: true });
-};

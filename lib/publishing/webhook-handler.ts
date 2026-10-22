@@ -18,7 +18,6 @@ const supportedPageEvents = new Set(["page.created", "page.content_updated", "pa
 export function createNotionWebhookHandler(
   storeVerification: (token: string) => Promise<void> = storeWebhookVerificationWith,
   startWorkflow: typeof start = start,
-  workflows = { reconcileBlogWorkflow, syncNotionPageWorkflow },
 ) {
   return async function POST(request: Request, context: { params: Promise<{ key: string }> }) {
     const receivedAt = new Date().toISOString();
@@ -57,7 +56,7 @@ export function createNotionWebhookHandler(
       if (envelope.data.type.startsWith("data_source") && envelope.data.entity.id.replaceAll("-", "").toLowerCase() === process.env.NOTION_DATA_SOURCE_ID?.replaceAll("-", "").toLowerCase()) {
         if (!publishingConfigured()) return errorResponse(503);
         try {
-          const run = await startWorkflow(workflows.reconcileBlogWorkflow, []);
+          const run = await startWorkflow(reconcileBlogWorkflow, []);
           return Response.json({ runId: run.runId }, { status: 202 });
         } catch {
           return errorResponse(503);
@@ -67,7 +66,7 @@ export function createNotionWebhookHandler(
     }
     if (!publishingConfigured()) return errorResponse(503);
     try {
-      const run = await startWorkflow(workflows.syncNotionPageWorkflow, [parsed.data.entity.id, parsed.data.type, receivedAt]);
+      const run = await startWorkflow(syncNotionPageWorkflow, [parsed.data.entity.id, parsed.data.type, receivedAt]);
       return Response.json({ runId: run.runId }, { status: 202 });
     } catch {
       return errorResponse(503);

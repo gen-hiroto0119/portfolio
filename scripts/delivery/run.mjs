@@ -7,21 +7,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { createServer } from "node:net";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const astro = process.env.DELIVERY_FRAMEWORK === "astro";
 const outputRoot = join(projectRoot, "test-output", "delivery");
 const copyEntries = [
-  ...(astro ? ["migration/astro"] : []),
-  "app",
-  "components",
-  "lib",
-  "public",
-  "tests/delivery",
-  "package.json",
-  "package-lock.json",
-  "next.config.ts",
-  "tsconfig.json",
-  "postcss.config.js",
-  "eslint.config.mjs",
+  "src", "components", "lib", "public", "tests/delivery",
+  "package.json", "package-lock.json", "astro.config.mjs", "tsconfig.json", "eslint.config.mjs",
 ];
 const copyExclusions = new Set([".git", ".next", ".vercel", "node_modules", "dist", ".astro"]);
 const maxCapturedCharacters = 2_000_000;
@@ -188,7 +177,7 @@ async function waitForReady(record, baseUrl) {
   let lastFailure = "server did not respond";
 
   while (Date.now() < deadline && !interrupted) {
-    if (record.exit) throw new Error("Local Next.js server exited before readiness");
+    if (record.exit) throw new Error("Local Astro server exited before readiness");
     try {
       const response = await fetch(`${baseUrl}/api/notion/revalidate`, {
         method: "POST",
@@ -204,7 +193,7 @@ async function waitForReady(record, baseUrl) {
     await delay(150);
   }
 
-  throw new Error(`Local Next.js server readiness timed out: ${lastFailure}`);
+  throw new Error(`Local Astro server readiness timed out: ${lastFailure}`);
 }
 
 function redact(value, secrets) {
@@ -260,7 +249,7 @@ async function main() {
     BLOG_SYNC_ENABLED: "true",
     BLOG_SYNC_SECRET: syncSecret,
     ISR_TEST_SECRET: syncSecret,
-    DELIVERY_FRAMEWORK: astro ? "astro" : "next",
+    DELIVERY_FRAMEWORK: "astro",
     ASTRO_ADAPTER: "node",
     HOST: "127.0.0.1",
     PORT: String(port),
@@ -283,9 +272,8 @@ async function main() {
   const logs = { build: "", server: "", driver: "" };
   const driverPath = join(workDir, "tests/delivery/driver.mjs");
   const preloadPath = join(workDir, "tests/delivery/preload.mjs");
-  const astroRoot = join(workDir, "migration/astro");
+  const astroRoot = workDir;
   const astroPath = join(astroRoot, "node_modules/astro/bin/astro.mjs");
-  const nextPath = join(workDir, "node_modules/next/dist/bin/next");
   const preloadOptions = `--import=${pathToFileURL(preloadPath).href}`;
   const isolatedEnv = { ...safeEnv, NODE_OPTIONS: preloadOptions };
   let serverRecord;
@@ -311,11 +299,6 @@ async function main() {
     if (install.stderr) process.stderr.write(install.stderr);
     requireSuccess("Isolated npm ci", install);
 
-    if (astro) {
-      const installed = await runCommand("Astro npm ci", "npm", ["ci", "--no-audit", "--no-fund"], { cwd: astroRoot, env: installEnv }, 5 * 60 * 1000);
-      logs.build += installed.stdout + installed.stderr;
-      requireSuccess("Astro npm ci", installed);
-    }
     const seeded = await runCommand(
       "Fixture seed",
       process.execPath,
@@ -328,8 +311,8 @@ async function main() {
     const build = await runCommand(
       "Production build",
       process.execPath,
-      astro ? [astroPath, "build"] : [nextPath, "build"],
-      { cwd: astro ? astroRoot : workDir, env: isolatedEnv },
+      [astroPath, "build"],
+      { cwd: astroRoot, env: isolatedEnv },
       buildTimeoutMs,
     );
     logs.build += `${build.stdout}${build.stderr}`;
@@ -338,7 +321,7 @@ async function main() {
 
     serverRecord = launch(
       process.execPath,
-      astro ? [join(astroRoot, "dist/server/entry.mjs")] : [nextPath, "start", "--hostname", "127.0.0.1", "--port", String(port)],
+      [join(astroRoot, "dist/server/entry.mjs")],
       { cwd: workDir, env: isolatedEnv },
     );
 

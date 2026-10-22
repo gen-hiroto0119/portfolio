@@ -1,23 +1,15 @@
-import "server-only";
+import 'server-only';
+import { createContentReaders } from './readers';
+import { isBlobConfigured, readSnapshot } from '@/lib/publishing/blob';
 
-import { cacheLife, cacheTag } from "next/cache";
-
-import { isBlobConfigured, readSnapshot } from "@/lib/publishing/blob";
-import type { Snapshot } from "@/lib/publishing/model";
-import { createContentReaders } from "./readers";
-import { BLOG_CACHE_TAG } from "@/lib/content/cache-policy";
-
-export { createContentReaders } from "./readers";
-
-async function publicSnapshot(): Promise<{ snapshot: Snapshot } | null> {
-  "use cache";
-  cacheLife("blog");
-  cacheTag(BLOG_CACHE_TAG);
-  if (!isBlobConfigured()) return null;
-  const { snapshot } = await readSnapshot();
-  return { snapshot };
+// Readers belong to one HTTP request. No process or CDN cache can retain a withdrawal.
+export function contentForRequest() {
+  let snapshot: ReturnType<typeof readSnapshot> | undefined;
+  return createContentReaders(async () => {
+    if (!isBlobConfigured()) return null;
+    snapshot ??= readSnapshot();
+    return snapshot;
+  });
 }
 
-const readers = createContentReaders(publicSnapshot);
-export const getAllPosts = readers.getAllPosts;
-export const getPost = readers.getPost;
+export { createContentReaders } from "./readers";

@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
-const fresh = process.env.DELIVERY_FRAMEWORK === "astro";
 const baseUrl = process.env.ISR_BASE_URL;
 if (!baseUrl) throw new Error("ISR_BASE_URL must be explicitly provided by the delivery runner");
 const base = new URL(baseUrl);
@@ -250,17 +249,7 @@ if (process.argv.includes("--seed")) {
   process.exit(0);
 }
 
-if (!fresh) {
-const prerenderManifest = JSON.parse(
-  readFileSync(new URL("../../.next/prerender-manifest.json", import.meta.url), "utf8"),
-);
-assert.equal(
-  Object.hasOwn(prerenderManifest.routes, "/sitemap.xml"),
-  false,
-  "sitemap must be rendered dynamically instead of emitted as a static asset",
-);
-
-}
+assert.equal(existsSync(new URL("../../dist/client/sitemap.xml", import.meta.url)), false, "sitemap must be rendered per request");
 
 await seed();
 await invalidate(true, "baseline-reset");
@@ -310,7 +299,7 @@ report("baseline", {
 const repeatedFeed = await response("/feed.xml");
 requireStatus(repeatedFeed, 200, "repeated feed");
 requireText(repeatedFeed, "ISR Fixture Title v1", "repeated feed");
-assert.equal(readCount(), warmedReads + (fresh ? 1 : 0), "repeated reads follow the selected cache policy");
+assert.equal(readCount(), warmedReads + 1, "repeated reads follow the selected cache policy");
 
 writeSnapshot(
   post({
@@ -326,10 +315,10 @@ await invalidate(false);
 assert.equal(readCount(), beforeUnauthorized, "unauthorized acknowledgement performs no Blob reads");
 const unauthorizedFeed = await response("/feed.xml");
 requireStatus(unauthorizedFeed, 200, "unauthorized follow-up feed");
-requireText(unauthorizedFeed, fresh ? "ISR Fixture Title v2" : "ISR Fixture Title v1", "unauthorized follow-up feed");
-requireAbsent(unauthorizedFeed, fresh ? "ISR Fixture Title v1" : "ISR Fixture Title v2", "unauthorized follow-up feed");
-assert.equal(readCount(), warmedReads + (fresh ? 2 : 0), "fresh SSR observes the committed Blob without requiring invalidation");
-report("unauthorized-preserves-cache", { blobReads: readCount() });
+requireText(unauthorizedFeed, "ISR Fixture Title v2", "unauthorized follow-up feed");
+requireAbsent(unauthorizedFeed, "ISR Fixture Title v1", "unauthorized follow-up feed");
+assert.equal(readCount(), warmedReads + 2, "fresh SSR observes the committed Blob without requiring invalidation");
+report("unauthorized-acknowledgement-denied", { blobReads: readCount() });
 
 await invalidate(true);
 const editedFeed = await response("/feed.xml");
@@ -339,7 +328,7 @@ requireAbsent(editedFeed, "ISR Fixture Title v1", "edited feed");
 requireText(editedFeed, `<lastBuildDate>${rssDate(editedSourceEditedAt)}</lastBuildDate>`, "edited feed");
 requireText(editedFeed, `<pubDate>${rssPublicationDate()}</pubDate>`, "edited feed");
 const afterEditReads = readCount();
-assert.equal(afterEditReads, warmedReads + (fresh ? 3 : 1), "authenticated invalidation refreshes Blob snapshot once");
+assert.equal(afterEditReads, warmedReads + 3, "fresh SSR reads the current snapshot once per request");
 
 const editedHome = await response("/");
 const editedList = await response("/blog");
@@ -358,7 +347,7 @@ requireStatus(editedSitemap, 200, "edited sitemap");
 requireText(editedDetail, "Fixture heading v2", "edited detail");
 requireText(editedDetail, "Fixture paragraph v2", "edited detail");
 requireText(editedSitemap, `/blog/${baselineSlug}`, "edited sitemap");
-assert.equal(readCount(), afterEditReads + (fresh ? 4 : 0), "edited routes follow the selected cache policy");
+assert.equal(readCount(), afterEditReads + 4, "edited routes follow the selected cache policy");
 const editedOgp = await inspectOgp("edited-ogp", ogImagePath(editedDetail), 200);
 const afterEditedOgpReads = readCount();
 report("authenticated-edit", {
@@ -399,7 +388,7 @@ requireAbsent(renamedSitemap, `/blog/${baselineSlug}`, "renamed sitemap");
 requireText(renamedDetail, "Fixture heading v3", "renamed detail");
 requireText(renamedDetail, "Fixture paragraph v3", "renamed detail");
 const routeRenameReads = readCount();
-assert.equal(routeRenameReads, afterEditedOgpReads + (fresh ? 5 : 1), "rename invalidation refreshes Blob snapshot once");
+assert.equal(routeRenameReads, afterEditedOgpReads + 5, "renamed routes read the current snapshot once each");
 const renamedOgp = await inspectOgp("renamed-ogp", ogImagePath(renamedDetail), 200);
 const afterRenameReads = readCount();
 report("slug-rename", {
@@ -428,7 +417,7 @@ for (const [name, result] of [
 }
 requireNotFoundPage(withdrawnDetail, "withdrawn detail", "ISR Fixture Title v3");
 const routeWithdrawalReads = readCount();
-assert.equal(routeWithdrawalReads, afterRenameReads + (fresh ? 5 : 1), "withdrawal invalidation refreshes Blob snapshot once");
+assert.equal(routeWithdrawalReads, afterRenameReads + 5, "withdrawn routes read the current snapshot once each");
 const withdrawnOgp = await inspectOgp("withdrawn-ogp", { url: renamedOgp.url }, 404);
 const afterWithdrawalReads = readCount();
 report("withdrawal", {
@@ -468,10 +457,10 @@ requireText(republishedFeed, `<lastBuildDate>${rssDate(republishedSourceEditedAt
 requireText(republishedFeed, `<pubDate>${rssPublicationDate()}</pubDate>`, "republished feed");
 requireText(republishedSitemap, `/blog/${renamedSlug}`, "republished sitemap");
 const routeRepublishReads = readCount();
-assert.equal(routeRepublishReads, afterWithdrawalReads + (fresh ? 4 : 1), "republish invalidation refreshes Blob snapshot once");
+assert.equal(routeRepublishReads, afterWithdrawalReads + 4, "republished routes read the current snapshot once each");
 await inspectOgp("republished-ogp", ogImagePath(republishedDetail), 200);
 const finalReads = readCount();
-report("negative-cache-republish", {
+report("fresh-republish", {
   detailStatus: republishedDetail.status,
   blobReads: finalReads,
   ogpBlobReads: finalReads - routeRepublishReads,

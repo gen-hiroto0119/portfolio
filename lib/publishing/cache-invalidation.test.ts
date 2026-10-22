@@ -25,7 +25,7 @@ async function withConfig(run: () => Promise<void>) {
   }
 }
 
-test("the invalidation route authenticates and expires only the shared blog tag", async () => {
+test("the publication callback authenticates before acknowledging the blog update", async () => {
   await withConfig(async () => {
     const calls: unknown[][] = [];
     const handler = createBlogCacheInvalidationHandler((...args) => { calls.push(args); });

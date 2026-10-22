@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import { test } from "node:test";
 
-import { POST as manualSync } from "../../app/api/notion/sync/route";
-import { POST as notionWebhook } from "../../app/api/notion/webhook/[key]/route";
+import { manualSync } from "./manual-handler";
+
 import { storeWebhookVerificationWith } from "./blob";
 import { createNotionWebhookHandler } from "./webhook-handler";
 import { syncNotionPageWorkflow } from "./workflows";
+
+const notionWebhook = createNotionWebhookHandler();
 
 async function withEnv(values: Record<string, string | undefined>, run: () => Promise<void>) {
   const previous = Object.fromEntries(Object.keys(values).map((key) => [key, process.env[key]]));

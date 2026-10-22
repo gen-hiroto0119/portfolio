@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { Fragment, type ReactNode, createElement } from "react";
 import { CodeBlock } from "@/components/blog/code-block";
 import { parseTiptapDocument, type TiptapDocument, type TiptapNode } from "@/lib/cms/document";

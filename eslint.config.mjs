@@ -1,22 +1,7 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig, globalIgnores } from 'eslint/config';
+import tseslint from 'typescript-eslint';
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "app/.well-known/workflow/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    "migration/astro/**",
-    "**/.obsidian/**",
-    "postcss.config.js",
-  ]),
+export default defineConfig([
+  ...tseslint.configs.recommended,
+  globalIgnores(['.next/**', '.astro/**', 'dist/**', '.vercel/**', 'src/pages/.well-known/workflow/**', 'test-output/**', 'Blog Content/**', '**/.obsidian/**']),
 ]);
-
-export default eslintConfig;

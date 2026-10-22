@@ -1,0 +1,9 @@
+.output
+.next
+.vercel
+node_modules
+.env*
+!.env.example
+test-output
+Blog Content
+.obsidian

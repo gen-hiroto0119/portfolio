@@ -18,7 +18,7 @@ npm run test:delivery
 npm run dev -- --host 127.0.0.1
 ```
 
-通常の `npm run build` はVercel向け。ローカルの本番検証は `ASTRO_ADAPTER=node npm run build` の後、`HOST=127.0.0.1 PORT=3002 npm start` を使う。実サービスへの接続・公開・デプロイは別途の作業とする。
+通常の `npm run build` はVercel向け。ローカルの本番検証は `ASTRO_ADAPTER=node npm run build` の後、`HOST=127.0.0.1 PORT=3002 npm start` を使う。実サービス連携と本番への切り替えは別途の作業とする。
 
 ## 移行前の実測値
 
@@ -89,13 +89,13 @@ Notion → Workflow → private Blobの処理は既存の実装を基にする�
 2. **表示の移植:** トップと共通レイアウト、配色、ブログ一覧・詳細を移植済み。Geistの代替フォントのメトリクスとpreloadも引き継ぎ、フォント切り替え時のレイアウトのずれを解消した。
 3. **公開データ:** 毎リクエスト取得を採用。本文・RSS・sitemap・OGPの更新と取り下げを隔離HTTPテストで確認済み。
 4. **公開フロー:** Workflow、認証付きAPI、メディア配信を移植済み。単体テスト7件、publishing tests 70件、delivery testsが成功した。Node版の本番ビルドとVercel向けローカルビルドも成功した。
-5. **ルートの切り替え:** コマンド、CI、運用ガイドをAstroへ変更済み。Next.js依存と移行用ディレクトリを削除した。実サービスへの接続とデプロイは未実施。
+5. **ルートの切り替え:** コマンド、CI、運用ガイドをAstroへ変更済み。Next.js依存と移行用ディレクトリを削除した。実サービス連携と本番への切り替えは未実施。pushに連動するVercel Previewのビルド状態はPRのchecksで確認する。
 
 公開→修正→slug変更→取り下げ→再公開、認証失敗、確認応答の失敗からの回復、転送中の画像取り下げをモックで検証した。既存の `scripts/delivery/run.mjs` と `tests/delivery/` はこの検証に使い、起動・ビルド・出力確認をAstroに対応させた。キャッシュ再利用の回数チェックは、毎HTTPリクエストで最新を読む回数チェックに変更した。
 
 型検査とlintは成功した。型検査には既存のZod APIに関する非推奨ヒントが6件残る。実行時依存の `npm audit --omit=dev` は脆弱性0件。Vercel向けのWorkflow生成とOGP用フォント・画像の同梱は確認したが、実サービス上のWorkflow実行とCDN配信は未検証。
 
-実サービスへの接続、記事公開、デプロイは別途明示的な依頼を受けて実施する。Next.jsへの復旧基準は `e41eb89`。戻す場合はコードに加えてVercelのframeworkをNext.jsへ戻す。公開スナップショットの形式は変えていない。
+実サービスへの接続、記事公開、本番へのデプロイは別途明示的な依頼を受けて実施する。Next.jsへの復旧基準は `e41eb89`。戻す場合はコードに加えてVercelのframeworkをNext.jsへ戻す。公開スナップショットの形式は変えていない。
 
 ## 参照する公式資料
 

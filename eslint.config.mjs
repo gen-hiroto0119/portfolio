@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "migration/astro/**",
     "**/.obsidian/**",
     "postcss.config.js",
   ]),

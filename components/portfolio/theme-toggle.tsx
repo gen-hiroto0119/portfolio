@@ -19,7 +19,12 @@ export function ThemeToggle() {
   }
 
   return (
-    <button type="button" className={styles.themeToggle} onClick={toggle} aria-label="配色を切り替える">
+    <button
+      type="button"
+      className={styles.themeToggle}
+      onClick={toggle}
+      aria-label="配色を切り替える"
+    >
       <Moon size={16} className={styles.lightIcon} aria-hidden="true" />
       <Sun size={16} className={styles.darkIcon} aria-hidden="true" />
     </button>

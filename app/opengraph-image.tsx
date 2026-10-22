@@ -1,7 +1,4 @@
-import {
-  ogImageContentType,
-  ogImageSize,
-} from "@/lib/og/create-og-image";
+import { ogImageContentType, ogImageSize } from "@/lib/og/create-og-image";
 import { site } from "@/lib/site";
 import { createPortfolioImage } from "@/lib/og/create-portfolio-image";
 

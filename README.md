@@ -16,30 +16,9 @@ npm install
 npm run dev
 npm run build
 npm run lint
-npm test
-npm run test:publishing
-npm run test:delivery
 ```
 
 公開URLは `NEXT_PUBLIC_SITE_URL` で指定します。公開連携の設定例は `.env.example` にあります。`BLOG_SYNC_ENABLED=false` のままでは書き込みルートは無効です。
-
-## CI
-
-GitHub Actions の `quality` は lint・型生成・型検査・単体テスト・publishing tests を、`delivery` は本番ビルド後の隔離された HTTP キャッシュライフサイクルを検証します。どちらも Node 24 と `npm ci` を使います。delivery テストは実行時に合成記事とダミー認証情報を作り、private Blob 読み取りをモックします。Notion、実 Blob、Vercel デプロイ、実環境でのイベント到着やキャッシュ伝播は検証しません。
-
-ローカルで同じゲートを実行する場合:
-
-```bash
-npm ci
-npm run lint
-npx next typegen
-npx tsc --noEmit
-npm test
-npm run test:publishing
-npm run test:delivery
-```
-
-この workflow はブランチ保護を変更しません。`quality` と `delivery` を必須にする場合は、GitHub の branch protection rules で required status checks として手動設定してください。
 
 ## コンテンツ
 
@@ -71,4 +50,4 @@ Webhook URL は `https://<deployment-host>/api/notion/webhook/<NOTION_WEBHOOK_PA
 
 cron や自動スケジュール公開は設定しません。slug を変更した記事の旧 URL は自動リダイレクトせず 404 になります。
 
-実サービス接続には Notion と Blob の認証情報およびデプロイ権限が必要です。これらがない場合は本番配信の確認・初回登録ができません。実サービスへの接続や変更は明示的な許可がある場合に限ります。現時点のテストはモックのみで、実サービスの配信は未検証です。
+実サービス接続には Notion と Blob の認証情報およびデプロイ権限が必要です。これらがない場合は本番配信の確認・初回登録ができません。実サービスへの接続や変更は明示的な許可がある場合に限ります。実サービスの配信は未検証です。

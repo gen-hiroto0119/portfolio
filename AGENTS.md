@@ -43,7 +43,9 @@ Hiroto Furugen の個人サイト。Next.js App Router。現在の公開ペー�
 
 ## コマンドと環境変数
 
-`npm run dev`、`npm run build`、`npm run lint`、`npm test`、`npm run test:publishing` を使用する。
+`npm run dev`、`npm run build`、`npm run start`、`npm run lint` を使用する。
+
+必要最低限の構成を保つ。明示的な依頼がない限り、CI・テスト・検証用スクリプトは追加しない。確認は手元のlintと本番ビルドを基本とする。
 
 `NEXT_PUBLIC_SITE_URL` は公開URLの指定に使う。連携の環境変数は `.env.example` を参照し、`BLOG_SYNC_ENABLED=false` を初期値とする。
 

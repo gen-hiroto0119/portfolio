@@ -1,10 +1,7 @@
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
-import {
-  ogImageContentType,
-  ogImageSize,
-} from "@/lib/og/create-og-image";
+import { ogImageContentType, ogImageSize } from "@/lib/og/create-og-image";
 import { getPost } from "@/lib/content";
 import { createPortfolioImage } from "@/lib/og/create-portfolio-image";
 

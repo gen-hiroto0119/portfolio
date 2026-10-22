@@ -5,7 +5,7 @@ Hiroto Furugenの個人サイト。現在の公開ページはトップとブロ
 ## 技術スタック
 
 - Astro 7 / React 19（本文のサーバー描画）/ TypeScript
-- CSS Modules for the public site; Tailwind CSS for shared fallback screens
+- CSS Modules for the public site; Tailwind CSS for shared content styles
 - Read-only Tiptap JSON rendering
 - Vercel
 

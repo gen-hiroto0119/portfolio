@@ -25,10 +25,10 @@ Hiroto Furugen の個人サイト。Astro。HTMLはサーバーで描画し、�
 
 ## コーディング規約
 
-- 公開トップ・ブログは CSS Modules と CSS カスタムプロパティを使う。共通フォールバック画面では Tailwind CSS を使う。Base UI は使用していない。StyleX を再導入しない。
-- import はファイル先頭にまとめる。サーバー専用処理には `import "server-only"` を付ける。
+- 公開トップ・ブログ・フォールバック画面は CSS Modules と CSS カスタムプロパティを使う。本文などの共通スタイルには Tailwind CSS を使う。Base UI は使用していない。StyleX を再導入しない。
+- import はファイル先頭にまとめる。
 - union / enum の switch は default で never チェックを行う。
-- サーバー専用処理は `server-only` マーカーを保つ。Astroのビルド設定がブラウザー側へのimportを拒否する。
+- サーバー専用処理には `import "server-only"` を付ける。Astroのビルド設定がブラウザー側へのimportを拒否する。
 - 公開スナップショットは毎リクエスト取得する。共有キャッシュを追加する場合は取り下げと複数プロセスへの反映を先に検証する。
 - 依頼外のリファクタ・ドキュメント・テストを追加しない。明示されない限り commit / push しない。
 

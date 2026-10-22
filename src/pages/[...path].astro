@@ -16,12 +16,13 @@ try {
   else if (/^blog\/[^/]+$/.test(path)) post = await content.getPost(path.slice(5));
 } catch { failed = true; }
 const missing = path !== '' && path !== 'blog' && !post;
+const missingPost = missing && /^blog\/[^/]+$/.test(path);
 Astro.response.status = failed ? 503 : missing ? 404 : 200;
-const title = failed ? '読み込みに失敗しました' : missing ? 'ページが見つかりませんでした。' : post?.title ?? (path === 'blog' ? 'Blog' : `${site.name} — Portfolio`);
+const title = failed ? '読み込みに失敗しました' : missing ? (missingPost ? '記事が見つかりませんでした。' : 'ページが見つかりませんでした。') : post?.title ?? (path === 'blog' ? 'Blog' : `${site.name} — Portfolio`);
 ---
 <Layout title={path === '' ? title : `${title} — ${site.name}`} description={post?.description} image={post ? `/blog/${post.slug}/opengraph-image` : undefined} articleDate={post?.date} noindex={failed || missing}>
-  {failed ? <main id="main" class={styles.main}><h1>読み込みに失敗しました。</h1><p>時間をおいて、もう一度お試しください。</p><a href={Astro.url.pathname}>再試行</a><a href="/">ホームへ戻る</a></main>
-    : missing ? <main id="main" class={styles.main}><h1>ページが見つかりませんでした。</h1><a href="/blog">← Blog</a></main>
+  {failed ? <main id="main" class={styles.main}><h1>読み込みに失敗しました。</h1><p>時間をおいて、もう一度お試しください。</p><a href={Astro.url.pathname} class={styles.retry}>再試行</a><a href="/">ホームへ戻る</a></main>
+    : missing ? <main id="main" class={styles.main}><h1>{title}</h1><a href={missingPost ? '/blog' : '/'}>{missingPost ? '← 記事一覧に戻る' : 'ホームへ戻る'}</a></main>
     : post ? <PostDetail post={post} />
     : path === 'blog' ? <main id="main" class={styles.main}><header class={styles.blogHeading}><h1>Blog</h1></header><section class={styles.section} aria-label="記事一覧"><PostList posts={posts} /></section></main>
     : <Home posts={posts} />}

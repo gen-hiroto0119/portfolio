@@ -135,7 +135,7 @@ function isNoIndex(result) {
 
 function requireNotFoundPage(result, name, unexpectedText) {
   assert.ok(
-    result.text.includes("ページが見つかりませんでした。"),
+    result.text.includes("記事が見つかりませんでした。"),
     `${name} not-found content`,
   );
   assert.ok(isNoIndex(result), `${name} noindex`);

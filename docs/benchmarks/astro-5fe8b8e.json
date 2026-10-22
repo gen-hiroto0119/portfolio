@@ -1,0 +1,452 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22",
+  "commit": "5fe8b8ed97bece6ac3e8ef13abf8eb08c2391d42",
+  "environment": {
+    "commit": "5fe8b8ed97bece6ac3e8ef13abf8eb08c2391d42",
+    "branch": "astro-migration-scaffold",
+    "node": "v24.14.0",
+    "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "architecture": "arm64",
+    "chrome": "155.0.8059.85",
+    "lighthouse": "13.5.0",
+    "baseUrl": "http://127.0.0.1:3002",
+    "routes": [
+      "/",
+      "/blog"
+    ],
+    "runsPerRouteAndDevice": 3,
+    "buildCommand": "ASTRO_ADAPTER=node BLOG_SYNC_ENABLED=false BLOB_READ_WRITE_TOKEN= BLOB_STORE_ID= VERCEL_OIDC_TOKEN= npm run build",
+    "serverCommand": "HOST=127.0.0.1 PORT=3002 BLOG_SYNC_ENABLED=false BLOB_READ_WRITE_TOKEN= BLOB_STORE_ID= VERCEL_OIDC_TOKEN= npm start",
+    "lighthouseCommand": "CHROME_PATH=\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" npm exec --yes --package=lighthouse@13.5.0 -- lighthouse <url> --chrome-flags=\"--headless=new\" --only-categories=performance,accessibility,best-practices,seo --output=json --output=html --output-path=<report-prefix> --no-enable-error-reporting --quiet [--preset=desktop]",
+    "content": "No published posts; Blob credentials are explicitly empty. Homepage contains the committed profile and experience content. No article detail route measured.",
+    "conditions": [
+      "Local Node-adapter production build, not astro dev",
+      "Lighthouse default simulated throttling for mobile; desktop preset for desktop",
+      "Fresh Chrome profile and default storage reset on every run",
+      "Sequential runs; no parallel Lighthouse sessions",
+      "No Notion/Blob connection or publication",
+      "VERCEL_ENV is unset; production Google Analytics is not loaded",
+      "Vercel Speed Insights endpoint returns 404 locally; best-practices score includes this local-only error",
+      "Not a production CDN, real network, field Core Web Vitals or load test; INP is not measured",
+      "Astro Node standalone serves these responses without Content-Encoding; the recorded Next.js baseline uses gzip for HTML/CSS/TTF/SVG. Transfers and simulated timings are therefore not a compression-normalized framework comparison.",
+      "Same font and image source files; Next image/font delivery is replaced by direct static delivery.",
+      "React components are server-only. HTML contains two inline executable scripts (125 + 293 UTF-8 bytes); these are part of document transfer, not the script resource metric.",
+      "The only external script resource is the failed local Speed Insights request (190 transferred bytes); no framework client script is fetched."
+    ],
+    "comparison": "Use the same content, machine, Node/Chrome/Lighthouse versions, URL origin, presets and telemetry conditions after migration. Compare per-metric medians across 3 runs. Preserve the recorded actual configSettings from every raw Lighthouse JSON.",
+    "astro": "7.4.2"
+  },
+  "aggregation": "Independent median of each metric and score over 3 runs; not all medians necessarily belong to one run.",
+  "unit": "KiB = 1024 bytes; times in ms unless indicated. Lighthouse resource transfer sizes include response overhead.",
+  "results": [
+    {
+      "page": "home",
+      "route": "/",
+      "device": "mobile",
+      "median_scores": {
+        "performance": 85,
+        "accessibility": 100,
+        "best-practices": 96,
+        "seo": 100
+      },
+      "median_metrics": {
+        "fcp_ms": 2555.36865,
+        "lcp_ms": 3754.64835,
+        "speed_index_ms": 2555.36865,
+        "tbt_ms": 0,
+        "cls": 0,
+        "transfer_bytes": 446150,
+        "script_transfer_bytes": 190,
+        "stylesheet_transfer_bytes": 123826,
+        "font_transfer_bytes": 285919,
+        "image_transfer_bytes": 28453,
+        "document_transfer_bytes": 7762,
+        "requests": 20
+      },
+      "metric_ranges": {
+        "fcp_ms": {
+          "min": 2554.64835,
+          "max": 2556.92655
+        },
+        "lcp_ms": {
+          "min": 3680.36865,
+          "max": 3756.9265499999997
+        },
+        "speed_index_ms": {
+          "min": 2554.64835,
+          "max": 2556.92655
+        },
+        "tbt_ms": {
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "min": 0,
+          "max": 0
+        },
+        "transfer_bytes": {
+          "min": 446150,
+          "max": 446150
+        },
+        "script_transfer_bytes": {
+          "min": 190,
+          "max": 190
+        },
+        "stylesheet_transfer_bytes": {
+          "min": 123826,
+          "max": 123826
+        },
+        "font_transfer_bytes": {
+          "min": 285919,
+          "max": 285919
+        },
+        "image_transfer_bytes": {
+          "min": 28453,
+          "max": 28453
+        },
+        "document_transfer_bytes": {
+          "min": 7762,
+          "max": 7762
+        },
+        "requests": {
+          "min": 20,
+          "max": 20
+        }
+      },
+      "settings": {
+        "formFactor": "mobile",
+        "throttlingMethod": "simulate",
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "requestLatencyMs": 562.5,
+          "downloadThroughputKbps": 1474.5600000000002,
+          "uploadThroughputKbps": 675,
+          "cpuSlowdownMultiplier": 4
+        },
+        "screenEmulation": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+        "disableStorageReset": false,
+        "onlyCategories": [
+          "performance",
+          "accessibility",
+          "best-practices",
+          "seo"
+        ]
+      }
+    },
+    {
+      "page": "home",
+      "route": "/",
+      "device": "desktop",
+      "median_scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 96,
+        "seo": 100
+      },
+      "median_metrics": {
+        "fcp_ms": 564.72965,
+        "lcp_ms": 783.8780999999999,
+        "speed_index_ms": 564.72965,
+        "tbt_ms": 0,
+        "cls": 0,
+        "transfer_bytes": 446150,
+        "script_transfer_bytes": 190,
+        "stylesheet_transfer_bytes": 123826,
+        "font_transfer_bytes": 285919,
+        "image_transfer_bytes": 28453,
+        "document_transfer_bytes": 7762,
+        "requests": 20
+      },
+      "metric_ranges": {
+        "fcp_ms": {
+          "min": 563.8781,
+          "max": 566.1785
+        },
+        "lcp_ms": {
+          "min": 764.72965,
+          "max": 786.1785
+        },
+        "speed_index_ms": {
+          "min": 563.8781,
+          "max": 566.1785
+        },
+        "tbt_ms": {
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "min": 0,
+          "max": 0
+        },
+        "transfer_bytes": {
+          "min": 446150,
+          "max": 446150
+        },
+        "script_transfer_bytes": {
+          "min": 190,
+          "max": 190
+        },
+        "stylesheet_transfer_bytes": {
+          "min": 123826,
+          "max": 123826
+        },
+        "font_transfer_bytes": {
+          "min": 285919,
+          "max": 285919
+        },
+        "image_transfer_bytes": {
+          "min": 28453,
+          "max": 28453
+        },
+        "document_transfer_bytes": {
+          "min": 7762,
+          "max": 7762
+        },
+        "requests": {
+          "min": 20,
+          "max": 20
+        }
+      },
+      "settings": {
+        "formFactor": "desktop",
+        "throttlingMethod": "simulate",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "disableStorageReset": false,
+        "onlyCategories": [
+          "performance",
+          "accessibility",
+          "best-practices",
+          "seo"
+        ]
+      }
+    },
+    {
+      "page": "blog",
+      "route": "/blog",
+      "device": "mobile",
+      "median_scores": {
+        "performance": 89,
+        "accessibility": 100,
+        "best-practices": 96,
+        "seo": 100
+      },
+      "median_metrics": {
+        "fcp_ms": 2255.1204,
+        "lcp_ms": 3377.72745,
+        "speed_index_ms": 2255.1204,
+        "tbt_ms": 0,
+        "cls": 0,
+        "transfer_bytes": 385167,
+        "script_transfer_bytes": 190,
+        "stylesheet_transfer_bytes": 123826,
+        "font_transfer_bytes": 254779,
+        "image_transfer_bytes": 1611,
+        "document_transfer_bytes": 4761,
+        "requests": 10
+      },
+      "metric_ranges": {
+        "fcp_ms": {
+          "min": 2252.72745,
+          "max": 2255.57505
+        },
+        "lcp_ms": {
+          "min": 3305.57505,
+          "max": 3380.1204
+        },
+        "speed_index_ms": {
+          "min": 2252.72745,
+          "max": 2255.57505
+        },
+        "tbt_ms": {
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "min": 0,
+          "max": 0
+        },
+        "transfer_bytes": {
+          "min": 385167,
+          "max": 385167
+        },
+        "script_transfer_bytes": {
+          "min": 190,
+          "max": 190
+        },
+        "stylesheet_transfer_bytes": {
+          "min": 123826,
+          "max": 123826
+        },
+        "font_transfer_bytes": {
+          "min": 254779,
+          "max": 254779
+        },
+        "image_transfer_bytes": {
+          "min": 1611,
+          "max": 1611
+        },
+        "document_transfer_bytes": {
+          "min": 4761,
+          "max": 4761
+        },
+        "requests": {
+          "min": 10,
+          "max": 10
+        }
+      },
+      "settings": {
+        "formFactor": "mobile",
+        "throttlingMethod": "simulate",
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "requestLatencyMs": 562.5,
+          "downloadThroughputKbps": 1474.5600000000002,
+          "uploadThroughputKbps": 675,
+          "cpuSlowdownMultiplier": 4
+        },
+        "screenEmulation": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+        "disableStorageReset": false,
+        "onlyCategories": [
+          "performance",
+          "accessibility",
+          "best-practices",
+          "seo"
+        ]
+      }
+    },
+    {
+      "page": "blog",
+      "route": "/blog",
+      "device": "desktop",
+      "median_scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 96,
+        "seo": 100
+      },
+      "median_metrics": {
+        "fcp_ms": 524.9149,
+        "lcp_ms": 684.9149,
+        "speed_index_ms": 524.9149,
+        "tbt_ms": 0,
+        "cls": 0,
+        "transfer_bytes": 385167,
+        "script_transfer_bytes": 190,
+        "stylesheet_transfer_bytes": 123826,
+        "font_transfer_bytes": 254779,
+        "image_transfer_bytes": 1611,
+        "document_transfer_bytes": 4761,
+        "requests": 10
+      },
+      "metric_ranges": {
+        "fcp_ms": {
+          "min": 523.9333,
+          "max": 525.98815
+        },
+        "lcp_ms": {
+          "min": 683.9333,
+          "max": 685.9881499999999
+        },
+        "speed_index_ms": {
+          "min": 523.9333,
+          "max": 525.98815
+        },
+        "tbt_ms": {
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "min": 0,
+          "max": 0
+        },
+        "transfer_bytes": {
+          "min": 385167,
+          "max": 385167
+        },
+        "script_transfer_bytes": {
+          "min": 190,
+          "max": 190
+        },
+        "stylesheet_transfer_bytes": {
+          "min": 123826,
+          "max": 123826
+        },
+        "font_transfer_bytes": {
+          "min": 254779,
+          "max": 254779
+        },
+        "image_transfer_bytes": {
+          "min": 1611,
+          "max": 1611
+        },
+        "document_transfer_bytes": {
+          "min": 4761,
+          "max": 4761
+        },
+        "requests": {
+          "min": 10,
+          "max": 10
+        }
+      },
+      "settings": {
+        "formFactor": "desktop",
+        "throttlingMethod": "simulate",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "disableStorageReset": false,
+        "onlyCategories": [
+          "performance",
+          "accessibility",
+          "best-practices",
+          "seo"
+        ]
+      }
+    }
+  ]
+}

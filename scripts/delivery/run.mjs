@@ -7,8 +7,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { createServer } from "node:net";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const astro = process.env.DELIVERY_FRAMEWORK === "astro";
 const outputRoot = join(projectRoot, "test-output", "delivery");
 const copyEntries = [
+  ...(astro ? ["migration/astro"] : []),
   "app",
   "components",
   "lib",
@@ -21,7 +23,7 @@ const copyEntries = [
   "postcss.config.js",
   "eslint.config.mjs",
 ];
-const copyExclusions = new Set([".git", ".next", ".vercel", "node_modules"]);
+const copyExclusions = new Set([".git", ".next", ".vercel", "node_modules", "dist", ".astro"]);
 const maxCapturedCharacters = 2_000_000;
 const buildTimeoutMs = 8 * 60 * 1000;
 const driverTimeoutMs = 4 * 60 * 1000;
@@ -258,6 +260,10 @@ async function main() {
     BLOG_SYNC_ENABLED: "true",
     BLOG_SYNC_SECRET: syncSecret,
     ISR_TEST_SECRET: syncSecret,
+    DELIVERY_FRAMEWORK: astro ? "astro" : "next",
+    ASTRO_ADAPTER: "node",
+    HOST: "127.0.0.1",
+    PORT: String(port),
     ISR_TEST_ROOT: workDir,
     ISR_FIXTURE_PATH: fixturePath,
     ISR_READS_PATH: readsPath,
@@ -277,6 +283,8 @@ async function main() {
   const logs = { build: "", server: "", driver: "" };
   const driverPath = join(workDir, "tests/delivery/driver.mjs");
   const preloadPath = join(workDir, "tests/delivery/preload.mjs");
+  const astroRoot = join(workDir, "migration/astro");
+  const astroPath = join(astroRoot, "node_modules/astro/bin/astro.mjs");
   const nextPath = join(workDir, "node_modules/next/dist/bin/next");
   const preloadOptions = `--import=${pathToFileURL(preloadPath).href}`;
   const isolatedEnv = { ...safeEnv, NODE_OPTIONS: preloadOptions };
@@ -303,6 +311,11 @@ async function main() {
     if (install.stderr) process.stderr.write(install.stderr);
     requireSuccess("Isolated npm ci", install);
 
+    if (astro) {
+      const installed = await runCommand("Astro npm ci", "npm", ["ci", "--no-audit", "--no-fund"], { cwd: astroRoot, env: installEnv }, 5 * 60 * 1000);
+      logs.build += installed.stdout + installed.stderr;
+      requireSuccess("Astro npm ci", installed);
+    }
     const seeded = await runCommand(
       "Fixture seed",
       process.execPath,
@@ -315,8 +328,8 @@ async function main() {
     const build = await runCommand(
       "Production build",
       process.execPath,
-      [nextPath, "build"],
-      { cwd: workDir, env: isolatedEnv },
+      astro ? [astroPath, "build"] : [nextPath, "build"],
+      { cwd: astro ? astroRoot : workDir, env: isolatedEnv },
       buildTimeoutMs,
     );
     logs.build += `${build.stdout}${build.stderr}`;
@@ -325,7 +338,7 @@ async function main() {
 
     serverRecord = launch(
       process.execPath,
-      [nextPath, "start", "--hostname", "127.0.0.1", "--port", String(port)],
+      astro ? [join(astroRoot, "dist/server/entry.mjs")] : [nextPath, "start", "--hostname", "127.0.0.1", "--port", String(port)],
       { cwd: workDir, env: isolatedEnv },
     );
 

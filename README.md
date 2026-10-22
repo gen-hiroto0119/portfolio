@@ -20,6 +20,8 @@ npm run lint
 
 公開URLは `NEXT_PUBLIC_SITE_URL` で指定します。公開連携の設定例は `.env.example` にあります。`BLOG_SYNC_ENABLED=false` のままでは書き込みルートは無効です。
 
+環境変数はVercelのProductionで管理し、ローカルも `vercel env pull .env.local --environment=production --project=portfolio --scope=gen-hirotos-projects` で取得します。
+
 ## コンテンツ
 
 記事は private Blob の公開スナップショットから取得します。Blob 未設定時は空の一覧を返します。Git にサンプル記事やローカル検証用データを追加しないでください。公開記事用の Tiptap JSON 検証・表示は `src/lib/cms/document.ts` と `src/components/blog/tiptap-content.tsx` に残しています。プロフィールと経歴のコピーは `src/app/(site)/page.tsx` にあります。
@@ -40,7 +42,7 @@ Blob 更新とキャッシュ失効は原子的ではなく、その間は古い
 
 キャッシュ失効には同じ `BLOG_SYNC_SECRET` を使います。`NEXT_PUBLIC_SITE_URL` は同じ環境・Blob store を使うサイトの正規 HTTPS オリジンに設定してください（パス・認証情報・クエリなし）。失効用URLの自動推測やリダイレクト追従はしません。ローカルの非Vercel環境のみ localhost の HTTP を許可します。失効ルートへの通信を Deployment Protection 等で遮断しないでください。Preview の同期は無効のままにします。
 
-本番と Preview はそれぞれ別の private Blob store を割り当ててください。Preview では `BLOG_SYNC_ENABLED=false` を維持します。Vercel Workflow はデプロイ時にプロビジョニングされます。ローカル開発サーバー上の実行を耐久性のあるWorkflow実行として扱わないでください。
+Vercel Workflow はデプロイ時にプロビジョニングされます。ローカル開発サーバー上の実行を耐久性のあるWorkflow実行として扱わないでください。
 
 Webhook URL は `https://<deployment-host>/api/notion/webhook/<NOTION_WEBHOOK_PATH_SECRET>` です。URL 全体を秘密として扱い、ログに出さないでください。Notion Webhooks では `page.created`、`page.content_updated`、`page.properties_updated`、`page.deleted`、`page.undeleted`、`page.moved` と、対象 data source の `data_source.created`、`data_source.updated`、`data_source.deleted`、`data_source.moved` を購読します。
 

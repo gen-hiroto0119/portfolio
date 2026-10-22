@@ -15,7 +15,7 @@ import yaml from "highlight.js/lib/languages/yaml";
 const highlighter = createLowlight({ bash, css, go, javascript, json, markdown, plaintext, python, sql, typescript, xml, yaml });
 highlighter.registerAlias({ typescript: ["tsx"], javascript: ["jsx"] });
 
-// Keep large pasted blocks responsive in both the editor and the public page.
+// Keep large code blocks responsive on the public page.
 const MAX_HIGHLIGHT_LENGTH = 20_000;
 
 export const lowlight = {
@@ -37,21 +37,3 @@ export const lowlight = {
     }
   },
 };
-
-export const codeLanguages = [
-  { value: "", label: "自動判定" },
-  { value: "plaintext", label: "プレーンテキスト" },
-  { value: "tsx", label: "TSX" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "javascript", label: "JavaScript" },
-  { value: "jsx", label: "JSX" },
-  { value: "go", label: "Go" },
-  { value: "json", label: "JSON" },
-  { value: "css", label: "CSS" },
-  { value: "html", label: "HTML" },
-  { value: "sql", label: "SQL" },
-  { value: "bash", label: "Shell" },
-  { value: "python", label: "Python" },
-  { value: "markdown", label: "Markdown" },
-  { value: "yaml", label: "YAML" },
-] as const;

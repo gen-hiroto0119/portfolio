@@ -9,7 +9,7 @@ import { registerSyncMarker, syncPageIfCurrentMarker, type SyncRegistration } fr
 import { CacheInvalidationConfigurationError, cacheInvalidationConfig, invalidateBlogCacheIfPending, requestBlogCacheInvalidation } from "./cache-invalidation";
 
 // Writing in Notion produces a burst of notifications; only the last one should publish.
-export const PUBLIC_SYNC_DEBOUNCE = "60s";
+const PUBLIC_SYNC_DEBOUNCE = "60s";
 
 function delay() {
   return Math.min(30_000, 10_000 * Math.max(1, getStepMetadata().attempt));
@@ -135,7 +135,7 @@ async function cleanupStep() {
 }
 cleanupStep.maxRetries = 5;
 
-export async function reconcilePagesAndCleanup(
+async function reconcilePagesAndCleanup(
   ids: string[],
   sync: (id: string) => Promise<{ needsInvalidation: boolean }>,
   cleanup: () => Promise<void>,
@@ -162,7 +162,7 @@ export async function reconcileBlogWorkflow(targetPageId?: string) {
   return reconcilePagesAndCleanup(ids, syncPageStep, cleanupStep, invalidateBlogCacheStep);
 }
 
-export type PageNotificationSteps = {
+type PageNotificationSteps = {
   classify: (id: string, eventType: string) => Promise<{ published: boolean }>;
   heal: () => Promise<void>;
   register: (id: string, token: string, requestedAt: string) => Promise<SyncRegistration>;
@@ -173,7 +173,7 @@ export type PageNotificationSteps = {
   invalidate: () => Promise<void>;
 };
 
-export async function coalescePageNotification(
+async function coalescePageNotification(
   pageId: string,
   eventType: string,
   token: string,

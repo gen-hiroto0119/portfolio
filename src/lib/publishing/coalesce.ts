@@ -1,6 +1,6 @@
 import { uuid, type SyncMarker, type SyncMarkerRead } from "./model";
 
-export type SyncMarkerPorts = {
+type SyncMarkerPorts = {
   read: (pageId: string) => Promise<SyncMarkerRead>;
   write: (marker: SyncMarker, etag: string | null) => Promise<void>;
 };
@@ -8,7 +8,7 @@ export type SyncMarkerPorts = {
 export type SyncRegistration = "accepted" | "superseded";
 
 // Equal receipt timestamps are broken by token so every run reaches the same verdict.
-export function supersedes(incoming: SyncMarker, stored: SyncMarker) {
+function supersedes(incoming: SyncMarker, stored: SyncMarker) {
   const incomingTime = Date.parse(incoming.requestedAt);
   const storedTime = Date.parse(stored.requestedAt);
   if (incomingTime !== storedTime) return incomingTime > storedTime;
@@ -30,7 +30,7 @@ export async function registerSyncMarker(
   return "accepted";
 }
 
-export async function isCurrentSyncMarker(
+async function isCurrentSyncMarker(
   pageId: string,
   token: string,
   read: SyncMarkerPorts["read"],

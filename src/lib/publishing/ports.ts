@@ -1,8 +1,8 @@
 import "server-only";
 
-import { getMedia, readSnapshot, removeAssets, uploadAsset, writeSnapshot } from "./blob";
+import { readSnapshot, removeAssets, uploadAsset, writeSnapshot } from "./blob";
 import { fetchBody, fetchPage } from "./notion";
-import { uuid, type PublishedAsset } from "./model";
+import { uuid } from "./model";
 import type { SyncPorts } from "./sync";
 
 export function publishingPorts(): SyncPorts {
@@ -16,8 +16,4 @@ export function publishingPorts(): SyncPorts {
     body: (id) => fetchBody(id, uploadAsset),
     removeAssets,
   };
-}
-
-export async function readPublishedMedia(asset: PublishedAsset) {
-  return getMedia(asset);
 }

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { CmsError } from "@/lib/cms/errors";
 
-export type TiptapMark = { type: string; attrs?: Record<string, string> };
+type TiptapMark = { type: string; attrs?: Record<string, string> };
 export type TiptapNode = {
   type: string;
   attrs?: Record<string, string | number | number[] | null>;

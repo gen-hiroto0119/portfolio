@@ -201,10 +201,6 @@
   flex-direction: column;
   gap: 8px;
 }
-.blogHeading p {
-  color: var(--muted-foreground);
-  line-height: 22px;
-}
 .posts {
   padding: 0;
   list-style: none;
@@ -225,14 +221,6 @@
   flex-shrink: 0;
   color: var(--muted-foreground);
   font-size: 12px;
-}
-.empty {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-block: 8px;
-  line-height: 22px;
-  color: var(--muted-foreground);
 }
 .article {
   display: flex;

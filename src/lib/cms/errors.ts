@@ -1,4 +1,4 @@
-export type CmsErrorCode = "VALIDATION";
+type CmsErrorCode = "VALIDATION";
 
 export class CmsError extends Error {
   readonly code: CmsErrorCode;

@@ -16,7 +16,7 @@ async function publicSnapshot(): Promise<{ snapshot: Snapshot } | null> {
   return { snapshot };
 }
 
-export function createContentReaders(loadSnapshot: () => Promise<{ snapshot: Snapshot } | null>) {
+function createContentReaders(loadSnapshot: () => Promise<{ snapshot: Snapshot } | null>) {
   return {
     async getAllPosts(): Promise<BlogPost[]> {
       const result = await loadSnapshot();

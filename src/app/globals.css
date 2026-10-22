@@ -7,14 +7,12 @@
   --foreground: light-dark(#171717, #ededed);
   --muted-foreground: light-dark(#7c7c7c, #a1a1a1);
   --border: light-dark(#e5e5e5, #303030);
-  --accent: var(--foreground);
   --syntax-comment: var(--muted-foreground);
   --syntax-keyword: var(--foreground);
   --syntax-string: light-dark(#526977, #a6c8e1);
   --syntax-title: var(--foreground);
   --syntax-literal: var(--syntax-string);
   --syntax-tag: var(--foreground);
-  --syntax-attribute: var(--syntax-string);
   --light-display: block;
   --dark-display: none;
   --monochrome-filter: none;
@@ -41,7 +39,6 @@
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --color-accent: var(--accent);
   --font-sans: "Inter Variable", "Noto Sans JP Variable", sans-serif;
   --font-mono: "JetBrains Mono Variable", monospace;
 }

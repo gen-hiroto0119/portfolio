@@ -2,7 +2,7 @@ import { z } from "zod";
 import { parseTiptapDocument } from "@/lib/cms/document";
 
 export const uuid = z.uuid().transform((id) => id.toLowerCase());
-export const slugSchema = z.string().min(1).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+const slugSchema = z.string().min(1).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
   const date = new Date(`${value}T00:00:00Z`);
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
@@ -47,7 +47,6 @@ export const snapshotSchema = z.object({
   }
 });
 export type PublishedAsset = z.infer<typeof assetSchema>;
-export type PublishedPost = z.infer<typeof postSchema>;
 export type Snapshot = z.infer<typeof snapshotSchema>;
 export type SnapshotRead = { snapshot: Snapshot; etag: string | null };
 

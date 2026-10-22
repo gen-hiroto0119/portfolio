@@ -3,7 +3,7 @@ import "server-only";
 import { timingSafeEqual, createHmac } from "node:crypto";
 import { z } from "zod";
 
-export const MIN_SECRET_LENGTH = 32;
+const MIN_SECRET_LENGTH = 32;
 
 export async function readBoundedBody(request: Request, limit: number): Promise<Uint8Array | null> {
   if (!request.body) return new Uint8Array();

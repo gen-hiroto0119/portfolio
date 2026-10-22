@@ -8,7 +8,7 @@ import {
   type SnapshotRead, syncMarkerSchema, type SyncMarker, type SyncMarkerRead, uuid,
 } from "./model";
 
-export const SNAPSHOT_PATH = "blog/snapshot.json";
+const SNAPSHOT_PATH = "blog/snapshot.json";
 const MAX_SNAPSHOT_BYTES = 8 * 1024 * 1024;
 const MAX_MARKER_BYTES = 4096;
 
@@ -59,7 +59,7 @@ function emptySnapshot(): Snapshot {
   return { version: 1, generation: randomUUID(), posts: [], garbage: [], cacheInvalidationPending: false };
 }
 
-export async function readSnapshotWith(getBlob: typeof get): Promise<SnapshotRead> {
+async function readSnapshotWith(getBlob: typeof get): Promise<SnapshotRead> {
   if (!configured()) throw new BlobConfigurationError("公開スナップショットの保存先が設定されていません。");
   try {
     const result = await getBlob(SNAPSHOT_PATH, {
@@ -86,7 +86,7 @@ export async function readSnapshot(): Promise<SnapshotRead> {
   return readSnapshotWith(get);
 }
 
-export async function writeSnapshotWith(putBlob: typeof put, snapshot: Snapshot, etag: string | null): Promise<void> {
+async function writeSnapshotWith(putBlob: typeof put, snapshot: Snapshot, etag: string | null): Promise<void> {
   if (!configured()) throw new BlobConfigurationError("公開スナップショットの保存先が設定されていません。");
   const checked = snapshotSchema.parse(snapshot);
   const body = JSON.stringify(checked);
@@ -112,11 +112,11 @@ export async function writeSnapshot(snapshot: Snapshot, etag: string | null): Pr
   return writeSnapshotWith(put, snapshot, etag);
 }
 
-export function syncMarkerPath(pageId: string) {
+function syncMarkerPath(pageId: string) {
   return `blog/sync/${uuid.parse(pageId)}.json`;
 }
 
-export async function readSyncMarkerWith(getBlob: typeof get, pageId: string): Promise<SyncMarkerRead> {
+async function readSyncMarkerWith(getBlob: typeof get, pageId: string): Promise<SyncMarkerRead> {
   if (!configured()) throw new BlobConfigurationError("公開スナップショットの保存先が設定されていません。");
   try {
     const result = await getBlob(syncMarkerPath(pageId), {
@@ -142,7 +142,7 @@ export async function readSyncMarkerWith(getBlob: typeof get, pageId: string): P
   }
 }
 
-export async function writeSyncMarkerWith(putBlob: typeof put, marker: SyncMarker, etag: string | null): Promise<void> {
+async function writeSyncMarkerWith(putBlob: typeof put, marker: SyncMarker, etag: string | null): Promise<void> {
   if (!configured()) throw new BlobConfigurationError("公開スナップショットの保存先が設定されていません。");
   const checked = syncMarkerSchema.parse(marker);
   try {

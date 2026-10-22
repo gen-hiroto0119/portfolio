@@ -34,10 +34,6 @@ const blockShape = z.object({
 }).passthrough();
 const childBearingBlockTypes = new Set(["bulleted_list_item", "numbered_list_item", "quote", "table", "paragraph", "heading_1", "heading_2", "heading_3"]);
 
-export function notionConfigured() {
-  return Boolean(process.env.NOTION_API_KEY && process.env.NOTION_DATA_SOURCE_ID);
-}
-
 function dataSourceId() {
   const id = process.env.NOTION_DATA_SOURCE_ID;
   if (!id) throw new PublicationError("Notion のデータソースが設定されていません。");

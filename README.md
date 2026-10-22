@@ -1,74 +1,94 @@
 # Hiroto Portfolio
 
-Hiroto Furugenの個人サイト。現在の公開ページはトップとブログです。
+Hiroto Furugenの個人サイト。トップとブログをHono JSXでサーバー描画します。
 
-## 技術スタック
+## 構成
 
-- Next.js 16 / React 19 / TypeScript
-- CSS Modules for the public site; Tailwind CSS for shared fallback screens
-- Read-only Tiptap JSON rendering
-- Vercel
+- Hono / Hono JSX / TypeScript
+- Nitro + Vercel Workflow
+- CSSとローカルフォントの静的配信
+- Notion → Workflow → private Vercel Blob → Hono
+
+```text
+src/
+  index.ts          # appをexport
+  app.ts            # middlewareとルートの組み立て
+  pages/            # 公開ページ・レイアウト・RSS・sitemap・OGPのルート
+  components/       # 共通の表示部品
+  feature/
+    posts/          # 公開記事の取得
+    publishing/     # 同期API・Webhook・Workflow
+    media/          # 公開状態を確認した画像配信
+  storage.ts        # 各Featureで共有するBlobの読み書き
+  lib/              # 本文の検証・シンタックスハイライト・サイト設定
+public/             # CSS・画像・フォント
+```
+
+各Featureは必要なファイルだけを持ちます。`index.ts`はHTTPの受付、`service.ts`は処理の手順、`repository.ts`は外部との読み書き、`schema.ts`は入力・保存形式の検証、`domain.ts`は型と公開条件などのルールです。ページはserviceを通じて記事を取得し、repositoryを直接呼びません。
 
 ## 開発
 
-```bash
+Node.js 24を使用します。
+
+```sh
 npm install
 npm run dev
 npm run build
+npm run start
 npm run lint
-npm test
-npm run test:publishing
-npm run test:delivery
 ```
 
-公開URLは `NEXT_PUBLIC_SITE_URL` で指定します。公開連携の設定例は `.env.example` にあります。`BLOG_SYNC_ENABLED=false` のままでは書き込みルートは無効です。
+Nitroの開発サーバーと`start`は`.env.local`を読み込みます。Workflowは`workflow/nitro`でビルドします。本番ではVercelのNitro設定を使います。
 
-## CI
+環境変数はVercelのProductionで管理します。
 
-GitHub Actions の `quality` は lint・型生成・型検査・単体テスト・publishing tests を、`delivery` は本番ビルド後の隔離された HTTP キャッシュライフサイクルを検証します。どちらも Node 24 と `npm ci` を使います。delivery テストは実行時に合成記事とダミー認証情報を作り、private Blob 読み取りをモックします。Notion、実 Blob、Vercel デプロイ、実環境でのイベント到着やキャッシュ伝播は検証しません。
-
-ローカルで同じゲートを実行する場合:
-
-```bash
-npm ci
-npm run lint
-npx next typegen
-npx tsc --noEmit
-npm test
-npm run test:publishing
-npm run test:delivery
+```sh
+vercel env pull .env.local --environment=production --project=portfolio --scope=gen-hirotos-projects
 ```
 
-この workflow はブランチ保護を変更しません。`quality` と `delivery` を必須にする場合は、GitHub の branch protection rules で required status checks として手動設定してください。
+設定例は`.env.example`にあります。公開URLの変数名`NEXT_PUBLIC_SITE_URL`は既存のVercel設定を引き継ぐため残しています。Honoではサーバー側で参照し、秘密値はHTMLに含めません。`BLOG_SYNC_ENABLED=false`を初期値とします。
 
-## コンテンツ
+## 記事の取得と表示
 
-記事は private Blob の公開スナップショットから取得します。Blob 未設定時は空の一覧を返します。Git にサンプル記事やローカル検証用データを追加しないでください。公開記事用の Tiptap JSON 検証・表示は `lib/cms/document.ts` と `components/blog/tiptap-content.tsx` に残しています。プロフィールと経歴のコピーは `app/(site)/page.tsx` にあります。
+`blog/snapshot.json`をprivate Blobから読み込みます。読み取りは`useCache: false`で、アプリ内やCDNに記事をキャッシュしません。トップ・一覧・詳細・RSS・sitemap・記事OGPはリクエスト時の公開スナップショットを使います。記事詳細は1回の読み取りから本文とメタデータを作ります。Next.jsのキャッシュ・失効コールバックと`/api/notion/revalidate`は廃止しました。
 
-記事公開フローは Notion → Workflow → private Vercel Blob → Next.js です。`blog/snapshot.json` と `blog/assets/{uuid}` は private Blob に保存します。記事の読み取りは Next.js 16.4 の Cache Components（`use cache`）で共通スナップショットをキャッシュし、トップ・一覧・詳細・RSS・sitemap・OGP が同じ `blog` タグを使います。`blog` プロファイルはクライアント stale 30秒、サーバー再検証5分、期限1時間です。キャッシュ再生成時の Blob 読み取りは `useCache: false` のままです。公開本文は段落、見出し、リスト、引用、コード、区切り線、表、Notion 画像に対応します。画像は HTTPS の許可された Notion ホストからのみ取得し、PNG/JPEG/GIF/WebP、4 MiB 以下に限定します。外部画像は Notion へアップロードしてください。古い画像は同期後の cleanup で削除されます。CAS 競合や失敗したステージ済み画像は安全のため private のまま残る場合があります。
+Blob未設定時は空の一覧になります。設定済みのBlobへの読み取りに失敗した場合はエラーを返します。サンプル記事やローカル検証用データはGitに追加しません。`Blog Content/`は旧Vaultで、サイトから読み込みません。
 
-公開記事への書き込み通知ごとにページ単位の Workflow を開始し、Notion の最新ページ状態を確認します。公開状態なら約60秒待ってから同期します。private Blob の `blog/sync/{uuid}.json` に小さな協調レコードを1ページにつき1件だけ保存し、後続の通知が待機中の古い通知を置き換えます。記事の書き込み・画像取得は待機後に行うため、待機中に置き換えられた通知は本文を取得しません。下書き化・削除・アーカイブ・data source 外への移動など公開対象外の状態や削除・移動イベントは、より新しい通知の marker を上書きしない範囲で marker を先に登録し、待たずに処理します。これにより、取り下げ前の待機中通知が後から起きても同期できません。再公開後は新しい公開通知が約60秒待ってから同期します。イベント一覧や常駐タイマーは持ちません。通知の coalescing は exactly-once を保証せず、既に開始した同期と新しい通知が競合すると追加同期が起きる場合があります。
+本文の検証は`src/lib/cms/document.ts`、表示は`src/components/blog/tiptap-content.tsx`にあります。段落・見出し・リスト・引用・コード・区切り線・表・Notion画像に対応します。プロフィールと経歴は`src/pages/home.tsx`にあります。
 
-Workflow はスナップショット保存後、独立した再試行可能なステップから `POST /api/notion/revalidate` を呼びます。Route Handler 内で `revalidateTag("blog", { expire: 0 })` を実行し、失効後のサーバーアクセスは古いデータを返さず最新データの再生成を待ちます。失効ルートから成功応答を受け取るまで同期完了とは扱いません。
+## 同期と公開
 
-スナップショットにはキャッシュ失効待ちを示すフラグを保存します。実際の公開・取り下げ書き込みでフラグを立て、HTTP失効が成功した後に同じスナップショットと ETag を使った CAS で解除します。失効要求が失敗した場合はフラグを残し、後続の同期で修復します。従来スナップショットでフラグがない場合も pending とみなし、次の同期で一度修復します。取り下げを含む既存記事の未変更同期でも pending なら失効し、未公開の下書きで、公開スナップショットに変更がなく、失効待ち状態もない場合は省略します。空の全件照合では従来どおり失効します。失効処理は最大5回まで独立して再試行され、上限に達した場合は同期失敗として扱います。通知同期や協調レコード更新も再試行上限に達した場合、自動で成功扱いにはならず、手動同期などによる復旧が必要です。記事同期自体が失敗した場合や、CAS競合で記事を書き込めなかった場合は失効を要求しません。
+Notion integrationに対象data sourceへのアクセスを付与します。公開プロパティは`公開状態`（select: `公開`）、`タイトル`、`slug`、`公開日`、`概要`、`タグ`です。`公開日`は日付のみを受け付けます。slug変更後の旧URLは404になります。cronや自動スケジュール公開は設定しません。
 
-Blob 更新とキャッシュ失効は原子的ではなく、その間は古い本文が表示され得ます。Next.js が管理する失効の伝播と、閲覧中・ブラウザーに保存済みの表示の即時回収までは保証しません。時間ベースの再検証は補助であり、Notion の同期自体を代替しません。RSS・OGP の応答と画像配信は引き続き `no-store` です。
+手動同期は`POST /api/notion/sync`に`Authorization: Bearer <BLOG_SYNC_SECRET>`を付けます。空bodyは全件照合、`{"pageId":"<uuid>"}`は1ページ同期です。受付後は202と`runId`を返します。
 
-`.env.example` を `.env.local` にコピーし、private Vercel Blob store と Notion integration を用意して値を設定してください。Notion integration には対象の data source へのアクセスを付与します。Notion 側の公開プロパティは `公開状態`（select: `公開`）、`タイトル`、`slug`、`公開日`、`概要`、`タグ` です。`公開日` は日付のみで、時刻を含む値は意図的に拒否します。
+Webhook URLは`https://<公開ホスト>/api/notion/webhook/<NOTION_WEBHOOK_PATH_SECRET>`です。URL全体を秘密として扱います。`BLOG_SYNC_SECRET`、`NOTION_WEBHOOK_PATH_SECRET`、`NOTION_WEBHOOK_SECRET`は32文字以上にします。
 
-`BLOG_SYNC_SECRET`、`NOTION_WEBHOOK_PATH_SECRET`、`NOTION_WEBHOOK_SECRET` はサーバー側だけに設定し、いずれも32文字以上にします。手動同期は `POST /api/notion/sync` に `Authorization: Bearer …` を付けます。空 body は全件照合、`{"pageId":"<uuid>"}` は1ページ同期です。
+Webhookは生の本文に対するHMAC-SHA256署名を確認します。購読イベントは`page.created`、`page.content_updated`、`page.properties_updated`、`page.deleted`、`page.undeleted`、`page.moved`と、対象data sourceの`data_source.created`、`data_source.updated`、`data_source.deleted`、`data_source.moved`です。
 
-キャッシュ失効には同じ `BLOG_SYNC_SECRET` を使います。`NEXT_PUBLIC_SITE_URL` は同じ環境・Blob store を使うサイトの正規 HTTPS オリジンに設定してください（パス・認証情報・クエリなし）。失効用URLの自動推測やリダイレクト追従はしません。ローカルの非Vercel環境のみ localhost の HTTP を許可します。失効ルートへの通信を Deployment Protection 等で遮断しないでください。Preview の同期は無効のままにします。
+公開中のページは約60秒待って同期します。`blog/sync/{uuid}.json`の協調レコードで後続の通知が待機中の古い通知を置き換えます。取り下げ・削除・移動などの通知は待たずに処理します。待機後や再試行時には最新のmarkerとNotionの状態を確認します。既に開始した同期と新しい通知の競合による追加同期は起こり得ます。
 
-本番と Preview はそれぞれ別の private Blob store を割り当ててください。Preview では `BLOG_SYNC_ENABLED=false` を維持します。Vercel Workflow はデプロイ時にプロビジョニングされます。ローカル開発サーバー上の実行を耐久性のあるWorkflow実行として扱わないでください。
+スナップショットの更新はETagによるCASを使います。競合時はNotionから取得し直し、準備済みの古い本文を再送しません。各ステップの再試行上限は5回です。上限を超えた場合は同期失敗となり、手動同期などで復旧します。
 
-Webhook URL は `https://<deployment-host>/api/notion/webhook/<NOTION_WEBHOOK_PATH_SECRET>` です。URL 全体を秘密として扱い、ログに出さないでください。Notion Webhooks では `page.created`、`page.content_updated`、`page.properties_updated`、`page.deleted`、`page.undeleted`、`page.moved` と、対象 data source の `data_source.created`、`data_source.updated`、`data_source.deleted`、`data_source.moved` を購読します。
+### Webhookの初回登録
 
-初回登録用の本番デプロイでは `BLOG_SYNC_ENABLED=true` と `NOTION_WEBHOOK_SETUP_ENABLED=true` を設定し、`NOTION_WEBHOOK_SECRET` は未設定にします。その間に Notion が送る verification request の候補を private Blob の `blog/setup/webhook-verification.json` に一度だけ保存します。無署名リクエストと、候補の `verification_token` を鍵として生のリクエスト本文の HMAC-SHA256 が `X-Notion-Signature` と一致する署名付きリクエストを受け付けます。不正な署名は拒否します。候補による署名は整合性確認であり、独立した送信元認証ではありません。秘密URL、一時的な setup mode、Notion 側での候補の照合を併用します。候補を Blob から安全に取得して Notion 側で確認した後、順に `NOTION_WEBHOOK_SECRET` を設定し、setup mode を無効化して、再デプロイしてください。確認候補は署名秘密に自動設定されません。同一トークンの再送は受け付けますが、別トークンで再登録・ローテーションする場合は、オペレーターが Blob 上の候補ファイルを明示的に削除してから行ってください。
+1. `BLOG_SYNC_ENABLED=true`、`NOTION_WEBHOOK_SETUP_ENABLED=true`とし、`NOTION_WEBHOOK_SECRET`を未設定にします。
+2. Notionからのverification requestで、候補をprivate Blobの`blog/setup/webhook-verification.json`に保存します。
+3. 候補を安全に取得し、Notion側で照合してから`NOTION_WEBHOOK_SECRET`に設定します。
+4. setup modeを無効化し、再デプロイします。
 
-画像配信は、レスポンス開始前に加えて最大64 KiBの各チャンクを渡す直前にも公開スナップショットをキャッシュなしで再確認します。取り下げを検知した場合や確認に失敗した場合、残りの転送と Blob の読み取りを中断します。転送開始後は404へ変更できず、本文の読み取りエラーになります。このため配信中のスナップショット読み取り回数・転送量が増えます。取り下げは Notion の変更が同期された後に効力を持ち、最後の確認とチャンク送出の間の競合、HTTP基盤が既にバッファしたデータ、送信済みデータの回収までを原子的に保証するものではありません。
+setup modeでは無署名リクエストと、候補トークンを鍵にした正しい署名付きリクエストを受け付けます。候補による署名だけでは送信元認証になりません。秘密URL・一時的なsetup mode・Notion側での照合を併用します。候補は署名秘密に自動設定されません。同一候補の再送は許可し、別候補への変更にはBlob上の候補ファイルの明示的な削除が必要です。
 
-cron や自動スケジュール公開は設定しません。slug を変更した記事の旧 URL は自動リダイレクトせず 404 になります。
+### 画像
 
-実サービス接続には Notion と Blob の認証情報およびデプロイ権限が必要です。これらがない場合は本番配信の確認・初回登録ができません。実サービスへの接続や変更は明示的な許可がある場合に限ります。現時点のテストはモックのみで、実サービスの配信は未検証です。
+画像はHTTPSの許可されたNotionホストから取得し、PNG/JPEG/GIF/WebP、4 MiB以下に限定します。SVGや外部画像URLは受け付けません。private Blobの`blog/assets/{uuid}`へ保存し、公開スナップショットに含まれる画像だけを`/media/{assetId}`で配信します。
+
+配信開始前と最大64 KiBの各チャンクを送る直前に、公開状態をキャッシュなしで確認します。取り下げや読み取り失敗時は残りの転送を中断します。送信済みのデータは回収できません。この確認によりBlobの読み取り回数が増えます。公開状態の変更はNotionの同期完了後に反映されます。
+
+使われなくなった画像は同期後のcleanupで削除します。競合や失敗時のステージ済み画像はprivateのまま残る場合があります。
+
+## 運用
+
+記事・画像・OGPは`no-store`で配信します。記事スナップショットの読み取りはリクエストごとに発生します。閲覧済みの画面や送信済みデータの即時回収は保証しません。
+
+実サービスへの変更・記事公開・デプロイは明示的な依頼がある場合に実施します。公開先は[hirotofurugen.dev](https://hirotofurugen.dev/)です。

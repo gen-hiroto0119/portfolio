@@ -14,11 +14,12 @@
 /coverage
 /test-output/
 
-# next.js
+# Legacy local Next.js output
 /.next/
 /out/
 
 # production
+/.output/
 /build
 
 # misc

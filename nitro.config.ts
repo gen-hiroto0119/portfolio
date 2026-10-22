@@ -7,10 +7,10 @@ export default defineConfig({
   modules: ["workflow/nitro"],
   routes: { "/**": "./src/index.ts" },
   publicAssets: [
-    ...["inter", "noto-sans-jp", "jetbrains-mono"].map((font) => ({
-      dir: `node_modules/@fontsource-variable/${font}/files`,
-      baseURL: `/fonts/${font}`,
+    {
+      dir: "node_modules/@fontsource-variable/jetbrains-mono/files",
+      baseURL: "/fonts/jetbrains-mono",
       ignore: ["**/*.woff"],
-    })),
+    },
   ],
 });

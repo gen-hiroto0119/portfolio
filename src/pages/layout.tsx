@@ -56,14 +56,13 @@ export function Layout({
         />
         <link
           rel="preload"
-          href="/portfolio/fonts/Geist-Regular.ttf"
+          href="/portfolio/fonts/Geist-Regular.woff2"
           as="font"
-          type="font/ttf"
+          type="font/woff2"
           crossorigin="anonymous"
         />
-        <link rel="stylesheet" href="/styles/fonts.css" />
-        <link rel="stylesheet" href="/styles/global.css" />
         <link rel="stylesheet" href="/styles/portfolio.css" />
+        {article && <link rel="stylesheet" href="/styles/fonts.css" />}
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:site_name" content={site.name} />

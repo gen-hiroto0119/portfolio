@@ -9,24 +9,22 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "@fontsource-variable/noto-sans-jp": "^5.2.10",
     "@fontsource/noto-sans-jp": "^5.2.9",
     "@vercel/blob": "2.8.1",
+    "@vercel/og": "1.0.3",
     "highlight.js": "11.12.0",
+    "hono": "4.13.13",
     "lowlight": "3.3.0",
     "workflow": "5.2.0",
-    "zod": "^4.4.3",
-    "hono": "4.13.13",
-    "@vercel/og": "1.0.3"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^20",
     "eslint": "^9",
-    "typescript": "^5",
     "nitro": "3.0.260903-beta",
     "rollup": "^4",
+    "typescript": "^5",
     "typescript-eslint": "^8"
   },
   "type": "module",

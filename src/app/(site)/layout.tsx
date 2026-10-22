@@ -5,12 +5,12 @@ import styles from "@/components/portfolio/portfolio.module.css";
 const geist = localFont({
   src: [
     {
-      path: "../../public/portfolio/fonts/Geist-Regular.ttf",
+      path: "../../../public/portfolio/fonts/Geist-Regular.ttf",
       weight: "400",
       style: "normal",
     },
     {
-      path: "../../public/portfolio/fonts/Geist-SemiBold.ttf",
+      path: "../../../public/portfolio/fonts/Geist-SemiBold.ttf",
       weight: "600",
       style: "normal",
     },

@@ -16,8 +16,8 @@ Hiroto Furugen の個人サイト。Next.js App Router。現在の公開ペー�
 
 - Blog の公開記事は Blob の強整合スナップショットから取得する。Blob 設定がないビルドでは空の一覧になる。Git にサンプル記事やローカル検証用データを追加しない。
 - 管理画面はない。Notion の読み取り、同期用認証、private Vercel Blob の公開スナップショットを使用する。Supabase のランタイムコードとローカルマイグレーションはない。
-- 公開記事用の Tiptap JSON 検証・表示は `lib/cms/document.ts` と `components/blog/tiptap-content.tsx` に残す。既存の URL・画像検証を弱めない。
-- プロフィールと経歴のコピーは `app/(site)/page.tsx` にある。事実を保ち、経歴・実績を創作しない。
+- 公開記事用の Tiptap JSON 検証・表示は `src/lib/cms/document.ts` と `src/components/blog/tiptap-content.tsx` に残す。既存の URL・画像検証を弱めない。
+- プロフィールと経歴のコピーは `src/app/(site)/page.tsx` にある。事実を保ち、経歴・実績を創作しない。
 - Idea は廃止済み。`Blog Content/` は Git 管理外の旧Vaultであり、サイトから読み込まない。
 - Notion → Workflow → private Blob → Next.js の公開フローは実装済みだが、実サービスの秘密値がないため未接続。実サービスへの変更・記事公開は明示的な許可なしに行わない。
 - 日本語のコピーは具体的で自然な文章にする。
@@ -26,12 +26,12 @@ Hiroto Furugen の個人サイト。Next.js App Router。現在の公開ペー�
 
 | 用途 | 場所 |
 |---|---|
-| 公開記事の取得 | `lib/content/index.ts` |
-| Tiptap JSON の検証・表示 | `lib/cms/document.ts`, `components/blog/tiptap-content.tsx` |
-| サイト設定 | `lib/site.ts` |
-| プロフィール・経歴コピー | `app/(site)/page.tsx` |
-| 公開トップ・ブログのレイアウトとCSS | `app/(site)/`, `components/portfolio/` |
-| 共通フォールバック画面 | `app/error.tsx`, `app/not-found.tsx`, `components/page-recovery.tsx` |
+| 公開記事の取得 | `src/lib/content/index.ts` |
+| Tiptap JSON の検証・表示 | `src/lib/cms/document.ts`, `src/components/blog/tiptap-content.tsx` |
+| サイト設定 | `src/lib/site.ts` |
+| プロフィール・経歴コピー | `src/app/(site)/page.tsx` |
+| 公開トップ・ブログのレイアウトとCSS | `src/app/(site)/`, `src/components/portfolio/` |
+| 共通フォールバック画面 | `src/app/error.tsx`, `src/app/not-found.tsx`, `src/components/page-recovery.tsx` |
 
 ## コーディング規約
 

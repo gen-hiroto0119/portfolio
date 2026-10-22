@@ -22,7 +22,7 @@ npm run lint
 
 ## コンテンツ
 
-記事は private Blob の公開スナップショットから取得します。Blob 未設定時は空の一覧を返します。Git にサンプル記事やローカル検証用データを追加しないでください。公開記事用の Tiptap JSON 検証・表示は `lib/cms/document.ts` と `components/blog/tiptap-content.tsx` に残しています。プロフィールと経歴のコピーは `app/(site)/page.tsx` にあります。
+記事は private Blob の公開スナップショットから取得します。Blob 未設定時は空の一覧を返します。Git にサンプル記事やローカル検証用データを追加しないでください。公開記事用の Tiptap JSON 検証・表示は `src/lib/cms/document.ts` と `src/components/blog/tiptap-content.tsx` に残しています。プロフィールと経歴のコピーは `src/app/(site)/page.tsx` にあります。
 
 記事公開フローは Notion → Workflow → private Vercel Blob → Next.js です。`blog/snapshot.json` と `blog/assets/{uuid}` は private Blob に保存します。記事の読み取りは Next.js 16.4 の Cache Components（`use cache`）で共通スナップショットをキャッシュし、トップ・一覧・詳細・RSS・sitemap・OGP が同じ `blog` タグを使います。`blog` プロファイルはクライアント stale 30秒、サーバー再検証5分、期限1時間です。キャッシュ再生成時の Blob 読み取りは `useCache: false` のままです。公開本文は段落、見出し、リスト、引用、コード、区切り線、表、Notion 画像に対応します。画像は HTTPS の許可された Notion ホストからのみ取得し、PNG/JPEG/GIF/WebP、4 MiB 以下に限定します。外部画像は Notion へアップロードしてください。古い画像は同期後の cleanup で削除されます。CAS 競合や失敗したステージ済み画像は安全のため private のまま残る場合があります。
 

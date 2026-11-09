@@ -1,9 +1,7 @@
-.output
-.next
+dist
+.astro
 .vercel
 node_modules
 .env*
-!.env.example
-test-output
 Blog Content
 .obsidian

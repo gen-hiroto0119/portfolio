@@ -33,7 +33,7 @@ npm run preview
 npm run lint
 ```
 
-環境変数はVercelのProductionで管理します。設定例は`.env.example`にあります。公開URLの変数名`NEXT_PUBLIC_SITE_URL`は既存のVercel設定を引き継ぐため残しています。
+環境変数はVercelのProductionで管理し、`vercel env pull`で取得します。使うのは公開URLの`NEXT_PUBLIC_SITE_URL`だけで、変数名は既存のVercel設定を引き継ぐため残しています。
 
 ## 記事
 

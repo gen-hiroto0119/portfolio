@@ -3,27 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nitro dev",
-    "build": "nitro build",
-    "start": "node --env-file-if-exists=.env.local .output/server/index.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "lint": "eslint"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource/noto-sans-jp": "^5.2.9",
-    "@vercel/blob": "2.8.1",
-    "@vercel/og": "1.0.3",
-    "highlight.js": "11.12.0",
-    "hono": "4.13.13",
-    "lowlight": "3.3.0",
-    "workflow": "5.2.0",
-    "zod": "^4.4.3"
+    "@resvg/resvg-js": "^2.6.2",
+    "astro": "^7.4.8",
+    "satori": "^0.63.2"
   },
   "devDependencies": {
     "@types/node": "^20",
     "eslint": "^9",
-    "nitro": "3.0.260903-beta",
-    "rollup": "^4",
     "typescript": "^5",
     "typescript-eslint": "^8"
   },

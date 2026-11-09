@@ -220,49 +220,19 @@ table {
   border-bottom: 1px solid var(--border);
   padding: 12px;
 }
-.overflow-x-auto {
-  overflow-x: auto;
-}
-.text-center {
-  text-align: center;
-}
-.text-right {
-  text-align: right;
-}
-.text-left {
-  text-align: left;
-}
-.syntax-highlight {
-  color: var(--foreground);
-}
-.syntax-highlight .hljs-comment,
-.syntax-highlight .hljs-quote {
-  color: var(--syntax-comment);
-}
-.syntax-highlight .hljs-keyword,
-.syntax-highlight .hljs-selector-tag,
-.syntax-highlight .hljs-deletion {
-  color: var(--syntax-keyword);
-}
-.syntax-highlight .hljs-string,
-.syntax-highlight .hljs-regexp,
-.syntax-highlight .hljs-doctag {
-  color: var(--syntax-string);
-}
-.syntax-highlight .hljs-title {
-  color: var(--syntax-title);
-}
-.syntax-highlight .hljs-tag,
-.syntax-highlight .hljs-name,
-.syntax-highlight .hljs-selector-attr,
-.syntax-highlight .hljs-selector-pseudo {
-  color: var(--syntax-tag);
-}
-.syntax-highlight .hljs-emphasis {
-  font-style: italic;
-}
-.syntax-highlight .hljs-strong {
-  font-weight: 600;
+/* Shiki's css-variables theme, mapped to the site's monochrome syntax colors. */
+.prose-content .astro-code {
+  --astro-code-foreground: var(--foreground);
+  --astro-code-background: var(--surface);
+  --astro-code-token-comment: var(--syntax-comment);
+  --astro-code-token-keyword: var(--syntax-keyword);
+  --astro-code-token-string: var(--syntax-string);
+  --astro-code-token-string-expression: var(--syntax-string);
+  --astro-code-token-constant: var(--syntax-literal);
+  --astro-code-token-function: var(--syntax-title);
+  --astro-code-token-parameter: var(--foreground);
+  --astro-code-token-punctuation: var(--foreground);
+  --astro-code-token-link: var(--syntax-string);
 }
 
 .portfolio-site {

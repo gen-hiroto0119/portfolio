@@ -1,6 +1,5 @@
-import { isBlobConfigured, readSnapshot } from "@/storage";
+import { getCollection } from "astro:content";
 
-export async function loadPublishedSnapshot() {
-  if (!isBlobConfigured()) return null;
-  return (await readSnapshot()).snapshot;
+export function getBlogEntries() {
+  return getCollection("blog");
 }

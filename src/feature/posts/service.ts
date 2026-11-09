@@ -1,44 +1,33 @@
-import { loadPublishedSnapshot } from "./repository";
-import { slugSchema } from "./schema";
-import type { BlogPost, BlogPostWithContent } from "./domain";
+import type { CollectionEntry } from "astro:content";
+import { getBlogEntries } from "./repository";
+import { slugPattern, toDateString, type BlogPost } from "./domain";
 
-export async function getAllPosts(): Promise<BlogPost[]> {
-  const snapshot = await loadPublishedSnapshot();
-  return [...(snapshot?.posts ?? [])]
-    .filter((post) => post.published)
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .map((post) => ({
-      slug: post.slug,
-      title: post.title,
-      description: post.description,
-      date: post.date,
-      category: post.category,
-      tags: post.tags,
-      published: post.published,
-      publishedAt: post.publishedAt,
-      updatedAt: post.sourceEditedAt,
-    }));
+function toPost(entry: CollectionEntry<"blog">): BlogPost {
+  // The file name becomes the public URL, so reject names that are not URL-safe.
+  if (!slugPattern.test(entry.id))
+    throw new Error(`Invalid blog file name: ${entry.id}`);
+  const date = toDateString(entry.data.date);
+  const publishedAt = `${date}T00:00:00+09:00`;
+  return {
+    slug: entry.id,
+    title: entry.data.title,
+    description: entry.data.description,
+    date,
+    tags: entry.data.tags,
+    publishedAt,
+    updatedAt: entry.data.updated
+      ? `${toDateString(entry.data.updated)}T00:00:00+09:00`
+      : publishedAt,
+  };
 }
 
-export async function getPost(
-  slug: string,
-): Promise<BlogPostWithContent | null> {
-  if (!slugSchema.safeParse(slug).success) return null;
-  const snapshot = await loadPublishedSnapshot();
-  const post = snapshot?.posts.find(
-    (item) => item.slug === slug && item.published,
-  );
-  if (!post) return null;
-  return {
-    slug: post.slug,
-    title: post.title,
-    description: post.description,
-    date: post.date,
-    category: post.category,
-    tags: post.tags,
-    published: post.published,
-    publishedAt: post.publishedAt,
-    updatedAt: post.sourceEditedAt,
-    body: post.body,
-  };
+export async function getPostEntries() {
+  const entries = await getBlogEntries();
+  return entries
+    .map((entry) => ({ entry, post: toPost(entry) }))
+    .sort((a, b) => b.post.date.localeCompare(a.post.date));
+}
+
+export async function getAllPosts(): Promise<BlogPost[]> {
+  return (await getPostEntries()).map(({ post }) => post);
 }

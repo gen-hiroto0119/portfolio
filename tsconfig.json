@@ -1,13 +1,10 @@
 {
-  "extends": "nitro/tsconfig",
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "plugins": [{ "name": "workflow" }]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "nitro.config.ts"],
-  "exclude": ["node_modules", ".output", ".vercel"]
+  "include": [".astro/types.d.ts", "src/**/*", "astro.config.ts"],
+  "exclude": ["node_modules", "dist", ".vercel"]
 }

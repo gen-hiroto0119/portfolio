@@ -1,0 +1,38 @@
+---
+import "@fontsource-variable/jetbrains-mono";
+import { render } from "astro:content";
+import Layout from "@/layouts/layout.astro";
+import { getPostEntries } from "@/feature/posts/service";
+
+export async function getStaticPaths() {
+  const entries = await getPostEntries();
+  return entries.map(({ entry, post }) => ({
+    params: { slug: post.slug },
+    props: { entry, post },
+  }));
+}
+
+const { entry, post } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout
+  path={`/blog/${post.slug}`}
+  title={post.title}
+  description={post.description}
+  article={{ date: post.publishedAt, updatedAt: post.updatedAt }}
+>
+  <main id="main" class="portfolio-main">
+    <a href="/blog">← Blog</a>
+    <article class="portfolio-article">
+      <header class="portfolio-articleHeading">
+        <h1>{post.title}</h1>
+        <time datetime={post.date}>{post.date.replaceAll("-", ".")}</time>
+      </header>
+      <div class="portfolio-articleBody">
+        <div class="prose-content"><Content /></div>
+      </div>
+    </article>
+    <a href="/blog">← 記事一覧に戻る</a>
+  </main>
+</Layout>

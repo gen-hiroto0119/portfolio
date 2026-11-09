@@ -1,10 +1,22 @@
-import { ImageResponse } from "@vercel/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { Resvg } from "@resvg/resvg-js";
+import satori from "satori";
 
-import geist from "../../../public/portfolio/fonts/Geist-Regular.ttf" with { type: "bytes" };
-import japanese from "@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-500-normal.woff" with { type: "bytes" };
-import avatar from "../../../public/portfolio/approved-avatar.svg" with { type: "text" };
 import { fitOgTitle } from "./title";
 import { site } from "@/lib/site";
+
+// Images are rendered during the static build, which always runs from the project root.
+const assets = Promise.all([
+  readFile(join(process.cwd(), "public/portfolio/fonts/Geist-Regular.ttf")),
+  readFile(
+    join(
+      process.cwd(),
+      "node_modules/@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-500-normal.woff",
+    ),
+  ),
+  readFile(join(process.cwd(), "public/portfolio/approved-avatar.svg")),
+]);
 
 // Satori accepts element objects directly; image generation needs no React runtime.
 function element(
@@ -15,15 +27,16 @@ function element(
   return { type, key: null, props: { ...props, children } };
 }
 
-export function createPortfolioImage({
+export async function createPortfolioImage({
   title,
   label = "Blog",
 }: {
   title: string;
   label?: string;
 }) {
+  const [geist, japanese, avatar] = await assets;
   const fitted = fitOgTitle(title);
-  return new ImageResponse(
+  const svg = await satori(
     element(
       "div",
       {
@@ -78,7 +91,7 @@ export function createPortfolioImage({
           ),
         ),
         element("img", {
-          src: `data:image/svg+xml;base64,${Buffer.from(avatar).toString("base64")}`,
+          src: `data:image/svg+xml;base64,${avatar.toString("base64")}`,
           alt: "",
           width: 104,
           height: 104,
@@ -89,20 +102,13 @@ export function createPortfolioImage({
       width: 1200,
       height: 630,
       fonts: [
-        {
-          name: "Geist",
-          data: Buffer.from(geist),
-          weight: 400,
-          style: "normal",
-        },
-        {
-          name: "Noto Sans JP",
-          data: Buffer.from(japanese),
-          weight: 400,
-          style: "normal",
-        },
+        { name: "Geist", data: geist, weight: 400, style: "normal" },
+        { name: "Noto Sans JP", data: japanese, weight: 400, style: "normal" },
       ],
-      headers: { "Cache-Control": "private, no-store" },
     },
   );
+  const png = new Resvg(svg).render().asPng();
+  return new Response(new Uint8Array(png), {
+    headers: { "Content-Type": "image/png" },
+  });
 }

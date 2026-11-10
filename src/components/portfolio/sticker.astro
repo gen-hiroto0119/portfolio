@@ -1,0 +1,22 @@
+---
+const stickers = {
+  terminal: `<rect x="7" y="11" width="50" height="42" rx="10" fill="#1D1D1F"/><circle cx="16" cy="19" r="2" fill="#FF6B5B"/><circle cx="23" cy="19" r="2" fill="#FFC93C"/><circle cx="30" cy="19" r="2" fill="#5ED17A"/><path d="M17 29 L24 35 L17 41" fill="none" stroke="#B9F25A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 42 H41" fill="none" stroke="#B9F25A" stroke-width="4" stroke-linecap="round"/>`,
+  kanban: `<rect x="6" y="10" width="52" height="44" rx="9" fill="#5B4BF5"/><rect x="11" y="16" width="12" height="10" rx="3" fill="#FFC93C"/><rect x="11" y="29" width="12" height="15" rx="3" fill="#FFFFFF"/><rect x="26" y="16" width="12" height="16" rx="3" fill="#FF8FB1"/><rect x="26" y="35" width="12" height="9" rx="3" fill="#FFFFFF"/><rect x="41" y="16" width="12" height="8" rx="3" fill="#5ED17A"/><rect x="41" y="27" width="12" height="12" rx="3" fill="#FFFFFF"/>`,
+  cap: `<path d="M16 28 V42 C16 50 48 50 48 42 V28 Z" fill="#5B4BF5"/><path d="M32 11 L60 24 L32 37 L4 24 Z" fill="#1D1D1F"/><path d="M32 24 L54 27 V41" fill="none" stroke="#FFC93C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="24" r="2.6" fill="#FFC93C"/><circle cx="54" cy="45" r="4.2" fill="#FFC93C"/>`,
+  bezier: `<path d="M12 46 L24 20 M52 18 L40 44" fill="none" stroke="#FF7A3D" stroke-width="2.8" stroke-linecap="round"/><path d="M12 46 C22 24 42 40 52 18" fill="none" stroke="#5B4BF5" stroke-width="5.5" stroke-linecap="round"/><circle cx="24" cy="20" r="4.2" fill="#FF7A3D"/><circle cx="40" cy="44" r="4.2" fill="#FF7A3D"/><rect x="6.5" y="40.5" width="11" height="11" rx="2.5" fill="#FFFFFF" stroke="#5B4BF5" stroke-width="3"/><rect x="46.5" y="12.5" width="11" height="11" rx="2.5" fill="#FFFFFF" stroke="#5B4BF5" stroke-width="3"/>`,
+  browser: `<rect x="6" y="11" width="52" height="42" rx="9" fill="#7EC8F5"/><rect x="9" y="22" width="46" height="28" rx="5" fill="#FFFFFF"/><circle cx="14" cy="17" r="2" fill="#FFFFFF"/><circle cx="20" cy="17" r="2" fill="#FFFFFF"/><circle cx="26" cy="17" r="2" fill="#FFFFFF"/><rect x="13" y="26" width="16" height="20" rx="3" fill="#FFC93C"/><path d="M34 29 H50 M34 36 H50 M34 43 H44" fill="none" stroke="#C7CBD3" stroke-width="3" stroke-linecap="round"/>`,
+  phone: `<g transform="rotate(8 32 32)"><rect x="17" y="5" width="30" height="54" rx="8" fill="#1D1D1F"/><rect x="20" y="8" width="24" height="48" rx="5.5" fill="#EAF0FF"/><rect x="23" y="14" width="8" height="8" rx="2.5" fill="#FF7A3D"/><rect x="33" y="14" width="8" height="8" rx="2.5" fill="#FFC93C"/><rect x="23" y="25" width="8" height="8" rx="2.5" fill="#5ED17A"/><rect x="33" y="25" width="8" height="8" rx="2.5" fill="#FF8FB1"/><rect x="23" y="36" width="8" height="8" rx="2.5" fill="#5B4BF5"/><path d="M28 51 H36" fill="none" stroke="#1D1D1F" stroke-width="2.4" stroke-linecap="round"/></g>`,
+} as const;
+
+export type StickerKind = keyof typeof stickers;
+
+interface Props {
+  kind: StickerKind;
+}
+
+const { kind } = Astro.props;
+---
+
+<svg class="portfolio-sticker" viewBox="0 0 64 64" aria-hidden="true">
+  <g filter="url(#portfolio-sticker-cut)" set:html={stickers[kind]} />
+</svg>

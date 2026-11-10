@@ -1,19 +1,12 @@
 ---
 import ThemeToggle from "./theme-toggle.astro";
-
-interface Props {
-  path: string;
-}
-
-const { path } = Astro.props;
-const home = path === "/";
 ---
 
 <header class="portfolio-header">
   <a href="/" class="portfolio-homeLink">HirotoFurugen</a>
   <div class="portfolio-headerActions">
     <nav aria-label="メインナビゲーション">
-      <a href={home ? "/blog" : "/"}>{home ? "Blog" : "Home"}</a>
+      <a href="/">Home</a>
     </nav>
     <ThemeToggle />
   </div>

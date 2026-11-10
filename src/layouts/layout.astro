@@ -89,7 +89,7 @@ const analytics = `window.dataLayer=window.dataLayer||[];function gtag(){dataLay
     <div class="portfolio-site">
       <a href="#main" class="portfolio-skipLink">本文へスキップ</a>
       <div class="portfolio-container">
-        <Header path={path} />
+        {path !== "/" && <Header />}
         <slot />
         <Footer />
       </div>

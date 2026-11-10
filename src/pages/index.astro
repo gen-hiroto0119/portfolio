@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/layout.astro";
+import Hero from "@/components/portfolio/hero.astro";
 import PostList from "@/components/portfolio/post-list.astro";
 import { getAllPosts } from "@/feature/posts/service";
 
@@ -31,43 +32,11 @@ const experience = [
     logo: "layerx-logo",
   },
 ];
-
-const technology = (name: string, logo: string) => ({ name, logo });
-const stack = [
-  technology("React", "react"),
-  technology("Next.js", "nextjs"),
-  technology("Deno", "deno"),
-  technology("Swift", "swift"),
-];
 ---
 
 <Layout path="/">
   <main id="main" class="portfolio-main">
-    <section class="portfolio-intro" lang="en" aria-label="Profile">
-      <p>
-        I'm a <strong>product engineer</strong> based in Tokyo, and I love <strong
-          >Product Design</strong
-        >. I'm currently working as an engineer while attending university.
-      </p>
-      <p>
-        My main focus is on <strong>frontend</strong> and <strong
-          >native development</strong
-        >. I primarily use {
-          stack.map((item, index) => (
-            <>
-              <span class="portfolio-technology"><img src={`/portfolio/${item.logo}-logo.svg`} width="15" height="15" alt="" />{item.name}</span>{index < stack.length - 2 ? ", " : index === stack.length - 2 ? ", and " : "."}
-            </>
-          ))
-        }
-      </p>
-      <p>
-        Lately, I've been drawn to <span class="portfolio-technology"
-          ><img src="/portfolio/rust-logo.svg" width="15" height="15" alt="" />Rust</span
-        > and am building a <strong>macOS application</strong> with <strong
-          >GPUI</strong
-        >.
-      </p>
-    </section>
+    <Hero />
     <section class="portfolio-section" aria-labelledby="work-title">
       <h2 id="work-title">Work</h2>
       <ul class="portfolio-experience">

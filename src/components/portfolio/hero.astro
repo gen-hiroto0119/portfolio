@@ -1,0 +1,123 @@
+---
+import Sticker, { type StickerKind } from "./sticker.astro";
+
+type Icon = { sticker: StickerKind } | { logo: string };
+
+interface Line {
+  text: string;
+  chip?: { rotate: number; items: { word: string; icon: Icon }[] };
+  after?: string;
+}
+
+const lines: Line[] = [
+  {
+    text: "I'm a",
+    chip: {
+      rotate: -10,
+      items: [
+        { word: "product engineer", icon: { sticker: "terminal" } },
+        { word: "product manager", icon: { sticker: "kanban" } },
+        { word: "student", icon: { sticker: "cap" } },
+      ],
+    },
+    after: " in Tokyo.",
+  },
+  {
+    text: "I love creating",
+    chip: {
+      rotate: 8,
+      items: [
+        { word: "products", icon: { sticker: "box" } },
+        { word: "interfaces", icon: { sticker: "browser" } },
+        { word: "experiences", icon: { sticker: "sparkle" } },
+      ],
+    },
+    after: ".",
+  },
+  {
+    text: "",
+    chip: {
+      rotate: -6,
+      items: [
+        { word: "TypeScript", icon: { logo: "typescript" } },
+        { word: "React", icon: { logo: "react" } },
+        { word: "Next.js", icon: { logo: "nextjs" } },
+        { word: "Hono", icon: { logo: "hono" } },
+      ],
+    },
+    after: " is in my stack.",
+  },
+];
+
+const sentence = lines
+  .map(
+    (line) =>
+      line.text +
+      (line.chip ? ` ${line.chip.items.map((item) => item.word).join(", ")}` : "") +
+      (line.after ?? ""),
+  )
+  .join(" ");
+
+// Rotates one chip at a time; the word box animates between measured widths.
+const swapScript = `(()=>{const chips=[...document.querySelectorAll("[data-chip]")];if(!chips.length||matchMedia("(prefers-reduced-motion: reduce)").matches)return;let turn=0;setInterval(()=>{const chip=chips[turn++%chips.length];const box=chip.querySelector("[data-chip-words]");const words=box.children;const icons=chip.querySelector("[data-chip-icons]").children;const cur=Number(chip.dataset.chip);const next=(cur+1)%words.length;box.style.width=words[cur].getBoundingClientRect().width+"px";box.getBoundingClientRect();box.style.width=words[next].getBoundingClientRect().width+"px";for(const set of[words,icons]){set[cur].dataset.state="out";set[next].dataset.state="on"}chip.dataset.chip=String(next);setTimeout(()=>{delete words[cur].dataset.state;delete icons[cur].dataset.state;box.style.width=""},800)},2200)})();`;
+---
+
+<header class="portfolio-hero" lang="en">
+  <svg class="portfolio-stickerDefs" width="0" height="0" aria-hidden="true">
+    <defs>
+      <filter id="portfolio-sticker-cut" x="-25%" y="-25%" width="150%" height="150%">
+        <feMorphology in="SourceAlpha" operator="dilate" radius="3.2" result="grow"></feMorphology>
+        <feFlood flood-color="#FFFFFF"></feFlood>
+        <feComposite in2="grow" operator="in" result="edge"></feComposite>
+        <feMerge>
+          <feMergeNode in="edge"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+  <h1>
+    Hiroto Furugen
+    <svg viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true">
+      <path
+        d="M2 9 C30 4 62 11 90 6 C100 4.5 110 5 118 7"
+        fill="none"
+        stroke="#D63B3B"
+        stroke-width="3.2"
+        stroke-linecap="round"
+        vector-effect="non-scaling-stroke"></path>
+    </svg>
+  </h1>
+  <p class="portfolio-visuallyHidden">{sentence}</p>
+  <p class="portfolio-heroLead" aria-hidden="true">
+    {
+      lines.map((line) => (
+        <span>
+          {line.text}
+          {line.chip && (
+            <span class="portfolio-chip" data-chip="0" style={`--chip-rotate:${line.chip.rotate}deg`}>
+              <span class="portfolio-chipIcons" data-chip-icons>
+                {line.chip.items.map(({ icon }, index) => (
+                  <span data-state={index === 0 ? "on" : undefined}>
+                    {"sticker" in icon ? (
+                      <Sticker kind={icon.sticker} />
+                    ) : (
+                      <img class="portfolio-sticker" src={`/portfolio/${icon.logo}-logo.svg`} alt="" />
+                    )}
+                  </span>
+                ))}
+              </span>
+              <span class="portfolio-chipWords" data-chip-words>
+                {line.chip.items.map((item, index) => (
+                  <span data-state={index === 0 ? "on" : undefined}>{item.word}</span>
+                ))}
+              </span>
+            </span>
+          )}
+          {line.after}
+        </span>
+      ))
+    }
+  </p>
+  <script is:inline set:html={swapScript} />
+</header>

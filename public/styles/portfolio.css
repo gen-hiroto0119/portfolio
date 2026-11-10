@@ -12,6 +12,14 @@
   font-style: normal;
   font-display: swap;
 }
+/* Subset containing only the glyphs of "Hiroto Furugen". */
+@font-face {
+  font-family: Caveat;
+  src: url(/portfolio/fonts/Caveat-Bold-Name.woff2) format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   color-scheme: light dark;
   --background: light-dark(#fff, #191919);
@@ -331,28 +339,6 @@ table {
   flex-direction: column;
   gap: var(--gap);
 }
-.portfolio-intro {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-.portfolio-intro p {
-  color: var(--muted-foreground);
-  line-height: 19.25px;
-}
-.portfolio-technology {
-  display: inline-block;
-  color: var(--foreground);
-  white-space: nowrap;
-  vertical-align: baseline;
-}
-.portfolio-technology img {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  margin-inline-end: 4px;
-  vertical-align: -0.125em;
-}
 .portfolio-section {
   border-top: 1px solid var(--border);
   padding-top: var(--gap);
@@ -427,16 +413,142 @@ table {
   display: inline-flex;
   padding-block: 2px;
 }
-.portfolio-socials img,
-.portfolio-technology img[src$="/nextjs-logo.svg"],
-.portfolio-technology img[src$="/deno-logo.svg"],
-.portfolio-technology img[src$="/rust-logo.svg"] {
+.portfolio-socials img {
   filter: var(--monochrome-filter);
 }
 .portfolio-blogHeading {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.portfolio-visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.portfolio-hero {
+  --chip-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 40px 48px;
+  text-align: center;
+}
+.portfolio-stickerDefs {
+  position: absolute;
+}
+.portfolio-hero h1 {
+  position: relative;
+  font-family: Caveat, cursive;
+  font-size: 95px;
+  font-weight: 700;
+  line-height: 1;
+}
+.portfolio-hero h1 svg {
+  position: absolute;
+  left: 2%;
+  bottom: -12px;
+  width: 96%;
+  height: 21px;
+  overflow: visible;
+}
+.portfolio-heroLead {
+  margin-top: 48px;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+}
+.portfolio-heroLead > span {
+  display: block;
+}
+.portfolio-chip {
+  display: inline-block;
+  margin: 0 0.12em 0 0.42em;
+  padding-right: 0.32em;
+  border-radius: 0.34em;
+  background: color-mix(in srgb, var(--foreground) 9%, transparent);
+  line-height: 1.3;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+.portfolio-chipIcons {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 46px;
+  margin: -12px 2px -8px -10px;
+  vertical-align: middle;
+}
+.portfolio-chipIcons > span {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: blur(3px);
+  transform: rotate(calc(var(--chip-rotate) - 12deg)) scale(0.72);
+}
+.portfolio-chipIcons > [data-state="on"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: rotate(var(--chip-rotate));
+  transition:
+    transform 0.75s var(--chip-ease),
+    opacity 0.55s var(--chip-ease),
+    filter 0.55s var(--chip-ease);
+}
+.portfolio-chipIcons > [data-state="out"] {
+  transform: rotate(calc(var(--chip-rotate) + 12deg)) scale(0.72);
+  transition:
+    transform 0.6s var(--chip-ease),
+    opacity 0.4s ease,
+    filter 0.4s ease;
+}
+.portfolio-sticker {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.16))
+    drop-shadow(0 6px 10px rgb(0 0 0 / 0.08));
+}
+img.portfolio-sticker {
+  padding: 5px;
+  filter: url(#portfolio-sticker-cut) drop-shadow(0 2px 3px rgb(0 0 0 / 0.16))
+    drop-shadow(0 6px 10px rgb(0 0 0 / 0.08));
+}
+.portfolio-chipWords {
+  position: relative;
+  display: inline-block;
+  clip-path: inset(-0.35em -0.05em -0.35em 0);
+  transition: width 0.7s var(--chip-ease);
+}
+.portfolio-chipWords > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateY(0.32em);
+}
+.portfolio-chipWords > [data-state="on"] {
+  position: static;
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+  transition:
+    transform 0.7s var(--chip-ease) 0.06s,
+    opacity 0.55s var(--chip-ease) 0.06s,
+    filter 0.55s var(--chip-ease) 0.06s;
+}
+.portfolio-chipWords > [data-state="out"] {
+  transform: translateY(-0.32em);
+  transition:
+    transform 0.55s var(--chip-ease),
+    opacity 0.35s ease,
+    filter 0.35s ease;
 }
 .portfolio-posts {
   padding: 0;
@@ -579,6 +691,17 @@ table {
   .portfolio-experienceRow {
     flex-direction: column;
     gap: 8px;
+  }
+  .portfolio-hero h1 {
+    font-size: 64px;
+  }
+  .portfolio-heroLead {
+    font-size: 20px;
+  }
+  .portfolio-chipIcons {
+    width: 32px;
+    height: 32px;
+    margin: -10px 2px -6px -8px;
   }
   .portfolio-postRow {
     flex-direction: column;

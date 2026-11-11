@@ -95,6 +95,11 @@ const analytics = `window.dataLayer=window.dataLayer||[];function gtag(){dataLay
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
     <script is:inline set:html={themeScript} />
+    <script>
+      import { inject } from "@vercel/analytics";
+
+      inject();
+    </script>
   </head>
   <body>
     <div class="portfolio-site">

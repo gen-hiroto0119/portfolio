@@ -33,27 +33,14 @@
   --syntax-title: var(--foreground);
   --syntax-literal: var(--syntax-string);
   --syntax-tag: var(--foreground);
-  --light-display: block;
-  --dark-display: none;
   --monochrome-filter: none;
   --font-sans: Geist, "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
   --font-mono: "JetBrains Mono Variable", monospace;
   --space-unit: 8px;
   --gap: calc(var(--space-unit) * 2);
 }
-:root[data-theme="light"] {
-  color-scheme: light;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --light-display: none;
-  --dark-display: block;
-  --monochrome-filter: invert(1);
-}
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --light-display: none;
-    --dark-display: block;
+  :root {
     --monochrome-filter: invert(1);
   }
 }

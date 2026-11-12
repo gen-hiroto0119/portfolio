@@ -24,7 +24,7 @@ export const GET: APIRoute = async () => {
 <rss version="2.0">
   <channel>
     <title>${escapeXml(`${site.name} — Blog`)}</title>
-    <link>${escapeXml(`${site.url}/blog`)}</link>
+    <link>${escapeXml(site.url)}</link>
     <description>${escapeXml(site.description)}</description>
     <language>ja</language>
 ${lastBuildDate ? `    <lastBuildDate>${escapeXml(lastBuildDate)}</lastBuildDate>` : ""}

@@ -66,12 +66,9 @@ const experience = [
   <section class="portfolio-section projects" aria-labelledby="projects-title">
     <h2 id="projects-title">Projects</h2>
   </section>
-  <section class="portfolio-section" aria-labelledby="blog-title">
-    <div class="heading">
-      <h2 id="blog-title">Blog</h2>
-      <a href="/blog">記事一覧を見る ↗</a>
-    </div>
-    <PostList posts={posts.slice(0, 3)} />
+  <section id="blog" class="portfolio-section" aria-labelledby="blog-title">
+    <h2 id="blog-title">Blog</h2>
+    <PostList posts={posts} />
   </section>
 </Layout>
 
@@ -109,16 +106,6 @@ const experience = [
   .projects {
     min-height: 53px;
   }
-  .heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: var(--space-unit);
-  }
-  .heading a {
-    font-size: 12px;
-  }
   @media (min-width: 600px) {
     .row {
       font-size: 13px;
@@ -134,11 +121,6 @@ const experience = [
     }
     .date {
       font-size: 14px;
-    }
-    .heading a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
     }
   }
 </style>

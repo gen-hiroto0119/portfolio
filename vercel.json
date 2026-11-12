@@ -4,5 +4,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [{ "source": "/blog", "destination": "/", "permanent": true }]
 }

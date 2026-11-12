@@ -7,7 +7,6 @@ export const GET: APIRoute = async () => {
   const posts = await getAllPosts();
   const routes = [
     { url: site.url, frequency: "weekly", priority: 1 },
-    { url: `${site.url}/blog`, frequency: "weekly", priority: 0.9 },
     ...posts.map((post) => ({
       url: `${site.url}/blog/${post.slug}`,
       date: post.date,

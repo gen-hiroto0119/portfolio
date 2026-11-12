@@ -17,7 +17,9 @@ const assets = Promise.all([
   font("inter", "inter-latin-500-normal.woff"),
   font("noto-sans-jp", "noto-sans-jp-japanese-400-normal.woff"),
   font("noto-sans-jp", "noto-sans-jp-japanese-500-normal.woff"),
-  file("public/portfolio/approved-avatar.svg"),
+  // The hero's Caveat subset (only the glyphs of "Hiroto Furugen"), converted to WOFF.
+  // License: public/portfolio/fonts/Caveat-OFL.txt
+  file("src/assets/og/Caveat-Bold-Name.woff"),
 ]);
 
 // Blurred landscapes from the Figma "Prefecture blur" set, cropped to 1200×630.
@@ -53,7 +55,7 @@ export async function createPortfolioImage({
   // Pages without a slug, such as the top page, use Tokyo.
   slug?: string;
 }) {
-  const [inter400, inter500, japanese400, japanese500, avatar] = await assets;
+  const [inter400, inter500, japanese400, japanese500, caveat] = await assets;
   const background = await file(
     backgroundDirectory,
     slug ? await backgroundFor(slug) : "13-tokyo.jpg",
@@ -106,27 +108,29 @@ export async function createPortfolioImage({
         {
           style: {
             display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: 8,
             height: 104,
-            alignItems: "center",
-            justifyContent: "space-between",
           },
         },
         element(
           "div",
-          { style: { display: "flex", flexDirection: "column", gap: 8 } },
-          element("div", { style: { fontSize: 26 } }, site.name),
-          element(
-            "div",
-            { style: { fontSize: 20, color: "rgba(255, 255, 255, 0.78)" } },
-            "Product engineer · Tokyo",
-          ),
+          {
+            style: {
+              fontFamily: "Caveat",
+              fontSize: 44,
+              fontWeight: 700,
+              lineHeight: 1,
+            },
+          },
+          site.name,
         ),
-        element("img", {
-          src: `data:image/svg+xml;base64,${avatar.toString("base64")}`,
-          alt: "",
-          width: 104,
-          height: 104,
-        }),
+        element(
+          "div",
+          { style: { fontSize: 20, color: "rgba(255, 255, 255, 0.78)" } },
+          "Product engineer · Tokyo",
+        ),
       ),
     ),
     {
@@ -137,6 +141,7 @@ export async function createPortfolioImage({
         { name: "Inter", data: inter500, weight: 500, style: "normal" },
         { name: "Noto Sans JP", data: japanese400, weight: 400, style: "normal" },
         { name: "Noto Sans JP", data: japanese500, weight: 500, style: "normal" },
+        { name: "Caveat", data: caveat, weight: 700, style: "normal" },
       ],
     },
   );

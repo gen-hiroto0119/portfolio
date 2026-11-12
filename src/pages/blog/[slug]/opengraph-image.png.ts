@@ -10,5 +10,5 @@ export const getStaticPaths = (async () => {
   }));
 }) satisfies GetStaticPaths;
 
-export const GET: APIRoute = ({ props }) =>
-  createPortfolioImage({ label: "Blog", title: props.title });
+export const GET: APIRoute = ({ params, props }) =>
+  createPortfolioImage({ label: "Blog", title: props.title, slug: params.slug });

@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
@@ -18,9 +18,21 @@ const assets = Promise.all([
   font("noto-sans-jp", "noto-sans-jp-japanese-400-normal.woff"),
   font("noto-sans-jp", "noto-sans-jp-japanese-500-normal.woff"),
   file("public/portfolio/approved-avatar.svg"),
-  // A blurred landscape from the Figma "Prefecture blur" set, cropped to 1200×630.
-  file("src/assets/og/13-tokyo.jpg"),
 ]);
+
+// Blurred landscapes from the Figma "Prefecture blur" set, cropped to 1200×630.
+const backgroundDirectory = "src/assets/og/prefectures";
+const backgrounds = readdir(join(process.cwd(), backgroundDirectory)).then(
+  (names) => names.filter((name) => name.endsWith(".jpg")).sort(),
+);
+
+// Hashes the slug so a post keeps the same prefecture across builds.
+async function backgroundFor(slug: string) {
+  const names = await backgrounds;
+  let hash = 2166136261;
+  for (const char of slug) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+  return names[(hash >>> 0) % names.length];
+}
 
 // Satori accepts element objects directly; image generation needs no React runtime.
 function element(
@@ -34,12 +46,18 @@ function element(
 export async function createPortfolioImage({
   title,
   label = "Blog",
+  slug,
 }: {
   title: string;
   label?: string;
+  // Pages without a slug, such as the top page, use Tokyo.
+  slug?: string;
 }) {
-  const [inter400, inter500, japanese400, japanese500, avatar, background] =
-    await assets;
+  const [inter400, inter500, japanese400, japanese500, avatar] = await assets;
+  const background = await file(
+    backgroundDirectory,
+    slug ? await backgroundFor(slug) : "13-tokyo.jpg",
+  );
   const fitted = fitOgTitle(title);
   const svg = await satori(
     element(
@@ -56,7 +74,7 @@ export async function createPortfolioImage({
           color: "#fff",
           fontFamily: "Inter, Noto Sans JP",
           // The gradient darkens the photo enough for white text.
-          backgroundImage: `linear-gradient(180deg, rgba(15, 23, 42, 0.18) 0%, rgba(15, 23, 42, 0.42) 100%), url(data:image/jpeg;base64,${background.toString("base64")})`,
+          backgroundImage: `linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.42) 100%), url(data:image/jpeg;base64,${background.toString("base64")})`,
           backgroundSize: "1200px 630px, 1200px 630px",
         },
       },

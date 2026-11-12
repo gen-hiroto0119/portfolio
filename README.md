@@ -34,6 +34,8 @@ npm run preview
 npm run lint
 ```
 
+PRではGitHub Actionsで`npm run lint`と`npm run build`を実行します。
+
 環境変数はVercelのProductionで管理し、`vercel env pull`で取得します。使うのは公開URLの`NEXT_PUBLIC_SITE_URL`だけで、変数名は既存のVercel設定を引き継ぐため残しています。
 
 ## 記事

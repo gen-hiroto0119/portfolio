@@ -23,5 +23,6 @@ Hiroto Furugenの個人サイト。Astroでトップとブログを静的生成�
 - union / enumのswitchはdefaultでneverチェックを行う。
 - OGP画像はビルド時にsatoriと`@resvg/resvg-js`で生成する。
 - 環境変数はVercelのProductionで管理する。`NEXT_PUBLIC_SITE_URL`は既存設定との互換のため残す。
+- コードの変更はPRで出し、GitHub Actions（`.github/workflows/ci.yml`）のlintとbuildが通ってからマージする。記事は`main`へ直接pushして公開する。
 - 必要最低限の構成を保つ。依頼外のリファクタ・ドキュメント・CI・テスト・検証用スクリプトは追加しない。
 - 実サービスへの変更・記事公開・デプロイ・commit / pushは明示的な依頼がある場合に行う。

@@ -101,6 +101,9 @@ const { Content } = await render(entry);
     color: var(--foreground);
     text-decoration: underline;
   }
+  .body :global(strong) {
+    font-weight: 600;
+  }
   .body :global(:is(ul, ol)) {
     padding-left: 24px;
   }

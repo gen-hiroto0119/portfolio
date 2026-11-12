@@ -22,17 +22,111 @@ const { Content } = await render(entry);
   description={post.description}
   article={{ date: post.publishedAt, updatedAt: post.updatedAt }}
 >
-  <main id="main" class="portfolio-main">
-    <a href="/blog">← Blog</a>
-    <article class="portfolio-article">
-      <header class="portfolio-articleHeading">
-        <h1>{post.title}</h1>
-        <time datetime={post.date}>{post.date.replaceAll("-", ".")}</time>
-      </header>
-      <div class="portfolio-articleBody">
-        <div class="prose-content"><Content /></div>
-      </div>
-    </article>
-    <a href="/blog">← 記事一覧に戻る</a>
-  </main>
+  <a href="/blog">← Blog</a>
+  <article class="article">
+    <header class="heading">
+      <h1>{post.title}</h1>
+      <time datetime={post.date}>{post.date.replaceAll("-", ".")}</time>
+    </header>
+    <div class="body"><Content /></div>
+  </article>
+  <a href="/blog">← 記事一覧に戻る</a>
 </Layout>
+
+<style>
+  .article {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .heading {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .heading time {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--muted-foreground);
+  }
+  .body {
+    border-block: 1px solid var(--border);
+    padding-block: 16px;
+    line-height: 22px;
+    color: var(--muted-foreground);
+    overflow-wrap: anywhere;
+  }
+
+  /* The Markdown output is not scoped to this page, so it is styled through :global(). */
+  .body > :global(* + *) {
+    margin-top: 16px;
+  }
+  .body :global(:is(h2, h3, h4, h5, h6)) {
+    line-height: 22px;
+    color: var(--foreground);
+  }
+  .body :global(a) {
+    color: var(--foreground);
+    text-decoration: underline;
+  }
+  .body :global(:is(ul, ol)) {
+    padding-left: 24px;
+  }
+  .body :global(ul) {
+    list-style: disc;
+  }
+  .body :global(ol) {
+    list-style: decimal;
+  }
+  .body :global(li + li) {
+    margin-top: 4px;
+  }
+  .body :global(blockquote) {
+    border-left: 1px solid var(--border);
+    padding: 4px 0 4px 16px;
+  }
+  .body :global(pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    border-left: 1px solid var(--border);
+    padding: 4px 0 4px 16px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .body :global(:not(pre) > code) {
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 1px 3px;
+    font-size: 0.9em;
+    color: var(--foreground);
+  }
+  .body :global(img) {
+    margin-inline: auto;
+  }
+  .body :global(hr) {
+    margin-bottom: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .body :global(table) {
+    width: 100%;
+    text-align: left;
+  }
+  .body :global(:is(th, td)) {
+    border-bottom: 1px solid var(--border);
+    padding: 12px;
+  }
+  /* Shiki's css-variables theme, mapped to the site's monochrome syntax colors. */
+  .body :global(.astro-code) {
+    --astro-code-foreground: var(--foreground);
+    --astro-code-background: var(--surface);
+    --astro-code-token-comment: var(--syntax-comment);
+    --astro-code-token-keyword: var(--syntax-keyword);
+    --astro-code-token-string: var(--syntax-string);
+    --astro-code-token-string-expression: var(--syntax-string);
+    --astro-code-token-constant: var(--syntax-literal);
+    --astro-code-token-function: var(--syntax-title);
+    --astro-code-token-parameter: var(--foreground);
+    --astro-code-token-punctuation: var(--foreground);
+    --astro-code-token-link: var(--syntax-string);
+  }
+</style>

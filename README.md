@@ -18,7 +18,7 @@ src/
   content.config.ts # 記事のスキーマ
   feature/posts/    # 記事の取得
   lib/              # サイト設定・OGP・XML
-  styles/           # 共通CSS（ビルド時にHTMLへインライン化）
+  styles/           # 全体に効くCSS（部品ごとのCSSは各.astroに書く）
 public/             # 画像・フォント
 ```
 

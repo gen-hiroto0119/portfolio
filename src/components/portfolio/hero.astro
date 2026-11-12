@@ -62,8 +62,8 @@ const sentence = lines
 const swapScript = `(()=>{const chips=[...document.querySelectorAll("[data-chip]")];if(!chips.length||matchMedia("(prefers-reduced-motion: reduce)").matches)return;let turn=0;setInterval(()=>{const chip=chips[turn++%chips.length];const box=chip.querySelector("[data-chip-words]");const words=box.children;const icons=chip.querySelector("[data-chip-icons]").children;const cur=Number(chip.dataset.chip);const next=(cur+1)%words.length;box.style.width=words[cur].getBoundingClientRect().width+"px";box.getBoundingClientRect();box.style.width=words[next].getBoundingClientRect().width+"px";for(const set of[words,icons]){set[cur].dataset.state="out";set[next].dataset.state="on"}chip.dataset.chip=String(next);setTimeout(()=>{delete words[cur].dataset.state;delete icons[cur].dataset.state;box.style.width=""},800)},2200)})();`;
 ---
 
-<header class="portfolio-hero" lang="en">
-  <svg class="portfolio-stickerDefs" width="0" height="0" aria-hidden="true">
+<header class="hero" lang="en">
+  <svg class="stickerDefs" width="0" height="0" aria-hidden="true">
     <defs>
       <filter id="portfolio-sticker-cut" x="-25%" y="-25%" width="150%" height="150%">
         <feMorphology in="SourceAlpha" operator="dilate" radius="3.2" result="grow"></feMorphology>
@@ -88,26 +88,26 @@ const swapScript = `(()=>{const chips=[...document.querySelectorAll("[data-chip]
         vector-effect="non-scaling-stroke"></path>
     </svg>
   </h1>
-  <p class="portfolio-visuallyHidden">{sentence}</p>
-  <p class="portfolio-heroLead" aria-hidden="true">
+  <p class="visuallyHidden">{sentence}</p>
+  <p class="lead" aria-hidden="true">
     {
       lines.map((line) => (
         <span>
           {line.text}
           {line.chip && (
-            <span class="portfolio-chip" data-chip="0" style={`--chip-rotate:${line.chip.rotate}deg`}>
-              <span class="portfolio-chipIcons" data-chip-icons>
+            <span class="chip" data-chip="0" style={`--chip-rotate:${line.chip.rotate}deg`}>
+              <span class="icons" data-chip-icons>
                 {line.chip.items.map(({ icon }, index) => (
                   <span data-state={index === 0 ? "on" : undefined}>
                     {"sticker" in icon ? (
                       <Sticker kind={icon.sticker} />
                     ) : (
-                      <img class="portfolio-sticker" src={`/portfolio/${icon.logo}-logo.svg`} alt="" />
+                      <img class="logo" src={`/portfolio/${icon.logo}-logo.svg`} alt="" />
                     )}
                   </span>
                 ))}
               </span>
-              <span class="portfolio-chipWords" data-chip-words>
+              <span class="words" data-chip-words>
                 {line.chip.items.map((item, index) => (
                   <span data-state={index === 0 ? "on" : undefined}>{item.word}</span>
                 ))}
@@ -121,3 +121,145 @@ const swapScript = `(()=>{const chips=[...document.querySelectorAll("[data-chip]
   </p>
   <script is:inline set:html={swapScript} />
 </header>
+
+<style>
+  .hero {
+    --chip-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 40px 48px;
+    text-align: center;
+  }
+  .stickerDefs {
+    position: absolute;
+  }
+  .hero h1 {
+    position: relative;
+    font-family: Caveat, cursive;
+    font-size: 95px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .hero h1 svg {
+    position: absolute;
+    left: 2%;
+    bottom: -12px;
+    width: 96%;
+    height: 21px;
+    overflow: visible;
+  }
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .lead {
+    margin-top: 48px;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: -0.01em;
+  }
+  .lead > span {
+    display: block;
+  }
+  .chip {
+    display: inline-block;
+    margin: 0 0.12em 0 0.42em;
+    padding-right: 0.32em;
+    border-radius: 0.34em;
+    background: color-mix(in srgb, var(--foreground) 9%, transparent);
+    line-height: 1.3;
+    white-space: nowrap;
+    vertical-align: baseline;
+  }
+  .icons {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 46px;
+    margin: -12px 2px -8px -10px;
+    vertical-align: middle;
+  }
+  .icons > span {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    filter: blur(3px);
+    transform: rotate(calc(var(--chip-rotate) - 12deg)) scale(0.72);
+  }
+  .icons > [data-state="on"] {
+    opacity: 1;
+    filter: blur(0);
+    transform: rotate(var(--chip-rotate));
+    transition:
+      transform 0.75s var(--chip-ease),
+      opacity 0.55s var(--chip-ease),
+      filter 0.55s var(--chip-ease);
+  }
+  .icons > [data-state="out"] {
+    transform: rotate(calc(var(--chip-rotate) + 12deg)) scale(0.72);
+    transition:
+      transform 0.6s var(--chip-ease),
+      opacity 0.4s ease,
+      filter 0.4s ease;
+  }
+  /* Logos get the same white cut edge as the drawn stickers. */
+  .logo {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    padding: 5px;
+    filter: url(#portfolio-sticker-cut) drop-shadow(0 2px 3px rgb(0 0 0 / 0.16))
+      drop-shadow(0 6px 10px rgb(0 0 0 / 0.08));
+  }
+  .words {
+    position: relative;
+    display: inline-block;
+    clip-path: inset(-0.35em -0.05em -0.35em 0);
+    transition: width 0.7s var(--chip-ease);
+  }
+  .words > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(0.32em);
+  }
+  .words > [data-state="on"] {
+    position: static;
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+    transition:
+      transform 0.7s var(--chip-ease) 0.06s,
+      opacity 0.55s var(--chip-ease) 0.06s,
+      filter 0.55s var(--chip-ease) 0.06s;
+  }
+  .words > [data-state="out"] {
+    transform: translateY(-0.32em);
+    transition:
+      transform 0.55s var(--chip-ease),
+      opacity 0.35s ease,
+      filter 0.35s ease;
+  }
+  @media (max-width: 599px) {
+    .hero h1 {
+      font-size: 64px;
+    }
+    .lead {
+      font-size: 20px;
+    }
+    .icons {
+      width: 32px;
+      height: 32px;
+      margin: -10px 2px -6px -8px;
+    }
+  }
+</style>

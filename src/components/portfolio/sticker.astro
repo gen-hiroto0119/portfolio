@@ -17,6 +17,16 @@ interface Props {
 const { kind } = Astro.props;
 ---
 
-<svg class="portfolio-sticker" viewBox="0 0 64 64" aria-hidden="true">
+<svg class="sticker" viewBox="0 0 64 64" aria-hidden="true">
   <g filter="url(#portfolio-sticker-cut)" set:html={stickers[kind]} />
 </svg>
+
+<style>
+  .sticker {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.16))
+      drop-shadow(0 6px 10px rgb(0 0 0 / 0.08));
+  }
+</style>

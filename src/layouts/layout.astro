@@ -2,7 +2,7 @@
 import Header from "@/components/portfolio/header.astro";
 import Footer from "@/components/portfolio/footer.astro";
 import { site } from "@/lib/site";
-import "@/styles/portfolio.css";
+import "@/styles/global.css";
 
 interface Props {
   title?: string;
@@ -102,13 +102,13 @@ const analytics = `window.dataLayer=window.dataLayer||[];function gtag(){dataLay
     </script>
   </head>
   <body>
-    <div class="portfolio-site">
-      <a href="#main" class="portfolio-skipLink">本文へスキップ</a>
-      <div class="portfolio-container">
-        {path !== "/" && <Header />}
+    <a href="#main" class="skipLink">本文へスキップ</a>
+    <div class="container">
+      {path !== "/" && <Header />}
+      <main id="main" class="main">
         <slot />
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
     {
       process.env.VERCEL && (
@@ -132,3 +132,33 @@ const analytics = `window.dataLayer=window.dataLayer||[];function gtag(){dataLay
     }
   </body>
 </html>
+
+<style>
+  .skipLink {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 8px;
+    background: var(--background);
+    transform: translateY(-200%);
+  }
+  .skipLink:focus {
+    transform: translateY(0);
+  }
+  .container {
+    max-width: 600px;
+    margin-inline: auto;
+    padding: 32px 24px;
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+  @media (min-width: 600px) {
+    .container {
+      padding-inline: 30px;
+    }
+  }
+</style>

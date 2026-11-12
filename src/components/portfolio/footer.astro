@@ -2,8 +2,8 @@
 import { site } from "@/lib/site";
 ---
 
-<footer class="portfolio-footer">
-  <nav aria-label="ソーシャルリンク" class="portfolio-socials">
+<footer class="footer">
+  <nav aria-label="ソーシャルリンク" class="socials">
     <a href={site.socials.github} aria-label="GitHub">
       <img src="/portfolio/github.svg" alt="" width="16" height="16" />
     </a>
@@ -13,3 +13,42 @@ import { site } from "@/lib/site";
   </nav>
   <span>HirotoFurugen</span>
 </footer>
+
+<style>
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    margin-top: var(--gap);
+    padding-top: var(--gap);
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--muted-foreground);
+  }
+  .socials {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .socials a {
+    display: inline-flex;
+    padding-block: 2px;
+  }
+  .socials img {
+    filter: var(--monochrome-filter);
+  }
+  @media (max-width: 599px) {
+    .socials {
+      gap: 4px;
+      margin-left: -14px;
+    }
+    .socials a {
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+    }
+  }
+</style>

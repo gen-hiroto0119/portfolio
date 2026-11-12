@@ -10,10 +10,10 @@ const { posts } = Astro.props;
 
 {
   posts.length > 0 && (
-    <ul class="portfolio-posts">
+    <ul>
       {posts.map((post) => (
         <li>
-          <a href={`/blog/${post.slug}`} class="portfolio-postRow">
+          <a href={`/blog/${post.slug}`} class="row">
             <span>{post.title}</span>
             <time datetime={post.date}>{post.date.replaceAll("-", ".")}</time>
           </a>
@@ -22,3 +22,32 @@ const { posts } = Astro.props;
     </ul>
   )
 }
+
+<style>
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 4px;
+    line-height: 22px;
+  }
+  .row > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .row time {
+    flex-shrink: 0;
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+  @media (max-width: 599px) {
+    .row {
+      flex-direction: column;
+      justify-content: center;
+      min-height: 44px;
+      gap: 4px;
+      padding-block: 8px;
+    }
+  }
+</style>

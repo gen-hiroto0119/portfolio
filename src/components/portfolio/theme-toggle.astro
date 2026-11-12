@@ -1,11 +1,11 @@
 <button
   type="button"
-  class="portfolio-themeToggle"
+  class="toggle"
   data-theme-toggle
   aria-label="配色を切り替える"
 >
   <svg
-    class="portfolio-lightIcon"
+    class="lightIcon"
     width="16"
     height="16"
     viewBox="0 0 24 24"
@@ -21,7 +21,7 @@
     ></path>
   </svg>
   <svg
-    class="portfolio-darkIcon"
+    class="darkIcon"
     width="16"
     height="16"
     viewBox="0 0 24 24"
@@ -38,3 +38,35 @@
     ></path>
   </svg>
 </button>
+
+<style>
+  .toggle {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: var(--foreground);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+  }
+  .toggle:hover {
+    background: var(--surface);
+  }
+  .lightIcon {
+    display: var(--light-display);
+  }
+  .darkIcon {
+    display: var(--dark-display);
+  }
+  @media (max-width: 599px) {
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+</style>

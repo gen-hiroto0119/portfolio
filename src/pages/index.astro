@@ -35,47 +35,110 @@ const experience = [
 ---
 
 <Layout path="/">
-  <main id="main" class="portfolio-main">
-    <Hero />
-    <section class="portfolio-section" aria-labelledby="work-title">
-      <h2 id="work-title">Work</h2>
-      <ul class="portfolio-experience">
-        {
-          experience.map((job) => (
-            <li class="portfolio-experienceRow">
-              <span class="portfolio-job">
-                <img src={`/portfolio/${job.logo}.svg`} width="16" height="16" alt="" />
-                <span lang="en">
-                  {job.company} <span class="portfolio-secondary">~ {job.role}</span>
-                </span>
+  <Hero />
+  <section class="portfolio-section" aria-labelledby="work-title">
+    <h2 id="work-title">Work</h2>
+    <ul class="experience">
+      {
+        experience.map((job) => (
+          <li class="row">
+            <span class="job">
+              <img src={`/portfolio/${job.logo}.svg`} width="16" height="16" alt="" />
+              <span lang="en">
+                {job.company} <span class="portfolio-secondary">~ {job.role}</span>
               </span>
-              <span class="portfolio-date">{job.date}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-    <section class="portfolio-section" aria-labelledby="edu-title">
-      <h2 id="edu-title">Edu</h2>
-      <div class="portfolio-experienceRow" lang="en">
-        <span>
-          Hosei University <span class="portfolio-secondary">~ Geography</span>
-        </span>
-        <span class="portfolio-date">2024.04 — 2028.03 (Expected)</span>
-      </div>
-    </section>
-    <section
-      class="portfolio-section portfolio-projects"
-      aria-labelledby="projects-title"
-    >
-      <h2 id="projects-title">Projects</h2>
-    </section>
-    <section class="portfolio-section" aria-labelledby="blog-title">
-      <div class="portfolio-sectionHeading">
-        <h2 id="blog-title">Blog</h2>
-        <a href="/blog">記事一覧を見る ↗</a>
-      </div>
-      <PostList posts={posts.slice(0, 3)} />
-    </section>
-  </main>
+            </span>
+            <span class="date">{job.date}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <section class="portfolio-section" aria-labelledby="edu-title">
+    <h2 id="edu-title">Edu</h2>
+    <div class="row" lang="en">
+      <span>
+        Hosei University <span class="portfolio-secondary">~ Geography</span>
+      </span>
+      <span class="date">2024.04 — 2028.03 (Expected)</span>
+    </div>
+  </section>
+  <section class="portfolio-section projects" aria-labelledby="projects-title">
+    <h2 id="projects-title">Projects</h2>
+  </section>
+  <section class="portfolio-section" aria-labelledby="blog-title">
+    <div class="heading">
+      <h2 id="blog-title">Blog</h2>
+      <a href="/blog">記事一覧を見る ↗</a>
+    </div>
+    <PostList posts={posts.slice(0, 3)} />
+  </section>
 </Layout>
+
+<style>
+  .experience {
+    display: flex;
+    flex-direction: column;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    line-height: 20px;
+    padding-block: 4px;
+  }
+  .job {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+  }
+  .job img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    align-self: center;
+    flex-shrink: 0;
+  }
+  .date {
+    color: var(--muted-foreground);
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .projects {
+    min-height: 53px;
+  }
+  .heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: var(--space-unit);
+  }
+  .heading a {
+    font-size: 12px;
+  }
+  @media (min-width: 600px) {
+    .row {
+      font-size: 13px;
+    }
+  }
+  @media (max-width: 599px) {
+    .experience {
+      gap: 16px;
+    }
+    .row {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .date {
+      font-size: 14px;
+    }
+    .heading a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
+</style>

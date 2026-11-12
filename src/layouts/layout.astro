@@ -2,6 +2,7 @@
 import Header from "@/components/portfolio/header.astro";
 import Footer from "@/components/portfolio/footer.astro";
 import { site } from "@/lib/site";
+import "@/styles/portfolio.css";
 
 interface Props {
   title?: string;
@@ -73,7 +74,6 @@ const analytics = `window.dataLayer=window.dataLayer||[];function gtag(){dataLay
         />
       )
     }
-    <link rel="stylesheet" href="/styles/portfolio.css" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={site.name} />

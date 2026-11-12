@@ -7,7 +7,7 @@ Hiroto Furugenの個人サイト。Astroでトップとブログを静的生成�
 - `src/pages/`はルート（ページ・RSS・sitemap・robots・OGP画像）、`src/layouts/`は共通レイアウト、`src/components/`は表示部品。
 - 記事は`src/content/blog/<slug>.md`に置き、`src/content.config.ts`のスキーマで検証する。ファイル名がURLのslugになる。画像は記事と同じディレクトリに置き、相対パスで参照する。
 - `src/feature/posts/`は記事の取得。`service.ts`は処理の手順、`repository.ts`はコレクションの読み取り、`domain.ts`は型とルールを置く。必要なファイルだけを作る。ページからはserviceを呼ぶ。
-- CSS・フォント・ロゴは`public/`から配信する。CSSは既存のカスタムプロパティと`portfolio-`のクラス名を使う。コードのハイライトはShikiの`css-variables`テーマを`--syntax-*`に対応させる。
+- フォント・ロゴは`public/`から配信する。CSSは`src/styles/portfolio.css`に置き、ビルド時にHTMLへインライン化する。既存のカスタムプロパティと`portfolio-`のクラス名を使う。コードのハイライトはShikiの`css-variables`テーマを`--syntax-*`に対応させる。
 
 ## コンテンツ方針
 

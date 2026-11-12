@@ -18,7 +18,8 @@ src/
   content.config.ts # 記事のスキーマ
   feature/posts/    # 記事の取得
   lib/              # サイト設定・OGP・XML
-public/             # CSS・画像・フォント
+  styles/           # 共通CSS（ビルド時にHTMLへインライン化）
+public/             # 画像・フォント
 ```
 
 ## 開発
